@@ -28,8 +28,7 @@ namespace MusicLibraryApi
 			services.AddSingleton<IDocumentExecuter, DocumentExecuter>();
 			services.AddSingleton<MusicLibraryQuery>();
 			services.AddSingleton<MusicLibraryMutation>();
-			var sp = services.BuildServiceProvider(); // CF TEMP
-			services.AddSingleton<ISchema>(new MusicLibrarySchema(new FuncDependencyResolver(type => sp.GetService(type))));
+			services.AddSingleton<ISchema>(sp => new MusicLibrarySchema(new FuncDependencyResolver(type => sp.GetService(type))));
 		}
 
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
