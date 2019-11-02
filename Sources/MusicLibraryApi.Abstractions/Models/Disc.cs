@@ -4,7 +4,7 @@ namespace MusicLibraryApi.Abstractions.Models
 {
 	public class Disc
 	{
-		public string Id { get; set; }
+		public int Id { get; set; }
 
 		public int? Year { get; set; }
 

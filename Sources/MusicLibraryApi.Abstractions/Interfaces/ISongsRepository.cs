@@ -5,10 +5,8 @@ using MusicLibraryApi.Abstractions.Models;
 
 namespace MusicLibraryApi.Abstractions.Interfaces
 {
-	public interface IDiscsRepository
+	public interface ISongsRepository
 	{
-		Task<IEnumerable<Disc>> GetAllDiscs(CancellationToken cancellationToken);
-
-		Task<Disc> GetDisc(int discId, CancellationToken cancellationToken);
+		Task<IReadOnlyCollection<Song>> GetDiscSongs(int discId, CancellationToken cancellationToken);
 	}
 }

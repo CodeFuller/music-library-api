@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using GraphQL;
+﻿using GraphQL;
 using GraphQL.Types;
 
 namespace MusicLibraryApi.GraphQL
@@ -13,7 +9,6 @@ namespace MusicLibraryApi.GraphQL
 			: base(resolver)
 		{
 			Query = resolver.Resolve<MusicLibraryQuery>();
-			Mutation = resolver.Resolve<MusicLibraryMutation>();
 		}
 	}
 }

@@ -8,14 +8,16 @@
     <PackageReference Include="AutoMapper" Version="9.0.0" />
     <PackageReference Include="graphiql" Version="1.2.0" />
     <PackageReference Include="GraphQL" Version="2.4.0" />
+    <!-- This package is required for the Entity Framework Core Tools (dotnet ef migrations) to work. -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\MusicLibraryApi.Abstractions\MusicLibraryApi.Abstractions.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Dto\" />
+    <ProjectReference Include="..\MusicLibraryApi.Dal.EfCore\MusicLibraryApi.Dal.EfCore.csproj" />
   </ItemGroup>
 
 </Project>
