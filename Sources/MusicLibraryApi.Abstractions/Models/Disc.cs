@@ -14,6 +14,6 @@ namespace MusicLibraryApi.Abstractions.Models
 
 		public int? AlbumOrder { get; set; }
 
-		public ICollection<Song> Songs { get; set; }
+		public ICollection<Song> Songs { get; } = new List<Song>();
 	}
 }

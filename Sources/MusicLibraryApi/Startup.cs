@@ -20,16 +20,17 @@ namespace MusicLibraryApi
 {
 	public class Startup
 	{
+		public IConfiguration Configuration { get; }
+
 		public Startup(IConfiguration configuration)
 		{
 			Configuration = configuration;
 		}
 
-		public IConfiguration Configuration { get; }
-
 		public void ConfigureServices(IServiceCollection services)
 		{
-			services.AddControllers();
+			services.AddControllers()
+				.AddNewtonsoftJson();
 
 			services.AddHttpContextAccessor();
 			services.AddSingleton<IContextRepositoryAccessor, ContextRepositoryAccessor>();
@@ -54,7 +55,7 @@ namespace MusicLibraryApi
 			services.AddSingleton<ISchema>(sp => new MusicLibrarySchema(new FuncDependencyResolver(sp.GetService)));
 		}
 
-		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+		public static void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 		{
 			if (env.IsDevelopment())
 			{

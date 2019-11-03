@@ -4,7 +4,7 @@ using MusicLibraryApi.Dal.EfCore;
 
 namespace MusicLibraryApi
 {
-	public static class WebHostExtensions
+	public static class HostExtensions
 	{
 		public static IHost ApplyMigrations(this IHost host)
 		{

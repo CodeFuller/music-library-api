@@ -24,6 +24,5 @@ namespace MusicLibraryApi.Internal
 		{
 			return httpContextAccessor.HttpContext.RequestServices.GetRequiredService<TRepository>();
 		}
-
 	}
 }

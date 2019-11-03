@@ -1,12 +1,11 @@
 ﻿using GraphQL.Types;
 using MusicLibraryApi.Abstractions.Models;
-using MusicLibraryApi.Interfaces;
 
 namespace MusicLibraryApi.GraphQL.Types
 {
 	public class SongType : ObjectGraphType<Song>
 	{
-		public SongType(IContextRepositoryAccessor repositoryAccessor)
+		public SongType()
 		{
 			Field(x => x.Id);
 			Field(x => x.Title);

@@ -34,7 +34,7 @@ namespace MusicLibraryApi.Controllers
 			{
 				Schema = schema,
 				Query = query.Query,
-				Inputs = inputs
+				Inputs = inputs,
 			};
 
 			var result = await documentExecuter.ExecuteAsync(executionOptions).ConfigureAwait(false);
