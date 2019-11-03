@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace MusicLibraryApi.Abstractions.Models
 {
@@ -14,6 +15,12 @@ namespace MusicLibraryApi.Abstractions.Models
 
 		public int? AlbumOrder { get; set; }
 
-		public ICollection<Song> Songs { get; } = new List<Song>();
+		public IReadOnlyCollection<Song> Songs { get; } = new List<Song>();
+
+		public Folder Folder { get; set; }
+
+		public DateTimeOffset? DeleteDate { get; set; }
+
+		public string DeleteComment { get; set; }
 	}
 }

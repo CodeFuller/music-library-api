@@ -14,10 +14,14 @@ namespace MusicLibraryApi.GraphQL.Types
 			Field(x => x.Title);
 			Field(x => x.AlbumTitle, true);
 			Field(x => x.AlbumOrder, true);
+
 			Field<ListGraphType<SongType>>(
 				"songs",
 				arguments: new QueryArguments(new QueryArgument<IntGraphType> { Name = "id" }),
 				resolve: context => repositoryAccessor.SongsRepository.GetDiscSongs(context.Source.Id, CancellationToken.None), description: "Disc songs");
+
+			Field(x => x.DeleteDate, true);
+			Field(x => x.DeleteComment, true);
 		}
 	}
 }

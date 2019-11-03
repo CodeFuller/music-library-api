@@ -13,6 +13,11 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 	{
 		private readonly MusicLibraryDbContext context;
 
+		private IQueryable<Disc> DiscsWithIncludedProperties =>
+			context.Discs
+				.Include(d => d.Songs).ThenInclude(s => s.Genre)
+				.Include(d => d.Songs).ThenInclude(s => s.Artist);
+
 		public DiscsRepository(MusicLibraryDbContext context)
 		{
 			this.context = context ?? throw new ArgumentNullException(nameof(context));
@@ -20,14 +25,13 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 
 		public async Task<IEnumerable<Disc>> GetAllDiscs(CancellationToken cancellationToken)
 		{
-			return await context.Discs
-				.Include(x => x.Songs)
+			return await DiscsWithIncludedProperties
 				.ToListAsync(cancellationToken);
 		}
 
 		public async Task<Disc> GetDisc(int discId, CancellationToken cancellationToken)
 		{
-			return await context.Discs
+			return await DiscsWithIncludedProperties
 				.Where(x => x.Id == discId)
 				.SingleOrDefaultAsync(cancellationToken);
 		}

@@ -9,10 +9,16 @@ namespace MusicLibraryApi.GraphQL.Types
 		{
 			Field(x => x.Id);
 			Field(x => x.Title);
-			Field(x => x.Duration, true);
-
-			// Current implementation of GraphQL can not currently automatically infer short type.
 			Field<IntGraphType>("trackNumber", resolve: context => context.Source.TrackNumber);
+			Field(x => x.Duration, true);
+			Field(x => x.Genre.Name).Name("genre");
+			Field<IntGraphType>("rating", resolve: context => (int?)context.Source.Rating);
+			Field(x => x.BitRate, true);
+			Field(x => x.FileSize);
+			Field(x => x.Checksum);
+			Field(x => x.Artist.Name).Name("artist");
+			Field(x => x.LastPlaybackTime, true);
+			Field(x => x.PlaybacksCount);
 		}
 	}
 }

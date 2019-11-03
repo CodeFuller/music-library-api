@@ -18,12 +18,34 @@ namespace MusicLibraryApi.Dal.EfCore
 		{
 			base.OnModelCreating(modelBuilder);
 
+			modelBuilder.Entity<Disc>().ToTable("Discs");
 			modelBuilder.Entity<Disc>().Property(e => e.Title).IsRequired();
+			modelBuilder.Entity<Disc>()
+				.HasOne(d => d.Folder)
+				.WithMany(f => f.Discs)
+				.IsRequired();
 
+			modelBuilder.Entity<Song>().ToTable("Songs");
 			modelBuilder.Entity<Song>().Property(e => e.Title).IsRequired();
 			modelBuilder.Entity<Song>()
 				.HasOne(s => s.Disc)
 				.WithMany(d => d.Songs)
+				.IsRequired();
+
+			modelBuilder.Entity<Artist>().ToTable("Artists");
+			modelBuilder.Entity<Artist>().Property(e => e.Name).IsRequired();
+
+			modelBuilder.Entity<Folder>().ToTable("Folders");
+			modelBuilder.Entity<Folder>().Property(e => e.Name).IsRequired();
+
+			modelBuilder.Entity<Genre>().ToTable("Genres");
+			modelBuilder.Entity<Genre>().HasIndex(g => g.Name).IsUnique();
+			modelBuilder.Entity<Genre>().Property(e => e.Name).IsRequired();
+
+			modelBuilder.Entity<Playback>().ToTable("Playbacks");
+			modelBuilder.Entity<Playback>()
+				.HasOne(p => p.Song)
+				.WithMany(s => s.Playbacks)
 				.IsRequired();
 		}
 	}
