@@ -9,6 +9,7 @@ namespace MusicLibraryApi.GraphQL
 			: base(resolver)
 		{
 			Query = resolver.Resolve<MusicLibraryQuery>();
+			Mutation = resolver.Resolve<MusicLibraryMutation>();
 		}
 	}
 }

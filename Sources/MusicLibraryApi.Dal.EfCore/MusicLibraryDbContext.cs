@@ -5,6 +5,8 @@ namespace MusicLibraryApi.Dal.EfCore
 {
 	public class MusicLibraryDbContext : DbContext
 	{
+		public DbSet<Genre> Genres { get; set; }
+
 		public DbSet<Disc> Discs { get; set; }
 
 		public DbSet<Song> Songs { get; set; }
@@ -39,7 +41,7 @@ namespace MusicLibraryApi.Dal.EfCore
 			modelBuilder.Entity<Folder>().Property(e => e.Name).IsRequired();
 
 			modelBuilder.Entity<Genre>().ToTable("Genres");
-			modelBuilder.Entity<Genre>().HasIndex(g => g.Name).IsUnique();
+			modelBuilder.Entity<Genre>().HasIndex(e => e.Name).IsUnique();
 			modelBuilder.Entity<Genre>().Property(e => e.Name).IsRequired();
 
 			modelBuilder.Entity<Playback>().ToTable("Playbacks");

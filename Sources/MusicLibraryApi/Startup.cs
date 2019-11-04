@@ -36,6 +36,7 @@ namespace MusicLibraryApi
 			services.AddSingleton<IContextRepositoryAccessor, ContextRepositoryAccessor>();
 
 			services.AddTransient<IDatabaseMigrator, DatabaseMigrator>();
+			services.AddTransient<IGenresRepository, GenresRepository>();
 			services.AddTransient<IDiscsRepository, DiscsRepository>();
 			services.AddTransient<ISongsRepository, SongsRepository>();
 
@@ -47,11 +48,14 @@ namespace MusicLibraryApi
 
 			services.AddDbContext<MusicLibraryDbContext>(options => options.UseNpgsql(connectionString));
 
+			services.AddSingleton<GenreType>();
+			services.AddSingleton<GenreInputType>();
 			services.AddSingleton<DiscType>();
 			services.AddSingleton<SongType>();
 
 			services.AddSingleton<IDocumentExecuter, DocumentExecuter>();
 			services.AddSingleton<MusicLibraryQuery>();
+			services.AddSingleton<MusicLibraryMutation>();
 			services.AddSingleton<ISchema>(sp => new MusicLibrarySchema(new FuncDependencyResolver(sp.GetService)));
 		}
 

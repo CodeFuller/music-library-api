@@ -9,6 +9,10 @@ namespace MusicLibraryApi.GraphQL
 	{
 		public MusicLibraryQuery(IContextRepositoryAccessor repositoryAccessor)
 		{
+			Field<ListGraphType<GenreType>>(
+				"genres",
+				resolve: context => repositoryAccessor.GenresRepository.GetAllGenres(CancellationToken.None));
+
 			Field<DiscType>(
 				"disc",
 				arguments: new QueryArguments(new QueryArgument<IntGraphType> { Name = "id" }),
