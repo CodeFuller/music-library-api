@@ -7,10 +7,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MusicLibraryApi.Dal.EfCore;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
-namespace MusicLibraryApi.Dal.EfCore.Migrations
+namespace MusicLibraryApi.Dal.EfCore.Migrations.Migrations
 {
     [DbContext(typeof(MusicLibraryDbContext))]
-    [Migration("20191103160438_InitialCreate")]
+    [Migration("20191104055946_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

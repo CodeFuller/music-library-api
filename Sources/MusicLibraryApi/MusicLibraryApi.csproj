@@ -19,7 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MusicLibraryApi.Abstractions\MusicLibraryApi.Abstractions.csproj" />
-    <ProjectReference Include="..\MusicLibraryApi.Dal.EfCore\MusicLibraryApi.Dal.EfCore.csproj" />
+    <ProjectReference Include="..\MusicLibraryApi.Dal.EfCore.Migrations\MusicLibraryApi.Dal.EfCore.Migrations.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

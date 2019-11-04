@@ -13,7 +13,7 @@ namespace MusicLibraryApi.Dal.EfCore
 			var connectionString = LoadConnectionString();
 
 			var optionsBuilder = new DbContextOptionsBuilder<MusicLibraryDbContext>();
-			optionsBuilder.UseNpgsql(connectionString);
+			optionsBuilder.UseNpgsql(connectionString, b => b.MigrationsAssembly(MigrationsAssembly.Name));
 
 			return new MusicLibraryDbContext(optionsBuilder.Options);
 		}

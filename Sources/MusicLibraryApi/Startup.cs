@@ -46,7 +46,7 @@ namespace MusicLibraryApi
 				throw new InvalidOperationException("Database connection string is not set");
 			}
 
-			services.AddDbContext<MusicLibraryDbContext>(options => options.UseNpgsql(connectionString));
+			services.AddDbContext<MusicLibraryDbContext>(options => options.UseNpgsql(connectionString, b => b.MigrationsAssembly(MigrationsAssembly.Name)));
 
 			services.AddSingleton<GenreType>();
 			services.AddSingleton<GenreInputType>();
