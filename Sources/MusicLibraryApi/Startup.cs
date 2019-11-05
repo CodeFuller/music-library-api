@@ -51,7 +51,9 @@ namespace MusicLibraryApi
 			services.AddSingleton<GenreType>();
 			services.AddSingleton<GenreInputType>();
 			services.AddSingleton<DiscType>();
+			services.AddSingleton<DiscInputType>();
 			services.AddSingleton<SongType>();
+			services.AddSingleton<FolderInputType>();
 
 			services.AddSingleton<IDocumentExecuter, DocumentExecuter>();
 			services.AddSingleton<MusicLibraryQuery>();

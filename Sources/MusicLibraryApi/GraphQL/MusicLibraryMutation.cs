@@ -10,8 +10,6 @@ namespace MusicLibraryApi.GraphQL
 	{
 		public MusicLibraryMutation(IContextRepositoryAccessor repositoryAccessor)
 		{
-			Name = "CreateGenreMutation";
-
 			Field<GenreType>(
 				"createGenre",
 				arguments: new QueryArguments(
@@ -20,6 +18,18 @@ namespace MusicLibraryApi.GraphQL
 				{
 					var genre = context.GetArgument<Genre>("genre");
 					return repositoryAccessor.GenresRepository.AddGenre(genre, CancellationToken.None);
+				});
+
+			Field<DiscType>(
+				"createDisc",
+				arguments: new QueryArguments(
+					new QueryArgument<NonNullGraphType<DiscInputType>> { Name = "disc" },
+					new QueryArgument<NonNullGraphType<IntGraphType>> { Name = "folderId" }),
+				resolve: context =>
+				{
+					var folderId = context.GetArgument<int>("folderId");
+					var disc = context.GetArgument<Disc>("disc");
+					return repositoryAccessor.DiscsRepository.AddDisc(folderId, disc, CancellationToken.None);
 				});
 		}
 	}

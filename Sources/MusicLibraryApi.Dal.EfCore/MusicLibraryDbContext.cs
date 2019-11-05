@@ -7,6 +7,8 @@ namespace MusicLibraryApi.Dal.EfCore
 	{
 		public DbSet<Genre> Genres { get; set; }
 
+		public DbSet<Folder> Folders { get; set; }
+
 		public DbSet<Disc> Discs { get; set; }
 
 		public DbSet<Song> Songs { get; set; }
