@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using GraphQL;
 using GraphQL.Types;
 using Microsoft.AspNetCore.Mvc;
+using MusicLibraryApi.Abstractions;
 using MusicLibraryApi.Internal;
 
 namespace MusicLibraryApi.Controllers
@@ -21,7 +23,7 @@ namespace MusicLibraryApi.Controllers
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> Post([FromBody] GraphQLQuery query)
+		public async Task<IActionResult> Post([FromBody] GraphQLQuery query, CancellationToken cancellationToken)
 		{
 			if (query == null)
 			{
@@ -35,16 +37,25 @@ namespace MusicLibraryApi.Controllers
 				Schema = schema,
 				Query = query.Query,
 				Inputs = inputs,
+				ThrowOnUnhandledException = true,
+				CancellationToken = cancellationToken,
 			};
 
-			var result = await documentExecuter.ExecuteAsync(executionOptions).ConfigureAwait(false);
-
-			if (result.Errors?.Count > 0)
+			try
 			{
-				return BadRequest(result);
-			}
+				var result = await documentExecuter.ExecuteAsync(executionOptions).ConfigureAwait(false);
 
-			return Ok(result);
+				if (result.Errors?.Count > 0)
+				{
+					return BadRequest(result);
+				}
+
+				return Ok(result);
+			}
+			catch (NotFoundException e)
+			{
+				return NotFound(e.Message);
+			}
 		}
 	}
 }
