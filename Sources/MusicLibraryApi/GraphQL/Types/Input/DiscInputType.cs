@@ -2,7 +2,7 @@
 
 namespace MusicLibraryApi.GraphQL.Types.Input
 {
-	public class DiscInputType : InputObjectGraphType
+	public class DiscInputType : InputObjectGraphType<DiscInput>
 	{
 		public DiscInputType()
 		{

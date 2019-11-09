@@ -2,7 +2,7 @@
 
 namespace MusicLibraryApi.GraphQL.Types.Input
 {
-	public class GenreInputType : InputObjectGraphType
+	public class GenreInputType : InputObjectGraphType<GenreInput>
 	{
 		public GenreInputType()
 		{

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
-using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using MusicLibraryApi.Abstractions;
 using MusicLibraryApi.Abstractions.Interfaces;
@@ -51,16 +50,22 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 		public async Task<IEnumerable<Disc>> GetAllDiscs(CancellationToken cancellationToken)
 		{
 			return await DiscsWithIncludedProperties
-				.ProjectTo<Disc>(mapper.ConfigurationProvider)
+				.Select(d => mapper.Map<Disc>(d))
 				.ToListAsync(cancellationToken);
 		}
 
 		public async Task<Disc> GetDisc(int discId, CancellationToken cancellationToken)
 		{
-			return await DiscsWithIncludedProperties
+			var discEntity = await DiscsWithIncludedProperties
 				.Where(x => x.Id == discId)
-				.ProjectTo<Disc>(mapper.ConfigurationProvider)
 				.SingleOrDefaultAsync(cancellationToken);
+
+			if (discEntity == null)
+			{
+				throw new NotFoundException(Invariant($"The disc with id of {discId} does not exist"));
+			}
+
+			return mapper.Map<Disc>(discEntity);
 		}
 	}
 }

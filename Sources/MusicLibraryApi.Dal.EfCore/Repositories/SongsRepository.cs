@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
-using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using MusicLibraryApi.Abstractions.Interfaces;
 using MusicLibraryApi.Abstractions.Models;
@@ -27,7 +26,7 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 		{
 			return await context.Songs
 				.Where(s => s.Disc.Id == discId)
-				.ProjectTo<Song>(mapper.ConfigurationProvider)
+				.Select(s => mapper.Map<Song>(s))
 				.ToListAsync(cancellationToken);
 		}
 	}

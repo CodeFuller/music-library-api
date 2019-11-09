@@ -5,13 +5,13 @@ namespace MusicLibraryApi.Dal.EfCore
 {
 	public class MusicLibraryDbContext : DbContext
 	{
-		public DbSet<GenreEntity> Genres { get; set; }
+		public DbSet<GenreEntity> Genres { get; set; } = null!;
 
-		public DbSet<FolderEntity> Folders { get; set; }
+		public DbSet<FolderEntity> Folders { get; set; } = null!;
 
-		public DbSet<DiscEntity> Discs { get; set; }
+		public DbSet<DiscEntity> Discs { get; set; } = null!;
 
-		public DbSet<SongEntity> Songs { get; set; }
+		public DbSet<SongEntity> Songs { get; set; } = null!;
 
 		public MusicLibraryDbContext(DbContextOptions options)
 			: base(options)
@@ -25,7 +25,6 @@ namespace MusicLibraryApi.Dal.EfCore
 			modelBuilder.Entity<DiscEntity>(b =>
 			{
 				b.ToTable("Discs");
-				b.Property(e => e.Title).IsRequired();
 				b.HasOne(d => d.Folder)
 					.WithMany(f => f.Discs)
 					.IsRequired();
@@ -34,7 +33,6 @@ namespace MusicLibraryApi.Dal.EfCore
 			modelBuilder.Entity<SongEntity>(b =>
 			{
 				b.ToTable("Songs");
-				b.Property(e => e.Title).IsRequired();
 				b.HasOne(s => s.Disc)
 					.WithMany(d => d.Songs)
 					.IsRequired();
@@ -43,27 +41,24 @@ namespace MusicLibraryApi.Dal.EfCore
 			modelBuilder.Entity<ArtistEntity>(b =>
 			{
 				b.ToTable("Artists");
-				b.Property(e => e.Name).IsRequired();
 			});
 
 			modelBuilder.Entity<FolderEntity>(b =>
 			{
 				b.ToTable("Folders");
-				b.Property(e => e.Name).IsRequired();
+				b.HasOne(f => f.ParentFolder)
+					.WithMany(f => f!.ChildFolders);
 			});
 
 			modelBuilder.Entity<GenreEntity>(b =>
 			{
 				b.ToTable("Genres");
-
 				b.HasIndex(e => e.Name).IsUnique();
-				b.Property(e => e.Name).IsRequired();
 			});
 
 			modelBuilder.Entity<PlaybackEntity>(b =>
 			{
 				b.ToTable("Playbacks");
-
 				b.HasOne(p => p.Song)
 					.WithMany(s => s.Playbacks)
 					.IsRequired();

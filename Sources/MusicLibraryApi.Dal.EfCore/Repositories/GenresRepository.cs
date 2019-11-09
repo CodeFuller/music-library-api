@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
-using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using MusicLibraryApi.Abstractions.Interfaces;
 using MusicLibraryApi.Abstractions.Models;
@@ -36,7 +36,7 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 		public async Task<IEnumerable<Genre>> GetAllGenres(CancellationToken cancellationToken)
 		{
 			return await context.Genres
-				.ProjectTo<Genre>(mapper.ConfigurationProvider)
+				.Select(g => mapper.Map<Genre>(g))
 				.ToListAsync(cancellationToken);
 		}
 	}

@@ -2,8 +2,14 @@
 {
 	public class Artist
 	{
-		public int Id { get; set; }
+		public int Id { get; }
 
-		public string Name { get; set; }
+		public string Name { get; }
+
+		public Artist(int id, string name)
+		{
+			Id = id;
+			Name = name;
+		}
 	}
 }

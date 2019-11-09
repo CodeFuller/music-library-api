@@ -196,7 +196,7 @@ namespace MusicLibraryApi.Dal.EfCore.Migrations.Migrations
             modelBuilder.Entity("MusicLibraryApi.Dal.EfCore.Entities.FolderEntity", b =>
                 {
                     b.HasOne("MusicLibraryApi.Dal.EfCore.Entities.FolderEntity", "ParentFolder")
-                        .WithMany()
+                        .WithMany("ChildFolders")
                         .HasForeignKey("ParentFolderId");
                 });
 

@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MusicLibraryApi.Dal.EfCore.Migrations.Migrations
 {
     [DbContext(typeof(MusicLibraryDbContext))]
-    [Migration("20191109095633_InitialCreate")]
+    [Migration("20191109115029_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -200,7 +200,7 @@ namespace MusicLibraryApi.Dal.EfCore.Migrations.Migrations
             modelBuilder.Entity("MusicLibraryApi.Dal.EfCore.Entities.FolderEntity", b =>
                 {
                     b.HasOne("MusicLibraryApi.Dal.EfCore.Entities.FolderEntity", "ParentFolder")
-                        .WithMany()
+                        .WithMany("ChildFolders")
                         .HasForeignKey("ParentFolderId");
                 });
 
