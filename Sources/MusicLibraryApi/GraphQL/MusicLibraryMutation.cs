@@ -1,7 +1,8 @@
-﻿using System.Threading;
-using GraphQL.Types;
+﻿using GraphQL.Types;
 using MusicLibraryApi.Abstractions.Models;
 using MusicLibraryApi.GraphQL.Types;
+using MusicLibraryApi.GraphQL.Types.Input;
+using MusicLibraryApi.GraphQL.Types.Output;
 using MusicLibraryApi.Interfaces;
 
 namespace MusicLibraryApi.GraphQL
@@ -10,26 +11,29 @@ namespace MusicLibraryApi.GraphQL
 	{
 		public MusicLibraryMutation(IContextRepositoryAccessor repositoryAccessor)
 		{
-			Field<GenreType>(
+			FieldAsync<CreateGenreResultType>(
 				"createGenre",
 				arguments: new QueryArguments(
 					new QueryArgument<NonNullGraphType<GenreInputType>> { Name = "genre" }),
-				resolve: context =>
+				resolve: async context =>
 				{
 					var genre = context.GetArgument<Genre>("genre");
-					return repositoryAccessor.GenresRepository.AddGenre(genre, CancellationToken.None);
+					var newGenreId = await repositoryAccessor.GenresRepository.AddGenre(genre, context.CancellationToken);
+					return new CreateGenreResult(newGenreId);
 				});
 
-			Field<DiscType>(
+			FieldAsync<CreateDiscResultType>(
 				"createDisc",
 				arguments: new QueryArguments(
 					new QueryArgument<NonNullGraphType<DiscInputType>> { Name = "disc" },
 					new QueryArgument<NonNullGraphType<IntGraphType>> { Name = "folderId" }),
-				resolve: context =>
+				resolve: async context =>
 				{
 					var folderId = context.GetArgument<int>("folderId");
 					var disc = context.GetArgument<Disc>("disc");
-					return repositoryAccessor.DiscsRepository.AddDisc(folderId, disc, CancellationToken.None);
+					var newDiscId = await repositoryAccessor.DiscsRepository.AddDisc(folderId, disc, context.CancellationToken);
+
+					return new CreateDiscResult(newDiscId);
 				});
 		}
 	}

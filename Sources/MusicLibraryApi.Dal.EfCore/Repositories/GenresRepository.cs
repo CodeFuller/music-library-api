@@ -17,12 +17,12 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 			this.context = context ?? throw new ArgumentNullException(nameof(context));
 		}
 
-		public async Task<Genre> AddGenre(Genre genre, CancellationToken cancellationToken)
+		public async Task<int> AddGenre(Genre genre, CancellationToken cancellationToken)
 		{
 			context.Genres.Add(genre);
 			await context.SaveChangesAsync(cancellationToken);
 
-			return genre;
+			return genre.Id;
 		}
 
 		public async Task<IEnumerable<Genre>> GetAllGenres(CancellationToken cancellationToken)

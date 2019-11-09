@@ -7,7 +7,7 @@ namespace MusicLibraryApi.Abstractions.Interfaces
 {
 	public interface IGenresRepository
 	{
-		Task<Genre> AddGenre(Genre genre, CancellationToken cancellationToken);
+		Task<int> AddGenre(Genre genre, CancellationToken cancellationToken);
 
 		Task<IEnumerable<Genre>> GetAllGenres(CancellationToken cancellationToken);
 	}

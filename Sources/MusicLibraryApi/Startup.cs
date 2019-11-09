@@ -13,6 +13,8 @@ using MusicLibraryApi.Dal.EfCore;
 using MusicLibraryApi.Dal.EfCore.Repositories;
 using MusicLibraryApi.GraphQL;
 using MusicLibraryApi.GraphQL.Types;
+using MusicLibraryApi.GraphQL.Types.Input;
+using MusicLibraryApi.GraphQL.Types.Output;
 using MusicLibraryApi.Interfaces;
 using MusicLibraryApi.Internal;
 
@@ -54,6 +56,9 @@ namespace MusicLibraryApi
 			services.AddSingleton<DiscInputType>();
 			services.AddSingleton<SongType>();
 			services.AddSingleton<FolderInputType>();
+
+			services.AddSingleton<CreateGenreResultType>();
+			services.AddSingleton<CreateDiscResultType>();
 
 			services.AddSingleton<IDocumentExecuter, DocumentExecuter>();
 			services.AddSingleton<MusicLibraryQuery>();

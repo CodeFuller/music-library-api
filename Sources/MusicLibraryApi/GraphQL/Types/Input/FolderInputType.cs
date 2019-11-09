@@ -1,6 +1,6 @@
 ﻿using GraphQL.Types;
 
-namespace MusicLibraryApi.GraphQL.Types
+namespace MusicLibraryApi.GraphQL.Types.Input
 {
 	public class FolderInputType : InputObjectGraphType
 	{

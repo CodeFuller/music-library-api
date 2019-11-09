@@ -1,5 +1,4 @@
-﻿using System.Threading;
-using GraphQL.Types;
+﻿using GraphQL.Types;
 using MusicLibraryApi.Abstractions.Models;
 using MusicLibraryApi.Interfaces;
 
@@ -18,7 +17,7 @@ namespace MusicLibraryApi.GraphQL.Types
 			Field<ListGraphType<SongType>>(
 				"songs",
 				arguments: new QueryArguments(new QueryArgument<IntGraphType> { Name = "id" }),
-				resolve: context => repositoryAccessor.SongsRepository.GetDiscSongs(context.Source.Id, CancellationToken.None), description: "Disc songs");
+				resolve: context => repositoryAccessor.SongsRepository.GetDiscSongs(context.Source.Id, context.CancellationToken), description: "Disc songs");
 
 			Field(x => x.DeleteDate, true);
 			Field(x => x.DeleteComment, true);

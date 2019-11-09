@@ -1,5 +1,4 @@
-﻿using System.Threading;
-using GraphQL.Types;
+﻿using GraphQL.Types;
 using MusicLibraryApi.GraphQL.Types;
 using MusicLibraryApi.Interfaces;
 
@@ -9,18 +8,18 @@ namespace MusicLibraryApi.GraphQL
 	{
 		public MusicLibraryQuery(IContextRepositoryAccessor repositoryAccessor)
 		{
-			Field<ListGraphType<GenreType>>(
+			FieldAsync<ListGraphType<GenreType>>(
 				"genres",
-				resolve: context => repositoryAccessor.GenresRepository.GetAllGenres(CancellationToken.None));
+				resolve: async context => await repositoryAccessor.GenresRepository.GetAllGenres(context.CancellationToken));
 
-			Field<DiscType>(
+			FieldAsync<DiscType>(
 				"disc",
 				arguments: new QueryArguments(new QueryArgument<IntGraphType> { Name = "id" }),
-				resolve: context => repositoryAccessor.DiscsRepository.GetDisc(context.GetArgument<int>("id"), CancellationToken.None));
+				resolve: async context => await repositoryAccessor.DiscsRepository.GetDisc(context.GetArgument<int>("id"), context.CancellationToken));
 
-			Field<ListGraphType<DiscType>>(
+			FieldAsync<ListGraphType<DiscType>>(
 				"discs",
-				resolve: context => repositoryAccessor.DiscsRepository.GetAllDiscs(CancellationToken.None));
+				resolve: async context => await repositoryAccessor.DiscsRepository.GetAllDiscs(context.CancellationToken));
 		}
 	}
 }
