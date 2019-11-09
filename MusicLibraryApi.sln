@@ -3,15 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29318.209
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sources", "Sources", "{D1FAA998-E5ED-4437-A4BF-2530E8754108}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{D1FAA998-E5ED-4437-A4BF-2530E8754108}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MusicLibraryApi", "Sources\MusicLibraryApi\MusicLibraryApi.csproj", "{B5C7B210-100D-401F-AC29-69896EBB12E4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MusicLibraryApi", "src\MusicLibraryApi\MusicLibraryApi.csproj", "{2534C515-7F9B-4F7F-9E1A-375A79122AB3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MusicLibraryApi.Abstractions", "Sources\MusicLibraryApi.Abstractions\MusicLibraryApi.Abstractions.csproj", "{0BA8716B-F6D3-4B88-ABED-3DDDC3AC83DB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MusicLibraryApi.Abstractions", "src\MusicLibraryApi.Abstractions\MusicLibraryApi.Abstractions.csproj", "{84C12A11-78E1-4488-8AB5-64BF45B7F121}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MusicLibraryApi.Dal.EfCore", "Sources\MusicLibraryApi.Dal.EfCore\MusicLibraryApi.Dal.EfCore.csproj", "{CC018D93-2F99-4823-9BC6-9E1EC98A0421}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MusicLibraryApi.Dal.EfCore", "src\MusicLibraryApi.Dal.EfCore\MusicLibraryApi.Dal.EfCore.csproj", "{059AC9CB-2768-431F-9AA7-3877EA37F8EB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MusicLibraryApi.Dal.EfCore.Migrations", "Sources\MusicLibraryApi.Dal.EfCore.Migrations\MusicLibraryApi.Dal.EfCore.Migrations.csproj", "{7CB42E3E-002A-4E2A-ADD5-4442AED46BD9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MusicLibraryApi.Dal.EfCore.Migrations", "src\MusicLibraryApi.Dal.EfCore.Migrations\MusicLibraryApi.Dal.EfCore.Migrations.csproj", "{4DE15510-C5B2-4F80-8232-8B15DBB96B78}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,31 +19,31 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{B5C7B210-100D-401F-AC29-69896EBB12E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B5C7B210-100D-401F-AC29-69896EBB12E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B5C7B210-100D-401F-AC29-69896EBB12E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B5C7B210-100D-401F-AC29-69896EBB12E4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0BA8716B-F6D3-4B88-ABED-3DDDC3AC83DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0BA8716B-F6D3-4B88-ABED-3DDDC3AC83DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0BA8716B-F6D3-4B88-ABED-3DDDC3AC83DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0BA8716B-F6D3-4B88-ABED-3DDDC3AC83DB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CC018D93-2F99-4823-9BC6-9E1EC98A0421}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CC018D93-2F99-4823-9BC6-9E1EC98A0421}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CC018D93-2F99-4823-9BC6-9E1EC98A0421}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CC018D93-2F99-4823-9BC6-9E1EC98A0421}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7CB42E3E-002A-4E2A-ADD5-4442AED46BD9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7CB42E3E-002A-4E2A-ADD5-4442AED46BD9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7CB42E3E-002A-4E2A-ADD5-4442AED46BD9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7CB42E3E-002A-4E2A-ADD5-4442AED46BD9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2534C515-7F9B-4F7F-9E1A-375A79122AB3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2534C515-7F9B-4F7F-9E1A-375A79122AB3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2534C515-7F9B-4F7F-9E1A-375A79122AB3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2534C515-7F9B-4F7F-9E1A-375A79122AB3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{84C12A11-78E1-4488-8AB5-64BF45B7F121}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84C12A11-78E1-4488-8AB5-64BF45B7F121}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84C12A11-78E1-4488-8AB5-64BF45B7F121}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84C12A11-78E1-4488-8AB5-64BF45B7F121}.Release|Any CPU.Build.0 = Release|Any CPU
+		{059AC9CB-2768-431F-9AA7-3877EA37F8EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{059AC9CB-2768-431F-9AA7-3877EA37F8EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{059AC9CB-2768-431F-9AA7-3877EA37F8EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{059AC9CB-2768-431F-9AA7-3877EA37F8EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4DE15510-C5B2-4F80-8232-8B15DBB96B78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4DE15510-C5B2-4F80-8232-8B15DBB96B78}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4DE15510-C5B2-4F80-8232-8B15DBB96B78}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4DE15510-C5B2-4F80-8232-8B15DBB96B78}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{B5C7B210-100D-401F-AC29-69896EBB12E4} = {D1FAA998-E5ED-4437-A4BF-2530E8754108}
-		{0BA8716B-F6D3-4B88-ABED-3DDDC3AC83DB} = {D1FAA998-E5ED-4437-A4BF-2530E8754108}
-		{CC018D93-2F99-4823-9BC6-9E1EC98A0421} = {D1FAA998-E5ED-4437-A4BF-2530E8754108}
-		{7CB42E3E-002A-4E2A-ADD5-4442AED46BD9} = {D1FAA998-E5ED-4437-A4BF-2530E8754108}
+		{2534C515-7F9B-4F7F-9E1A-375A79122AB3} = {D1FAA998-E5ED-4437-A4BF-2530E8754108}
+		{84C12A11-78E1-4488-8AB5-64BF45B7F121} = {D1FAA998-E5ED-4437-A4BF-2530E8754108}
+		{059AC9CB-2768-431F-9AA7-3877EA37F8EB} = {D1FAA998-E5ED-4437-A4BF-2530E8754108}
+		{4DE15510-C5B2-4F80-8232-8B15DBB96B78} = {D1FAA998-E5ED-4437-A4BF-2530E8754108}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {82D63505-EB18-49C6-81EE-79AF3E8A8DB3}
