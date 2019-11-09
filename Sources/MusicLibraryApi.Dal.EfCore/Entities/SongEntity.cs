@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using MusicLibraryApi.Abstractions.Models;
 
-namespace MusicLibraryApi.Abstractions.Models
+namespace MusicLibraryApi.Dal.EfCore.Entities
 {
-	public class Song
+	public class SongEntity
 	{
 		public int Id { get; set; }
 
@@ -13,11 +14,11 @@ namespace MusicLibraryApi.Abstractions.Models
 
 		public TimeSpan? Duration { get; set; }
 
-		public Artist Artist { get; set; }
+		public ArtistEntity Artist { get; set; }
 
-		public Disc Disc { get; set; }
+		public DiscEntity Disc { get; set; }
 
-		public Genre Genre { get; set; }
+		public GenreEntity Genre { get; set; }
 
 		public Rating? Rating { get; set; }
 
@@ -31,6 +32,6 @@ namespace MusicLibraryApi.Abstractions.Models
 
 		public int PlaybacksCount { get; set; }
 
-		public IReadOnlyCollection<Playback> Playbacks { get; } = new List<Playback>();
+		public IReadOnlyCollection<PlaybackEntity> Playbacks { get; } = new List<PlaybackEntity>();
 	}
 }

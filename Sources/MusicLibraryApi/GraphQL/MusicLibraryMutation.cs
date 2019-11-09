@@ -1,6 +1,5 @@
 ﻿using GraphQL.Types;
 using MusicLibraryApi.Abstractions.Models;
-using MusicLibraryApi.GraphQL.Types;
 using MusicLibraryApi.GraphQL.Types.Input;
 using MusicLibraryApi.GraphQL.Types.Output;
 using MusicLibraryApi.Interfaces;

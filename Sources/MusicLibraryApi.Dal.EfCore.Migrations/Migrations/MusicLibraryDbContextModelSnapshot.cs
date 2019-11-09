@@ -17,7 +17,7 @@ namespace MusicLibraryApi.Dal.EfCore.Migrations.Migrations
                 .HasAnnotation("ProductVersion", "3.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            modelBuilder.Entity("MusicLibraryApi.Abstractions.Models.Artist", b =>
+            modelBuilder.Entity("MusicLibraryApi.Dal.EfCore.Entities.ArtistEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -33,7 +33,7 @@ namespace MusicLibraryApi.Dal.EfCore.Migrations.Migrations
                     b.ToTable("Artists");
                 });
 
-            modelBuilder.Entity("MusicLibraryApi.Abstractions.Models.Disc", b =>
+            modelBuilder.Entity("MusicLibraryApi.Dal.EfCore.Entities.DiscEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -69,7 +69,7 @@ namespace MusicLibraryApi.Dal.EfCore.Migrations.Migrations
                     b.ToTable("Discs");
                 });
 
-            modelBuilder.Entity("MusicLibraryApi.Abstractions.Models.Folder", b =>
+            modelBuilder.Entity("MusicLibraryApi.Dal.EfCore.Entities.FolderEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -90,7 +90,7 @@ namespace MusicLibraryApi.Dal.EfCore.Migrations.Migrations
                     b.ToTable("Folders");
                 });
 
-            modelBuilder.Entity("MusicLibraryApi.Abstractions.Models.Genre", b =>
+            modelBuilder.Entity("MusicLibraryApi.Dal.EfCore.Entities.GenreEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -109,7 +109,7 @@ namespace MusicLibraryApi.Dal.EfCore.Migrations.Migrations
                     b.ToTable("Genres");
                 });
 
-            modelBuilder.Entity("MusicLibraryApi.Abstractions.Models.Playback", b =>
+            modelBuilder.Entity("MusicLibraryApi.Dal.EfCore.Entities.PlaybackEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -129,7 +129,7 @@ namespace MusicLibraryApi.Dal.EfCore.Migrations.Migrations
                     b.ToTable("Playbacks");
                 });
 
-            modelBuilder.Entity("MusicLibraryApi.Abstractions.Models.Song", b =>
+            modelBuilder.Entity("MusicLibraryApi.Dal.EfCore.Entities.SongEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -184,44 +184,44 @@ namespace MusicLibraryApi.Dal.EfCore.Migrations.Migrations
                     b.ToTable("Songs");
                 });
 
-            modelBuilder.Entity("MusicLibraryApi.Abstractions.Models.Disc", b =>
+            modelBuilder.Entity("MusicLibraryApi.Dal.EfCore.Entities.DiscEntity", b =>
                 {
-                    b.HasOne("MusicLibraryApi.Abstractions.Models.Folder", "Folder")
+                    b.HasOne("MusicLibraryApi.Dal.EfCore.Entities.FolderEntity", "Folder")
                         .WithMany("Discs")
                         .HasForeignKey("FolderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MusicLibraryApi.Abstractions.Models.Folder", b =>
+            modelBuilder.Entity("MusicLibraryApi.Dal.EfCore.Entities.FolderEntity", b =>
                 {
-                    b.HasOne("MusicLibraryApi.Abstractions.Models.Folder", "ParentFolder")
+                    b.HasOne("MusicLibraryApi.Dal.EfCore.Entities.FolderEntity", "ParentFolder")
                         .WithMany()
                         .HasForeignKey("ParentFolderId");
                 });
 
-            modelBuilder.Entity("MusicLibraryApi.Abstractions.Models.Playback", b =>
+            modelBuilder.Entity("MusicLibraryApi.Dal.EfCore.Entities.PlaybackEntity", b =>
                 {
-                    b.HasOne("MusicLibraryApi.Abstractions.Models.Song", "Song")
+                    b.HasOne("MusicLibraryApi.Dal.EfCore.Entities.SongEntity", "Song")
                         .WithMany("Playbacks")
                         .HasForeignKey("SongId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MusicLibraryApi.Abstractions.Models.Song", b =>
+            modelBuilder.Entity("MusicLibraryApi.Dal.EfCore.Entities.SongEntity", b =>
                 {
-                    b.HasOne("MusicLibraryApi.Abstractions.Models.Artist", "Artist")
+                    b.HasOne("MusicLibraryApi.Dal.EfCore.Entities.ArtistEntity", "Artist")
                         .WithMany()
                         .HasForeignKey("ArtistId");
 
-                    b.HasOne("MusicLibraryApi.Abstractions.Models.Disc", "Disc")
+                    b.HasOne("MusicLibraryApi.Dal.EfCore.Entities.DiscEntity", "Disc")
                         .WithMany("Songs")
                         .HasForeignKey("DiscId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MusicLibraryApi.Abstractions.Models.Genre", "Genre")
+                    b.HasOne("MusicLibraryApi.Dal.EfCore.Entities.GenreEntity", "Genre")
                         .WithMany()
                         .HasForeignKey("GenreId");
                 });

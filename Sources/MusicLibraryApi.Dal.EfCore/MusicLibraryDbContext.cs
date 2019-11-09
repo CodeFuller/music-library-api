@@ -1,17 +1,17 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MusicLibraryApi.Abstractions.Models;
+using MusicLibraryApi.Dal.EfCore.Entities;
 
 namespace MusicLibraryApi.Dal.EfCore
 {
 	public class MusicLibraryDbContext : DbContext
 	{
-		public DbSet<Genre> Genres { get; set; }
+		public DbSet<GenreEntity> Genres { get; set; }
 
-		public DbSet<Folder> Folders { get; set; }
+		public DbSet<FolderEntity> Folders { get; set; }
 
-		public DbSet<Disc> Discs { get; set; }
+		public DbSet<DiscEntity> Discs { get; set; }
 
-		public DbSet<Song> Songs { get; set; }
+		public DbSet<SongEntity> Songs { get; set; }
 
 		public MusicLibraryDbContext(DbContextOptions options)
 			: base(options)
@@ -22,35 +22,52 @@ namespace MusicLibraryApi.Dal.EfCore
 		{
 			base.OnModelCreating(modelBuilder);
 
-			modelBuilder.Entity<Disc>().ToTable("Discs");
-			modelBuilder.Entity<Disc>().Property(e => e.Title).IsRequired();
-			modelBuilder.Entity<Disc>()
-				.HasOne(d => d.Folder)
-				.WithMany(f => f.Discs)
-				.IsRequired();
+			modelBuilder.Entity<DiscEntity>(b =>
+			{
+				b.ToTable("Discs");
+				b.Property(e => e.Title).IsRequired();
+				b.HasOne(d => d.Folder)
+					.WithMany(f => f.Discs)
+					.IsRequired();
+			});
 
-			modelBuilder.Entity<Song>().ToTable("Songs");
-			modelBuilder.Entity<Song>().Property(e => e.Title).IsRequired();
-			modelBuilder.Entity<Song>()
-				.HasOne(s => s.Disc)
-				.WithMany(d => d.Songs)
-				.IsRequired();
+			modelBuilder.Entity<SongEntity>(b =>
+			{
+				b.ToTable("Songs");
+				b.Property(e => e.Title).IsRequired();
+				b.HasOne(s => s.Disc)
+					.WithMany(d => d.Songs)
+					.IsRequired();
+			});
 
-			modelBuilder.Entity<Artist>().ToTable("Artists");
-			modelBuilder.Entity<Artist>().Property(e => e.Name).IsRequired();
+			modelBuilder.Entity<ArtistEntity>(b =>
+			{
+				b.ToTable("Artists");
+				b.Property(e => e.Name).IsRequired();
+			});
 
-			modelBuilder.Entity<Folder>().ToTable("Folders");
-			modelBuilder.Entity<Folder>().Property(e => e.Name).IsRequired();
+			modelBuilder.Entity<FolderEntity>(b =>
+			{
+				b.ToTable("Folders");
+				b.Property(e => e.Name).IsRequired();
+			});
 
-			modelBuilder.Entity<Genre>().ToTable("Genres");
-			modelBuilder.Entity<Genre>().HasIndex(e => e.Name).IsUnique();
-			modelBuilder.Entity<Genre>().Property(e => e.Name).IsRequired();
+			modelBuilder.Entity<GenreEntity>(b =>
+			{
+				b.ToTable("Genres");
 
-			modelBuilder.Entity<Playback>().ToTable("Playbacks");
-			modelBuilder.Entity<Playback>()
-				.HasOne(p => p.Song)
-				.WithMany(s => s.Playbacks)
-				.IsRequired();
+				b.HasIndex(e => e.Name).IsUnique();
+				b.Property(e => e.Name).IsRequired();
+			});
+
+			modelBuilder.Entity<PlaybackEntity>(b =>
+			{
+				b.ToTable("Playbacks");
+
+				b.HasOne(p => p.Song)
+					.WithMany(s => s.Playbacks)
+					.IsRequired();
+			});
 		}
 	}
 }

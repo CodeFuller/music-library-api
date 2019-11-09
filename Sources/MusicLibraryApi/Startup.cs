@@ -4,13 +4,10 @@ using GraphQL;
 using GraphQL.Types;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using MusicLibraryApi.Abstractions.Interfaces;
 using MusicLibraryApi.Dal.EfCore;
-using MusicLibraryApi.Dal.EfCore.Repositories;
 using MusicLibraryApi.GraphQL;
 using MusicLibraryApi.GraphQL.Types;
 using MusicLibraryApi.GraphQL.Types.Input;
@@ -37,18 +34,13 @@ namespace MusicLibraryApi
 			services.AddHttpContextAccessor();
 			services.AddSingleton<IContextRepositoryAccessor, ContextRepositoryAccessor>();
 
-			services.AddTransient<IDatabaseMigrator, DatabaseMigrator>();
-			services.AddTransient<IGenresRepository, GenresRepository>();
-			services.AddTransient<IDiscsRepository, DiscsRepository>();
-			services.AddTransient<ISongsRepository, SongsRepository>();
-
 			var connectionString = Configuration.GetConnectionString("musicLibraryDB");
 			if (String.IsNullOrWhiteSpace(connectionString))
 			{
 				throw new InvalidOperationException("Database connection string is not set");
 			}
 
-			services.AddDbContext<MusicLibraryDbContext>(options => options.UseNpgsql(connectionString, b => b.MigrationsAssembly(MigrationsAssembly.Name)));
+			services.AddDal(connectionString);
 
 			services.AddSingleton<GenreType>();
 			services.AddSingleton<GenreInputType>();
