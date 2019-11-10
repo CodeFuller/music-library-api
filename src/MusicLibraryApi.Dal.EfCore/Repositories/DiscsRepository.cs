@@ -19,11 +19,6 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 
 		private readonly IMapper mapper;
 
-		private IQueryable<DiscEntity> DiscsWithIncludedProperties =>
-			context.Discs
-				.Include(d => d.Songs).ThenInclude(s => s.Genre)
-				.Include(d => d.Songs).ThenInclude(s => s.Artist);
-
 		public DiscsRepository(MusicLibraryDbContext context, IMapper mapper)
 		{
 			this.context = context ?? throw new ArgumentNullException(nameof(context));
@@ -49,14 +44,17 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 
 		public async Task<IEnumerable<Disc>> GetAllDiscs(CancellationToken cancellationToken)
 		{
-			return await DiscsWithIncludedProperties
+			return await context.Discs
+				.OrderBy(d => d.Id)
 				.Select(d => mapper.Map<Disc>(d))
 				.ToListAsync(cancellationToken);
 		}
 
 		public async Task<Disc> GetDisc(int discId, CancellationToken cancellationToken)
 		{
-			var discEntity = await DiscsWithIncludedProperties
+			var discEntity = await context.Discs
+				.Include(d => d.Songs).ThenInclude(s => s.Genre)
+				.Include(d => d.Songs).ThenInclude(s => s.Artist)
 				.Where(x => x.Id == discId)
 				.SingleOrDefaultAsync(cancellationToken);
 

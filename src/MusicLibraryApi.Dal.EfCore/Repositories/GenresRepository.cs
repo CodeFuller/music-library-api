@@ -36,6 +36,7 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 		public async Task<IEnumerable<Genre>> GetAllGenres(CancellationToken cancellationToken)
 		{
 			return await context.Genres
+				.OrderBy(g => g.Id)
 				.Select(g => mapper.Map<Genre>(g))
 				.ToListAsync(cancellationToken);
 		}

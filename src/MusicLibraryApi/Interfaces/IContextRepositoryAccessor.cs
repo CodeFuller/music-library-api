@@ -7,7 +7,5 @@ namespace MusicLibraryApi.Interfaces
 		IGenresRepository GenresRepository { get; }
 
 		IDiscsRepository DiscsRepository { get; }
-
-		ISongsRepository SongsRepository { get; }
 	}
 }

@@ -8,7 +8,7 @@ namespace MusicLibraryApi.Dal.EfCore.Entities
 
 		public string Name { get; private set; }
 
-		public FolderEntity? ParentFolder { get; private set; }
+		public FolderEntity? ParentFolder { get; set; }
 
 		public IReadOnlyCollection<FolderEntity> ChildFolders { get; } = new List<FolderEntity>();
 

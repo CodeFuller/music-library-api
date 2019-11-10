@@ -24,14 +24,19 @@ namespace MusicLibraryApi.Dal.EfCore.Entities
 
 		public IReadOnlyCollection<SongEntity> Songs { get; } = new List<SongEntity>();
 
-		public DiscEntity(int id, int? year, string title, string? albumTitle, int? albumOrder, DateTimeOffset? deleteDate, string? deleteComment)
+		public DiscEntity(int id, int? year, string title, string? albumTitle = null, int? albumOrder = null, DateTimeOffset? deleteDate = null, string? deleteComment = null)
 		{
 			Id = id;
 			Year = year;
 			Title = title;
 			AlbumTitle = albumTitle;
 			AlbumOrder = albumOrder;
-			DeleteDate = deleteDate;
+
+			// We convert date to universal time mostly because of integration tests.
+			// PostgreSQL does not store timezone in 'timestamp with timezone' column.
+			// When the value is read from the database, the local timezone is set.
+			// This makes difficult baseline-based testing.
+			DeleteDate = deleteDate?.ToUniversalTime();
 			DeleteComment = deleteComment;
 		}
 	}

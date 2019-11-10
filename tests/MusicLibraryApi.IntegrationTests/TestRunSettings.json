@@ -1,0 +1,5 @@
+{
+	"connectionStrings": {
+		"musicLibraryDB": "Server=localhost;Port=15432;Database=TestMusicLibraryDb;User Id=postgres;Password=9TMQvdCewhJN84rWaaN2;"
+	}
+}

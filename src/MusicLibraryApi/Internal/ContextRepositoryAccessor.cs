@@ -15,8 +15,6 @@ namespace MusicLibraryApi.Internal
 
 		public IDiscsRepository DiscsRepository => GetRepository<IDiscsRepository>();
 
-		public ISongsRepository SongsRepository => GetRepository<ISongsRepository>();
-
 		public ContextRepositoryAccessor(IHttpContextAccessor httpContextAccessor)
 		{
 			this.httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
