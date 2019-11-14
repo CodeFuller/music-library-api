@@ -14,7 +14,7 @@ namespace MusicLibraryApi.GraphQL
 
 			FieldAsync<DiscType>(
 				"disc",
-				arguments: new QueryArguments(new QueryArgument<IntGraphType> { Name = "id" }),
+				arguments: new QueryArguments(new QueryArgument<NonNullGraphType<IntGraphType>> { Name = "id" }),
 				resolve: async context => await repositoryAccessor.DiscsRepository.GetDisc(context.GetArgument<int>("id"), context.CancellationToken));
 
 			FieldAsync<ListGraphType<DiscType>>(
