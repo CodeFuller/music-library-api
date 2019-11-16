@@ -12,7 +12,7 @@ namespace MusicLibraryApi.GraphQL.Types
 			Field<IntGraphType>("trackNumber", resolve: context => context.Source.TrackNumber);
 			Field(x => x.Duration, true);
 			Field("genre", x => x.Genre != null ? x.Genre.Name : null);
-			Field<IntGraphType>("rating", resolve: context => (int?)context.Source.Rating);
+			Field<RatingEnumType>("rating");
 			Field(x => x.BitRate, true);
 			Field(x => x.FileSize);
 			Field(x => x.Checksum);
