@@ -16,6 +16,8 @@ namespace MusicLibraryApi
 				.ConfigureAwait(false);
 		}
 
+		// The method CreateHostBuilder() is also used by EF Core Tools (i.e. dotnet ef migrations).
+		// See the following article for more details: https://docs.microsoft.com/en-us/ef/core/miscellaneous/cli/dbcontext-creation
 		public static IHostBuilder CreateHostBuilder(string[] args) =>
 			Host.CreateDefaultBuilder(args)
 				.ConfigureAppConfiguration((hostingContext, config) =>
