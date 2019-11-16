@@ -150,33 +150,19 @@ namespace MusicLibraryApi.IntegrationTests.Controllers
 
 			var client = webApplicationFactory.CreateClient();
 
-			// Act
-
-			var requestBody = new
+			var discData = new
 			{
-				query = @"mutation ($disc: DiscInput!, $folderId: Int!) {
-							createDisc(disc: $disc, folderId: $folderId) {
-								newDiscId
-							}
-						}",
-
-				variables = new
-				{
-					disc = new
-					{
-						year = 1994,
-						title = "Битва на мотоциклах (CD 2)",
-						albumTitle = "Битва на мотоциклах",
-						albumOrder = 2,
-						deleteDate = new DateTimeOffset(2019, 11, 10, 18, 50, 24, TimeSpan.FromHours(2)),
-						deleteComment = "Deleted just for test :)",
-					},
-
-					folderId = 4,
-				},
+				year = 1994,
+				title = "Битва на мотоциклах (CD 2)",
+				albumTitle = "Битва на мотоциклах",
+				albumOrder = 2,
+				deleteDate = new DateTimeOffset(2019, 11, 10, 18, 50, 24, TimeSpan.FromHours(2)),
+				deleteComment = "Deleted just for test :)",
 			};
 
-			var response = await client.PostAsJsonAsync(new Uri("/graphql", UriKind.Relative), requestBody);
+			// Act
+
+			var response = await ExecuteCreateDiscMutation(client, discData, 4);
 
 			// Assert
 
@@ -270,28 +256,14 @@ namespace MusicLibraryApi.IntegrationTests.Controllers
 
 			var client = webApplicationFactory.CreateClient();
 
-			// Act
-
-			var requestBody = new
+			var discData = new
 			{
-				query = @"mutation ($disc: DiscInput!, $folderId: Int!) {
-							createDisc(disc: $disc, folderId: $folderId) {
-								newDiscId
-							}
-						}",
-
-				variables = new
-				{
-					disc = new
-					{
-						title = "Russian",
-					},
-
-					folderId = 4,
-				},
+				title = "Russian",
 			};
 
-			var response = await client.PostAsJsonAsync(new Uri("/graphql", UriKind.Relative), requestBody);
+			// Act
+
+			var response = await ExecuteCreateDiscMutation(client, discData, 4);
 
 			// Assert
 
@@ -413,6 +385,26 @@ namespace MusicLibraryApi.IntegrationTests.Controllers
 								deleteComment
 							}}
 						}}"),
+			};
+
+			return client.PostAsJsonAsync(new Uri("/graphql", UriKind.Relative), requestBody);
+		}
+
+		private Task<HttpResponseMessage> ExecuteCreateDiscMutation(HttpClient client, object discData, int folderId)
+		{
+			var requestBody = new
+			{
+				query = @"mutation ($disc: DiscInput!, $folderId: ID!) {
+							createDisc(disc: $disc, folderId: $folderId) {
+								newDiscId
+							}
+						}",
+
+				variables = new
+				{
+					disc = discData,
+					folderId = folderId,
+				},
 			};
 
 			return client.PostAsJsonAsync(new Uri("/graphql", UriKind.Relative), requestBody);
