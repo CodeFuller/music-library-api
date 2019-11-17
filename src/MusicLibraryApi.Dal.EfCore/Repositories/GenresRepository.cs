@@ -5,9 +5,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using MusicLibraryApi.Abstractions.Exceptions;
 using MusicLibraryApi.Abstractions.Interfaces;
 using MusicLibraryApi.Abstractions.Models;
 using MusicLibraryApi.Dal.EfCore.Entities;
+using Npgsql;
 
 namespace MusicLibraryApi.Dal.EfCore.Repositories
 {
@@ -28,7 +30,15 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 			var genreEntity = mapper.Map<GenreEntity>(genre);
 
 			context.Genres.Add(genreEntity);
-			await context.SaveChangesAsync(cancellationToken);
+
+			try
+			{
+				await context.SaveChangesAsync(cancellationToken);
+			}
+			catch (DbUpdateException e) when (e.InnerException is PostgresException pgException && pgException.SqlState == PostgresErrors.UniqueViolation)
+			{
+				throw new DuplicateKeyException($"Failed to add genre '{genre.Name}' to the database", e);
+			}
 
 			return genreEntity.Id;
 		}

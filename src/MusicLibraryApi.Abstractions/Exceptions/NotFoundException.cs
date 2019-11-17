@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace MusicLibraryApi.Abstractions
+namespace MusicLibraryApi.Abstractions.Exceptions
 {
 	[Serializable]
 	public class NotFoundException : Exception

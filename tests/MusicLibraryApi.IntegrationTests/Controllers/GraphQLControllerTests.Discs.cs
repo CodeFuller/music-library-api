@@ -17,7 +17,7 @@ namespace MusicLibraryApi.IntegrationTests.Controllers
 
 			// Act
 
-			var response = await ExecuteGetDiscsQuery(client);
+			var response = await GetDiscsData(client);
 
 			// Assert
 
@@ -144,6 +144,47 @@ namespace MusicLibraryApi.IntegrationTests.Controllers
 		}
 
 		[TestMethod]
+		public async Task DiscQuery_IfDiscDoesNotExist_ReturnsError()
+		{
+			// Arrange
+
+			var client = webApplicationFactory.CreateClient();
+
+			// Act
+
+			var response = await ExecuteGetDiscQuery(client, 12345);
+
+			// Assert
+
+			var expectedData = new
+			{
+				data = new
+				{
+					disc = (object?)null,
+				},
+
+				errors = new[]
+				{
+					new
+					{
+						message = "The disc with id of '12345' does not exist",
+						locations = new[]
+						{
+							new
+							{
+								line = 2,
+								column = 8,
+							},
+						},
+						path = new[] { "disc" },
+					},
+				},
+			};
+
+			await AssertResponse(response, expectedData);
+		}
+
+		[TestMethod]
 		public async Task CreateDiscMutation_ForDiscWithOptionalDataFilled_CreatesDiscSuccessfully()
 		{
 			// Arrange
@@ -245,7 +286,7 @@ namespace MusicLibraryApi.IntegrationTests.Controllers
 				},
 			};
 
-			var response2 = await ExecuteGetDiscsQuery(client);
+			var response2 = await GetDiscsData(client);
 			await AssertResponse(response2, expectedDiscsData);
 		}
 
@@ -346,11 +387,76 @@ namespace MusicLibraryApi.IntegrationTests.Controllers
 				},
 			};
 
-			var response2 = await ExecuteGetDiscsQuery(client);
+			var response2 = await GetDiscsData(client);
 			await AssertResponse(response2, expectedDiscsData);
 		}
 
-		private Task<HttpResponseMessage> ExecuteGetDiscsQuery(HttpClient client)
+		[TestMethod]
+		public async Task CreateDiscMutation_IfFolderDoesNotExist_ReturnsError()
+		{
+			// Arrange
+
+			var client = webApplicationFactory.CreateClient();
+
+			var discData = new
+			{
+				title = "Some New Disc",
+			};
+
+			// Act
+
+			var response = await ExecuteCreateDiscMutation(client, discData, 12345);
+
+			// Assert
+
+			var expectedData = new
+			{
+				data = new
+				{
+					createDisc = (object?)null,
+				},
+
+				errors = new[]
+				{
+					new
+					{
+						message = "The folder with id of '12345' does not exist",
+						locations = new[]
+						{
+							new
+							{
+								line = 2,
+								column = 8,
+							},
+						},
+						path = new[] { "createDisc" },
+					},
+				},
+			};
+
+			await AssertResponse(response, expectedData);
+
+			// Checking the genre data
+
+			var expectedDiscsData = new
+			{
+				data = new
+				{
+					discs = new[]
+					{
+						new { id = 1, },
+						new { id = 2, },
+						new { id = 3, },
+						new { id = 4, },
+					},
+				},
+			};
+
+			var response2 = await GetDiscsIds(client);
+			await AssertResponse(response2, expectedDiscsData);
+		}
+
+		private Task<HttpResponseMessage> GetDiscsData(HttpClient client)
 		{
 			var requestBody = new
 			{
@@ -363,6 +469,20 @@ namespace MusicLibraryApi.IntegrationTests.Controllers
 								albumOrder
 								deleteDate
 								deleteComment
+							}
+						}",
+			};
+
+			return client.PostAsJsonAsync(new Uri("/graphql", UriKind.Relative), requestBody);
+		}
+
+		private Task<HttpResponseMessage> GetDiscsIds(HttpClient client)
+		{
+			var requestBody = new
+			{
+				query = @"{
+							discs {
+								id
 							}
 						}",
 			};

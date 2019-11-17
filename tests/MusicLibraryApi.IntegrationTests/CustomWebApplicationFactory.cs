@@ -78,7 +78,7 @@ namespace MusicLibraryApi.IntegrationTests
 		{
 			var genre1 = new GenreEntity(1, "Russian Rock");
 			var genre2 = new GenreEntity(2, "Nu Metal");
-			var genre3 = new GenreEntity(3, "Pop");
+			var genre3 = new GenreEntity(3, "Alternative Rock");
 
 			identityInsert.InitializeIdentityInsert(context, "Genres");
 

@@ -1,13 +1,17 @@
-﻿using GraphQL.Types;
+﻿using GraphQL;
+using GraphQL.Types;
+using Microsoft.Extensions.Logging;
+using MusicLibraryApi.Abstractions.Exceptions;
 using MusicLibraryApi.GraphQL.Types.Input;
 using MusicLibraryApi.GraphQL.Types.Output;
 using MusicLibraryApi.Interfaces;
+using static System.FormattableString;
 
 namespace MusicLibraryApi.GraphQL
 {
 	public class MusicLibraryMutation : ObjectGraphType
 	{
-		public MusicLibraryMutation(IContextRepositoryAccessor repositoryAccessor)
+		public MusicLibraryMutation(IContextRepositoryAccessor repositoryAccessor, ILogger<MusicLibraryMutation> logger)
 		{
 			FieldAsync<CreateGenreResultType>(
 				"createGenre",
@@ -17,8 +21,17 @@ namespace MusicLibraryApi.GraphQL
 				{
 					var genreInput = context.GetArgument<GenreInput>("genre");
 					var genre = genreInput.ToModel();
-					var newGenreId = await repositoryAccessor.GenresRepository.AddGenre(genre, context.CancellationToken);
-					return new CreateGenreResult(newGenreId);
+
+					try
+					{
+						var newGenreId = await repositoryAccessor.GenresRepository.AddGenre(genre, context.CancellationToken);
+						return new CreateGenreResult(newGenreId);
+					}
+					catch (DuplicateKeyException e)
+					{
+						logger.LogError(e, "Genre {GenreName} already exists", genre.Name);
+						throw new ExecutionError(Invariant($"Genre '{genre.Name}' already exists"));
+					}
 				});
 
 			FieldAsync<CreateDiscResultType>(
@@ -31,9 +44,17 @@ namespace MusicLibraryApi.GraphQL
 					var folderId = context.GetArgument<int>("folderId");
 					var discInput = context.GetArgument<DiscInput>("disc");
 					var disc = discInput.ToModel();
-					var newDiscId = await repositoryAccessor.DiscsRepository.AddDisc(folderId, disc, context.CancellationToken);
 
-					return new CreateDiscResult(newDiscId);
+					try
+					{
+						var newDiscId = await repositoryAccessor.DiscsRepository.AddDisc(folderId, disc, context.CancellationToken);
+						return new CreateDiscResult(newDiscId);
+					}
+					catch (NotFoundException e)
+					{
+						logger.LogError(e, "The folder with id of {FolderId} does not exist", folderId);
+						throw new ExecutionError(Invariant($"The folder with id of '{folderId}' does not exist"));
+					}
 				});
 		}
 	}

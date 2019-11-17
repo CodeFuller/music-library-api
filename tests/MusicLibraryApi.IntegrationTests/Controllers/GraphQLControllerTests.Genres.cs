@@ -39,7 +39,7 @@ namespace MusicLibraryApi.IntegrationTests.Controllers
 						new
 						{
 							id = 3,
-							name = "Pop",
+							name = "Alternative Rock",
 						},
 					},
 				},
@@ -57,24 +57,7 @@ namespace MusicLibraryApi.IntegrationTests.Controllers
 
 			// Act
 
-			var requestBody = new
-			{
-				query = @"mutation ($genre: GenreInput!) {
-							createGenre(genre: $genre) {
-								newGenreId
-							}
-						}",
-
-				variables = new
-				{
-					genre = new
-					{
-						name = "Gothic Metal",
-					},
-				},
-			};
-
-			var response = await client.PostAsJsonAsync(new Uri("/graphql", UriKind.Relative), requestBody);
+			var response = await ExecuteCreateGenreMutation(client, "Gothic Metal");
 
 			// Assert
 
@@ -112,12 +95,83 @@ namespace MusicLibraryApi.IntegrationTests.Controllers
 						new
 						{
 							id = 3,
-							name = "Pop",
+							name = "Alternative Rock",
 						},
 						new
 						{
 							id = 4,
 							name = "Gothic Metal",
+						},
+					},
+				},
+			};
+
+			var response2 = await ExecuteGetGenresQuery(client);
+			await AssertResponse(response2, expectedGenresData);
+		}
+
+		[TestMethod]
+		public async Task CreateGenreMutation_IfGenreExists_ReturnsError()
+		{
+			// Arrange
+
+			var client = webApplicationFactory.CreateClient();
+
+			// Act
+
+			var response = await ExecuteCreateGenreMutation(client, "Nu Metal");
+
+			// Assert
+
+			var expectedData = new
+			{
+				data = new
+				{
+					createGenre = (object?)null,
+				},
+
+				errors = new[]
+				{
+					new
+					{
+						message = "Genre 'Nu Metal' already exists",
+						locations = new[]
+						{
+							new
+							{
+								line = 2,
+								column = 8,
+							},
+						},
+						path = new[] { "createGenre" },
+					},
+				},
+			};
+
+			await AssertResponse(response, expectedData);
+
+			// Checking the genre data
+
+			var expectedGenresData = new
+			{
+				data = new
+				{
+					genres = new[]
+					{
+						new
+						{
+							id = 1,
+							name = "Russian Rock",
+						},
+						new
+						{
+							id = 2,
+							name = "Nu Metal",
+						},
+						new
+						{
+							id = 3,
+							name = "Alternative Rock",
 						},
 					},
 				},
@@ -137,6 +191,28 @@ namespace MusicLibraryApi.IntegrationTests.Controllers
 								name
 							}
 						}",
+			};
+
+			return client.PostAsJsonAsync(new Uri("/graphql", UriKind.Relative), requestBody);
+		}
+
+		private Task<HttpResponseMessage> ExecuteCreateGenreMutation(HttpClient client, object genreName)
+		{
+			var requestBody = new
+			{
+				query = @"mutation ($genre: GenreInput!) {
+							createGenre(genre: $genre) {
+								newGenreId
+							}
+						}",
+
+				variables = new
+				{
+					genre = new
+					{
+						name = genreName,
+					},
+				},
 			};
 
 			return client.PostAsJsonAsync(new Uri("/graphql", UriKind.Relative), requestBody);

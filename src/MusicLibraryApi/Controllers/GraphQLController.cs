@@ -2,9 +2,11 @@
 using System.Threading;
 using System.Threading.Tasks;
 using GraphQL;
+using GraphQL.Instrumentation;
 using GraphQL.Types;
 using Microsoft.AspNetCore.Mvc;
-using MusicLibraryApi.Abstractions;
+using Microsoft.Extensions.Logging;
+using MusicLibraryApi.GraphQL;
 using MusicLibraryApi.Internal;
 
 namespace MusicLibraryApi.Controllers
@@ -16,10 +18,13 @@ namespace MusicLibraryApi.Controllers
 
 		private readonly IDocumentExecuter documentExecuter;
 
-		public GraphQLController(ISchema schema, IDocumentExecuter documentExecuter)
+		private readonly ILogger<GraphQLController> logger;
+
+		public GraphQLController(ISchema schema, IDocumentExecuter documentExecuter, ILogger<GraphQLController> logger)
 		{
 			this.schema = schema ?? throw new ArgumentNullException(nameof(schema));
 			this.documentExecuter = documentExecuter ?? throw new ArgumentNullException(nameof(schema));
+			this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
 		}
 
 		[HttpPost]
@@ -37,25 +42,14 @@ namespace MusicLibraryApi.Controllers
 				Schema = schema,
 				Query = query.Query,
 				Inputs = inputs,
-				ThrowOnUnhandledException = true,
 				CancellationToken = cancellationToken,
 			};
 
-			try
-			{
-				var result = await documentExecuter.ExecuteAsync(executionOptions).ConfigureAwait(false);
+			ErrorHandlingMiddleware.Logger = logger;
+			executionOptions.FieldMiddleware.Use<ErrorHandlingMiddleware>();
 
-				if (result.Errors?.Count > 0)
-				{
-					return BadRequest(result);
-				}
-
-				return Ok(result);
-			}
-			catch (NotFoundException e)
-			{
-				return NotFound(e.Message);
-			}
+			var result = await documentExecuter.ExecuteAsync(executionOptions).ConfigureAwait(false);
+			return Ok(result);
 		}
 	}
 }
