@@ -11,9 +11,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MusicLibraryApi.Dal.EfCore;
 using MusicLibraryApi.GraphQL;
-using MusicLibraryApi.GraphQL.Types;
-using MusicLibraryApi.GraphQL.Types.Input;
-using MusicLibraryApi.GraphQL.Types.Output;
 using MusicLibraryApi.Interfaces;
 using MusicLibraryApi.Internal;
 
@@ -44,23 +41,15 @@ namespace MusicLibraryApi
 
 			services.AddDal(connectionString);
 
-			services.AddSingleton<GenreType>();
-			services.AddSingleton<GenreInputType>();
-			services.AddSingleton<DiscType>();
-			services.AddSingleton<DiscInputType>();
-			services.AddSingleton<SongType>();
-			services.AddSingleton<FolderInputType>();
-
-			services.AddSingleton<CreateGenreResultType>();
-			services.AddSingleton<CreateDiscResultType>();
-
 			services.AddSingleton<MusicLibraryQuery>();
 			services.AddSingleton<MusicLibraryMutation>();
 			services.AddSingleton<MusicLibrarySchema>();
 
 			services.AddSingleton<IDependencyResolver>(s => new FuncDependencyResolver(s.GetRequiredService));
 
-			services.AddGraphQL(options => { options.ExposeExceptions = false; });
+			services.AddGraphQL(options => { options.ExposeExceptions = false; })
+				.AddGraphTypes(ServiceLifetime.Singleton);
+
 			services.AddTransient<IGraphQLExecuter<MusicLibrarySchema>, CustomGraphQLExecuter>();
 
 			// Fix for the error "Synchronous operations are disallowed. Call ReadAsync or set AllowSynchronousIO to true instead."
