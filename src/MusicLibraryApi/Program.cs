@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace MusicLibraryApi
 {
@@ -25,6 +26,16 @@ namespace MusicLibraryApi
 					config.AddJsonFile("appsettings.json", optional: false)
 						.AddEnvironmentVariables()
 						.AddCommandLine(args);
+				})
+				.ConfigureLogging((context, logging) =>
+				{
+					// Disabling any built-in logging
+					// Custom logging is configured in Startup.Configure().
+					logging.ClearProviders();
+
+					// Setting native logging level to most verbose.
+					// Actual logging level will be set by CF.Library.Logging based on settings in Logging section.
+					logging.SetMinimumLevel(LogLevel.Trace);
 				})
 				.ConfigureWebHostDefaults(webBuilder =>
 				{

@@ -1,4 +1,5 @@
 using System;
+using CF.Library.Logging;
 using GraphQL;
 using GraphQL.Server;
 using GraphQL.Server.Internal;
@@ -60,12 +61,14 @@ namespace MusicLibraryApi
 			});
 		}
 
-		public static void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+		public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
 		{
 			if (env.IsDevelopment())
 			{
 				app.UseDeveloperExceptionPage();
 			}
+
+			loggerFactory.LoadLoggingConfiguration(Configuration);
 
 			app.UseGraphQL<MusicLibrarySchema>();
 			app.UseGraphQLPlayground(new GraphQLPlaygroundOptions());
