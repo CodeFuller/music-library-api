@@ -3,9 +3,9 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace MusicLibraryApi.IntegrationTests.Controllers
+namespace MusicLibraryApi.IntegrationTests
 {
-	public sealed partial class GraphQLControllerTests
+	public sealed partial class GraphQLTests
 	{
 		[TestMethod]
 		public async Task GenresQuery_ReturnsCorrectData()

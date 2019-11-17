@@ -1,4 +1,5 @@
-﻿using GraphQL;
+﻿using System;
+using GraphQL;
 using GraphQL.Types;
 using Microsoft.Extensions.Logging;
 using MusicLibraryApi.Abstractions.Exceptions;
@@ -37,6 +38,12 @@ namespace MusicLibraryApi.GraphQL
 			FieldAsync<ListGraphType<DiscType>>(
 				"discs",
 				resolve: async context => await repositoryAccessor.DiscsRepository.GetAllDiscs(context.CancellationToken));
+
+			// This 'error' field was added for IT purpose.
+			// It is required for testing of error handling middleware that hides internal sensitive exceptions.
+			Field<StringGraphType>(
+				"error",
+				resolve: context => throw new InvalidOperationException("Some internal sensitive information goes here"));
 		}
 	}
 }

@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 
-namespace MusicLibraryApi.IntegrationTests.Controllers
+namespace MusicLibraryApi.IntegrationTests
 {
 	[TestClass]
-	public sealed partial class GraphQLControllerTests : IDisposable
+	public sealed partial class GraphQLTests : IDisposable
 	{
 		private readonly CustomWebApplicationFactory webApplicationFactory = new CustomWebApplicationFactory();
 

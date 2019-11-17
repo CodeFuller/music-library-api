@@ -2,11 +2,10 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using static System.FormattableString;
 
-namespace MusicLibraryApi.IntegrationTests.Controllers
+namespace MusicLibraryApi.IntegrationTests
 {
-	public sealed partial class GraphQLControllerTests
+	public sealed partial class GraphQLTests
 	{
 		[TestMethod]
 		public async Task DiscsQuery_ReturnsCorrectData()
@@ -494,7 +493,7 @@ namespace MusicLibraryApi.IntegrationTests.Controllers
 		{
 			var requestBody = new
 			{
-				query = Invariant($@"{{
+				query = FormattableString.Invariant($@"{{
 							disc(id: {discId}) {{
 								id
 								year
