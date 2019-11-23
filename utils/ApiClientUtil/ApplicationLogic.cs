@@ -26,8 +26,7 @@ namespace ApiClientUtil
 
 		public async Task<int> Run(string[] args, CancellationToken cancellationToken)
 		{
-			var newGenre = new InputGenreData("Some New Genre 2");
-
+			var newGenre = new InputGenreData($"Some Genre - {DateTimeOffset.Now:yyyy/MM/dd HH:mm:ss}");
 			var id = await genresMutation.CreateGenre(newGenre, cancellationToken);
 
 			await foreach (var genre in genresQuery.GetGenres(GenreFields.All, cancellationToken))

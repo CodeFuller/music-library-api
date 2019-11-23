@@ -1,36 +1,34 @@
 ﻿using System;
 using System.Linq;
+using System.Net.Http;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using GraphQL.Client;
-using GraphQL.Common.Request;
-using GraphQL.Common.Response;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using MusicLibraryApi.Client.Exceptions;
+using MusicLibraryApi.Client.GraphQL;
+using Newtonsoft.Json;
 
 namespace MusicLibraryApi.Client.Operations
 {
-	public abstract class BasicQuery : IDisposable
+	public abstract class BasicQuery
 	{
-		private readonly GraphQLClient graphQLClient;
+		private const string GraphQLRelativeUri = "graphql";
+
+		public static string HttpClientName => "graphql";
+
+		private readonly IHttpClientFactory httpClientFactory;
 
 		protected ILogger<BasicQuery> Logger { get; }
 
-		protected BasicQuery(ILogger<BasicQuery> logger, IOptions<ApiConnectionSettings> options)
+		protected BasicQuery(IHttpClientFactory httpClientFactory, ILogger<BasicQuery> logger)
 		{
-			var settings = options?.Value ?? throw new ArgumentNullException(nameof(options));
-			if (settings.GraphQLEndpointUrl == null)
-			{
-				throw new InvalidOperationException($"{nameof(ApiConnectionSettings.GraphQLEndpointUrl)} is not set");
-			}
-
-			this.graphQLClient = new GraphQLClient(settings.GraphQLEndpointUrl);
-
+			this.httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
 			this.Logger = logger ?? throw new ArgumentNullException(nameof(logger));
 		}
 
 		protected async Task<TData> ExecuteQuery<TData>(string queryName, QueryFieldSet fields, CancellationToken cancellationToken)
+			where TData : class
 		{
 			var requestedFields = JoinRequestFields(fields);
 			var query = $@"{{ {queryName} {{ {requestedFields} }} }}";
@@ -40,42 +38,53 @@ namespace MusicLibraryApi.Client.Operations
 		}
 
 		protected async Task<TData> ExecuteRequest<TData>(string queryName, GraphQLRequest request, CancellationToken cancellationToken)
+			where TData : class
 		{
 			Logger.LogDebug("Executing query {QueryName} ...", queryName);
-			var response = await graphQLClient.PostAsync(request, cancellationToken);
+
+			using var httpClient = httpClientFactory.CreateClient(HttpClientName);
+			using var httpContent = BuildJsonContent(request);
+			var httpResponse = await httpClient.PostAsync(GraphQLRelativeUri, httpContent, cancellationToken);
+
+			if (!httpResponse.IsSuccessStatusCode)
+			{
+				Logger.LogError("GraphQL request failed with status code {RequestStatusCode}", httpResponse.StatusCode);
+				throw new GraphQLRequestFailedException($"GraphQL request failed with status code {httpResponse.StatusCode}");
+			}
+
+			var responseData = await httpResponse.Content.ReadAsAsync<GraphQLResponse>(cancellationToken);
 			Logger.LogDebug("The query {QueryName} completed successfully", queryName);
 
-			foreach (var error in response.Errors ?? Enumerable.Empty<GraphQLError>())
+			foreach (var error in responseData.Errors ?? Enumerable.Empty<GraphQLError>())
 			{
 				Logger.LogWarning("The query {QueryName} results contain error: {QueryErrorMessage}", queryName, error.Message);
 			}
 
-			if (response.Data == null)
+			if (responseData.Data == null)
 			{
 				Logger.LogError("The query {QueryName} returned null data", queryName);
 				throw new GraphQLRequestFailedException($"Query {queryName} returned null data");
 			}
 
-			return response.GetDataFieldAs<TData>(queryName);
+			var dataToken = responseData.Data[queryName];
+			if (dataToken == null)
+			{
+				Logger.LogError("The field {QueryName} is missing in query result", queryName);
+				throw new GraphQLRequestFailedException($"The field {queryName} is missing in query result");
+			}
+
+			return dataToken.ToObject<TData>();
+		}
+
+		private static StringContent BuildJsonContent(object requestData)
+		{
+			var jsonData = JsonConvert.SerializeObject(requestData);
+			return new StringContent(jsonData, Encoding.UTF8, "application/json");
 		}
 
 		protected static string JoinRequestFields(QueryFieldSet fields)
 		{
 			return String.Join(" ", fields.Select(f => f.Name));
-		}
-
-		protected virtual void Dispose(bool disposing)
-		{
-			if (disposing)
-			{
-				graphQLClient?.Dispose();
-			}
-		}
-
-		public void Dispose()
-		{
-			Dispose(true);
-			GC.SuppressFinalize(this);
 		}
 	}
 }

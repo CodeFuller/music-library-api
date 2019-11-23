@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using GraphQL.Common.Request;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using MusicLibraryApi.Client.Contracts.Discs;
+using MusicLibraryApi.Client.GraphQL;
 using MusicLibraryApi.Client.Interfaces;
 using static System.FormattableString;
 
@@ -13,8 +13,8 @@ namespace MusicLibraryApi.Client.Operations
 {
 	public class DiscOperations : BasicQuery, IDiscsQuery
 	{
-		public DiscOperations(ILogger<BasicQuery> logger, IOptions<ApiConnectionSettings> options)
-			: base(logger, options)
+		public DiscOperations(IHttpClientFactory httpClientFactory, ILogger<BasicQuery> logger)
+			: base(httpClientFactory, logger)
 		{
 		}
 

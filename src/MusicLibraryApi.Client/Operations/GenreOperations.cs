@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using GraphQL.Common.Request;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using MusicLibraryApi.Client.Contracts.Genres;
 using MusicLibraryApi.Client.Exceptions;
+using MusicLibraryApi.Client.GraphQL;
 using MusicLibraryApi.Client.Interfaces;
 using static System.FormattableString;
 
@@ -14,8 +14,8 @@ namespace MusicLibraryApi.Client.Operations
 {
 	public class GenreOperations : BasicQuery, IGenresQuery, IGenresMutation
 	{
-		public GenreOperations(ILogger<GenreOperations> logger, IOptions<ApiConnectionSettings> options)
-			: base(logger, options)
+		public GenreOperations(IHttpClientFactory httpClientFactory, ILogger<GenreOperations> logger)
+			: base(httpClientFactory, logger)
 		{
 		}
 
@@ -48,14 +48,16 @@ namespace MusicLibraryApi.Client.Operations
 
 			var data = await ExecuteRequest<CreateGenreOutputData>("createGenre", request, cancellationToken);
 
-			if (data.NewGenreId == null)
+			var newGenreId = data.NewGenreId;
+
+			if (newGenreId == null)
 			{
 				throw new GraphQLRequestFailedException($"Response does not contain id of created genre {genreData.Name}");
 			}
 
-			Logger.LogInformation("Created new genre {GenreName} with id of {GenreId}", genreData.Name, data.NewGenreId);
+			Logger.LogInformation("Created new genre {GenreName} with id of {GenreId}", genreData.Name, newGenreId);
 
-			return data.NewGenreId.Value;
+			return newGenreId.Value;
 		}
 	}
 }

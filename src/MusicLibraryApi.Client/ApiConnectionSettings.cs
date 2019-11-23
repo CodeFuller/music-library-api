@@ -4,6 +4,6 @@ namespace MusicLibraryApi.Client
 {
 	public class ApiConnectionSettings
 	{
-		public Uri? GraphQLEndpointUrl { get; set; }
+		public Uri? BaseUrl { get; set; }
 	}
 }
