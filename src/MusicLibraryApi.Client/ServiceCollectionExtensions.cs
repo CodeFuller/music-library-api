@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using MusicLibraryApi.Client.Interfaces;
-using MusicLibraryApi.Client.Queries;
+using MusicLibraryApi.Client.Operations;
 
 namespace MusicLibraryApi.Client
 {
@@ -8,8 +8,9 @@ namespace MusicLibraryApi.Client
 	{
 		public static IServiceCollection AddMusicLibraryApiClient(this IServiceCollection services)
 		{
-			services.AddTransient<IGenresQuery, GenresQuery>();
-			services.AddTransient<IDiscsQuery, DiscsQuery>();
+			services.AddTransient<IGenresQuery, GenreOperations>();
+			services.AddTransient<IGenresMutation, GenreOperations>();
+			services.AddTransient<IDiscsQuery, DiscOperations>();
 
 			return services;
 		}

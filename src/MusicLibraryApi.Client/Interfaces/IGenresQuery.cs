@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
-using MusicLibraryApi.Client.Contracts.Output;
+using MusicLibraryApi.Client.Contracts.Genres;
 
 namespace MusicLibraryApi.Client.Interfaces
 {
 	public interface IGenresQuery
 	{
-		IAsyncEnumerable<GenreDto> GetGenres(QueryFieldSet fields, CancellationToken cancellationToken);
+		IAsyncEnumerable<OutputGenreData> GetGenres(QueryFieldSet fields, CancellationToken cancellationToken);
 	}
 }

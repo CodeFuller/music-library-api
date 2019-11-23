@@ -9,13 +9,13 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MusicLibraryApi.Client.Exceptions;
 
-namespace MusicLibraryApi.Client.Queries
+namespace MusicLibraryApi.Client.Operations
 {
 	public abstract class BasicQuery : IDisposable
 	{
 		private readonly GraphQLClient graphQLClient;
 
-		private readonly ILogger<BasicQuery> logger;
+		protected ILogger<BasicQuery> Logger { get; }
 
 		protected BasicQuery(ILogger<BasicQuery> logger, IOptions<ApiConnectionSettings> options)
 		{
@@ -27,12 +27,12 @@ namespace MusicLibraryApi.Client.Queries
 
 			this.graphQLClient = new GraphQLClient(settings.GraphQLEndpointUrl);
 
-			this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+			this.Logger = logger ?? throw new ArgumentNullException(nameof(logger));
 		}
 
 		protected async Task<TData> ExecuteQuery<TData>(string queryName, QueryFieldSet fields, CancellationToken cancellationToken)
 		{
-			var requestedFields = String.Join(" ", fields.Select(f => f.Name));
+			var requestedFields = JoinRequestFields(fields);
 			var query = $@"{{ {queryName} {{ {requestedFields} }} }}";
 			var request = new GraphQLRequest { Query = query };
 
@@ -41,22 +41,27 @@ namespace MusicLibraryApi.Client.Queries
 
 		protected async Task<TData> ExecuteRequest<TData>(string queryName, GraphQLRequest request, CancellationToken cancellationToken)
 		{
-			logger.LogDebug("Executing query {QueryName} ...", queryName);
+			Logger.LogDebug("Executing query {QueryName} ...", queryName);
 			var response = await graphQLClient.PostAsync(request, cancellationToken);
-			logger.LogDebug("The query {QueryName} completed successfully", queryName);
+			Logger.LogDebug("The query {QueryName} completed successfully", queryName);
 
 			foreach (var error in response.Errors ?? Enumerable.Empty<GraphQLError>())
 			{
-				logger.LogWarning("The query {QueryName} results contain error: {QueryErrorMessage}", queryName, error.Message);
+				Logger.LogWarning("The query {QueryName} results contain error: {QueryErrorMessage}", queryName, error.Message);
 			}
 
 			if (response.Data == null)
 			{
-				logger.LogError("The query {QueryName} returned null data", queryName);
+				Logger.LogError("The query {QueryName} returned null data", queryName);
 				throw new GraphQLRequestFailedException($"Query {queryName} returned null data");
 			}
 
 			return response.GetDataFieldAs<TData>(queryName);
+		}
+
+		protected static string JoinRequestFields(QueryFieldSet fields)
+		{
+			return String.Join(" ", fields.Select(f => f.Name));
 		}
 
 		protected virtual void Dispose(bool disposing)
