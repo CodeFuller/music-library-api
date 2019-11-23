@@ -6,6 +6,7 @@ using GraphQL.Server.Internal;
 using GraphQL.Server.Ui.Playground;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -55,10 +56,8 @@ namespace MusicLibraryApi
 
 			// Fix for the error "Synchronous operations are disallowed. Call ReadAsync or set AllowSynchronousIO to true instead."
 			// See https://stackoverflow.com/questions/55052319/net-core-3-preview-synchronous-operations-are-disallowed
-			services.Configure<IISServerOptions>(options =>
-			{
-				options.AllowSynchronousIO = true;
-			});
+			services.Configure<IISServerOptions>(options => { options.AllowSynchronousIO = true; });
+			services.Configure<KestrelServerOptions>(options => { options.AllowSynchronousIO = true; });
 		}
 
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)

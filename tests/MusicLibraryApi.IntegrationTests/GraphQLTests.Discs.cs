@@ -2,6 +2,7 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using static System.FormattableString;
 
 namespace MusicLibraryApi.IntegrationTests
 {
@@ -493,7 +494,7 @@ namespace MusicLibraryApi.IntegrationTests
 		{
 			var requestBody = new
 			{
-				query = FormattableString.Invariant($@"{{
+				query = Invariant($@"{{
 							disc(id: {discId}) {{
 								id
 								year
