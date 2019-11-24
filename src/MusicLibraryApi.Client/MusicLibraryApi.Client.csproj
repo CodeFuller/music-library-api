@@ -5,6 +5,18 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <PackageId>MusicLibraryApi.Client</PackageId>
+    <Authors>CodeFuller</Authors>
+    <Description>This package contains a client for Music Library GraphQL API</Description>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <Copyright>Copyright © 2019</Copyright>
+    <PackageTags>Music Library MusicLibrary MusicLibraryApi API GraphQL client</PackageTags>
+    <Company>CodeFuller</Company>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>0.1.0</Version>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.7" />
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.7" PrivateAssets="all" />
