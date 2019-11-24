@@ -1,18 +1,20 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Reflection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MusicLibraryApi.Client;
 using MusicLibraryApi.Dal.EfCore;
 using MusicLibraryApi.Dal.EfCore.Entities;
 using MusicLibraryApi.IntegrationTests.Utility;
 
 namespace MusicLibraryApi.IntegrationTests
 {
-	public class CustomWebApplicationFactory : WebApplicationFactory<Startup>
+	public class CustomWebApplicationFactory : WebApplicationFactory<Startup>, IHttpClientFactory
 	{
 		public CustomWebApplicationFactory()
 		{
@@ -31,6 +33,17 @@ namespace MusicLibraryApi.IntegrationTests
 
 				configBuilder.AddJsonFile(configFile, optional: false);
 			});
+
+			builder.ConfigureServices(services =>
+			{
+				services.AddMusicLibraryApiClient();
+				services.AddSingleton<IHttpClientFactory>(this);
+			});
+		}
+
+		public HttpClient CreateClient(string name)
+		{
+			return CreateClient();
 		}
 
 		public void SeedData()

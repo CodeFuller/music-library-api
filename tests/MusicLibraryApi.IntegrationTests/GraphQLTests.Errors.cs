@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json;
 
 namespace MusicLibraryApi.IntegrationTests
 {
@@ -52,7 +54,12 @@ namespace MusicLibraryApi.IntegrationTests
 				},
 			};
 
-			await AssertResponse(response, expectedData);
+			Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+
+			var expectedBody = JsonConvert.SerializeObject(expectedData);
+			var receivedBody = await response.Content.ReadAsStringAsync();
+
+			Assert.AreEqual(expectedBody, receivedBody);
 		}
 	}
 }

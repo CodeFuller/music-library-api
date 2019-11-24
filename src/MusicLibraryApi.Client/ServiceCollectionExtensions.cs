@@ -14,6 +14,7 @@ namespace MusicLibraryApi.Client
 			services.AddTransient<IGenresQuery, GenreOperations>();
 			services.AddTransient<IGenresMutation, GenreOperations>();
 			services.AddTransient<IDiscsQuery, DiscOperations>();
+			services.AddTransient<IDiscsMutation, DiscOperations>();
 
 			services.AddHttpClient(BasicQuery.HttpClientName, (serviceProvider, httpClient) =>
 			{

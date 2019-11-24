@@ -1,51 +1,71 @@
 ﻿using System;
-using System.Net.Http;
+using System.Collections;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MusicLibraryApi.Client;
+using MusicLibraryApi.Client.Contracts.Genres;
+using MusicLibraryApi.Client.Exceptions;
+using MusicLibraryApi.Client.Interfaces;
 
 namespace MusicLibraryApi.IntegrationTests
 {
 	public sealed partial class GraphQLTests
 	{
+		private class GenreDataComparer : IComparer
+		{
+			public int Compare(object? x, object? y)
+			{
+				var g1 = x as OutputGenreData;
+				var g2 = y as OutputGenreData;
+
+				if (Object.ReferenceEquals(g1, null) && Object.ReferenceEquals(g2, null))
+				{
+					return 0;
+				}
+
+				if (Object.ReferenceEquals(g1, null))
+				{
+					return -1;
+				}
+
+				if (Object.ReferenceEquals(g2, null))
+				{
+					return 1;
+				}
+
+				var cmp = Nullable.Compare(g1.Id, g2.Id);
+				if (cmp != 0)
+				{
+					return cmp;
+				}
+
+				return String.Compare(g1.Name, g2.Name, StringComparison.Ordinal);
+			}
+		}
+
 		[TestMethod]
 		public async Task GenresQuery_ReturnsCorrectData()
 		{
 			// Arrange
 
-			var client = webApplicationFactory.CreateClient();
+			var expectedGenres = new[]
+			{
+				new OutputGenreData(1, "Russian Rock"),
+				new OutputGenreData(2, "Nu Metal"),
+				new OutputGenreData(3, "Alternative Rock"),
+			};
+
+			var client = CreateClient<IGenresQuery>();
 
 			// Act
 
-			var response = await ExecuteGetGenresQuery(client);
+			var receivedGenres = await client.GetGenres(GenreFields.All, CancellationToken.None);
 
 			// Assert
 
-			var expectedData = new
-			{
-				data = new
-				{
-					genres = new[]
-					{
-						new
-						{
-							id = 1,
-							name = "Russian Rock",
-						},
-						new
-						{
-							id = 2,
-							name = "Nu Metal",
-						},
-						new
-						{
-							id = 3,
-							name = "Alternative Rock",
-						},
-					},
-				},
-			};
-
-			await AssertResponse(response, expectedData);
+			CollectionAssert.AreEqual(expectedGenres, receivedGenres.ToList(), new GenreDataComparer());
 		}
 
 		[TestMethod]
@@ -53,61 +73,30 @@ namespace MusicLibraryApi.IntegrationTests
 		{
 			// Arrange
 
-			var client = webApplicationFactory.CreateClient();
+			var client = CreateClient<IGenresMutation>();
 
 			// Act
 
-			var response = await ExecuteCreateGenreMutation(client, "Gothic Metal");
+			var newGenreId = await client.CreateGenre(new InputGenreData("Gothic Metal"), CancellationToken.None);
 
 			// Assert
 
-			var expectedData = new
+			Assert.AreEqual(4, newGenreId);
+
+			// Checking new genres data
+
+			var expectedGenres = new[]
 			{
-				data = new
-				{
-					createGenre = new
-					{
-						newGenreId = 4,
-					},
-				},
+				new OutputGenreData(1, "Russian Rock"),
+				new OutputGenreData(2, "Nu Metal"),
+				new OutputGenreData(3, "Alternative Rock"),
+				new OutputGenreData(4, "Gothic Metal"),
 			};
 
-			await AssertResponse(response, expectedData);
+			var genresQuery = CreateClient<IGenresQuery>();
+			var receivedGenres = await genresQuery.GetGenres(GenreFields.All, CancellationToken.None);
 
-			// Checking the genre data
-
-			var expectedGenresData = new
-			{
-				data = new
-				{
-					genres = new[]
-					{
-						new
-						{
-							id = 1,
-							name = "Russian Rock",
-						},
-						new
-						{
-							id = 2,
-							name = "Nu Metal",
-						},
-						new
-						{
-							id = 3,
-							name = "Alternative Rock",
-						},
-						new
-						{
-							id = 4,
-							name = "Gothic Metal",
-						},
-					},
-				},
-			};
-
-			var response2 = await ExecuteGetGenresQuery(client);
-			await AssertResponse(response2, expectedGenresData);
+			CollectionAssert.AreEqual(expectedGenres, receivedGenres.ToList(), new GenreDataComparer());
 		}
 
 		[TestMethod]
@@ -115,107 +104,30 @@ namespace MusicLibraryApi.IntegrationTests
 		{
 			// Arrange
 
-			var client = webApplicationFactory.CreateClient();
+			var client = CreateClient<IGenresMutation>();
 
 			// Act
 
-			var response = await ExecuteCreateGenreMutation(client, "Nu Metal");
+			var createGenreTask = client.CreateGenre(new InputGenreData("Nu Metal"), CancellationToken.None);
 
 			// Assert
 
-			var expectedData = new
-			{
-				data = new
-				{
-					createGenre = (object?)null,
-				},
+			var exception = await Assert.ThrowsExceptionAsync<GraphQLRequestFailedException>(() => createGenreTask);
+			Assert.AreEqual("Genre 'Nu Metal' already exists", exception.Message);
 
-				errors = new[]
-				{
-					new
-					{
-						message = "Genre 'Nu Metal' already exists",
-						locations = new[]
-						{
-							new
-							{
-								line = 2,
-								column = 8,
-							},
-						},
-						path = new[] { "createGenre" },
-					},
-				},
+			// Checking that no changes to the genres were made
+
+			var expectedGenres = new[]
+			{
+				new OutputGenreData(1, "Russian Rock"),
+				new OutputGenreData(2, "Nu Metal"),
+				new OutputGenreData(3, "Alternative Rock"),
 			};
 
-			await AssertResponse(response, expectedData);
+			var genresQuery = CreateClient<IGenresQuery>();
+			var receivedGenres = await genresQuery.GetGenres(GenreFields.All, CancellationToken.None);
 
-			// Checking the genre data
-
-			var expectedGenresData = new
-			{
-				data = new
-				{
-					genres = new[]
-					{
-						new
-						{
-							id = 1,
-							name = "Russian Rock",
-						},
-						new
-						{
-							id = 2,
-							name = "Nu Metal",
-						},
-						new
-						{
-							id = 3,
-							name = "Alternative Rock",
-						},
-					},
-				},
-			};
-
-			var response2 = await ExecuteGetGenresQuery(client);
-			await AssertResponse(response2, expectedGenresData);
-		}
-
-		private Task<HttpResponseMessage> ExecuteGetGenresQuery(HttpClient client)
-		{
-			var requestBody = new
-			{
-				query = @"{
-							genres {
-								id
-								name
-							}
-						}",
-			};
-
-			return client.PostAsJsonAsync(new Uri("/graphql", UriKind.Relative), requestBody);
-		}
-
-		private Task<HttpResponseMessage> ExecuteCreateGenreMutation(HttpClient client, object genreName)
-		{
-			var requestBody = new
-			{
-				query = @"mutation ($genre: GenreInput!) {
-							createGenre(genre: $genre) {
-								newGenreId
-							}
-						}",
-
-				variables = new
-				{
-					genre = new
-					{
-						name = genreName,
-					},
-				},
-			};
-
-			return client.PostAsJsonAsync(new Uri("/graphql", UriKind.Relative), requestBody);
+			CollectionAssert.AreEqual(expectedGenres, receivedGenres.ToList(), new GenreDataComparer());
 		}
 	}
 }

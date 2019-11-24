@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\MusicLibraryApi.Client\MusicLibraryApi.Client.csproj" />
     <ProjectReference Include="..\..\src\MusicLibraryApi\MusicLibraryApi.csproj" />
   </ItemGroup>
 

@@ -60,17 +60,25 @@ namespace MusicLibraryApi.Client.Operations
 				Logger.LogWarning("The query {QueryName} results contain error: {QueryErrorMessage}", queryName, error.Message);
 			}
 
+			var errorMessage = responseData.Errors?.Select(e => e.Message).FirstOrDefault(m => !String.IsNullOrEmpty(m));
+
 			if (responseData.Data == null)
 			{
 				Logger.LogError("The query {QueryName} returned null data", queryName);
-				throw new GraphQLRequestFailedException($"Query {queryName} returned null data");
+				throw new GraphQLRequestFailedException(errorMessage ?? $"Query {queryName} returned null data");
 			}
 
 			var dataToken = responseData.Data[queryName];
 			if (dataToken == null)
 			{
 				Logger.LogError("The field {QueryName} is missing in query result", queryName);
-				throw new GraphQLRequestFailedException($"The field {queryName} is missing in query result");
+				throw new GraphQLRequestFailedException(errorMessage ?? $"The field {queryName} is missing in query result");
+			}
+
+			if (!dataToken.HasValues)
+			{
+				Logger.LogError("The field {QueryName} is null in query result", queryName);
+				throw new GraphQLRequestFailedException(errorMessage ?? $"The field {queryName} is null in query result");
 			}
 
 			return dataToken.ToObject<TData>();

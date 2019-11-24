@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Net.Http;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -19,14 +18,9 @@ namespace MusicLibraryApi.Client.Operations
 		{
 		}
 
-		public async IAsyncEnumerable<OutputGenreData> GetGenres(QueryFieldSet fields, [EnumeratorCancellation] CancellationToken cancellationToken)
+		public async Task<IReadOnlyCollection<OutputGenreData>> GetGenres(QueryFieldSet fields, CancellationToken cancellationToken)
 		{
-			var genres = await ExecuteQuery<OutputGenreData[]>("genres", fields, cancellationToken);
-
-			foreach (var genre in genres)
-			{
-				yield return genre;
-			}
+			return await ExecuteQuery<OutputGenreData[]>("genres", fields, cancellationToken);
 		}
 
 		public async Task<int> CreateGenre(InputGenreData genreData, CancellationToken cancellationToken)

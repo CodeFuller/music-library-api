@@ -9,6 +9,11 @@ namespace MusicLibraryApi.Client
 	{
 		private readonly IReadOnlyCollection<QueryField> fields;
 
+		public QueryFieldSet(QueryField field)
+		{
+			fields = new List<QueryField> { field };
+		}
+
 		public QueryFieldSet(QueryField f1, QueryField f2)
 		{
 			fields = new List<QueryField> { f1, f2 };
@@ -17,6 +22,16 @@ namespace MusicLibraryApi.Client
 		public QueryFieldSet(QueryFieldSet set, QueryField field)
 		{
 			fields = new List<QueryField>(set.fields) { field };
+		}
+
+		public static implicit operator QueryFieldSet(QueryField field)
+		{
+			return new QueryFieldSet(field);
+		}
+
+		public static QueryFieldSet FromQueryField(QueryField field)
+		{
+			return new QueryFieldSet(field);
 		}
 
 		public static QueryFieldSet operator +(QueryFieldSet set, QueryField field)

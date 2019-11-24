@@ -1,80 +1,102 @@
 ﻿using System;
-using System.Net.Http;
+using System.Collections;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using static System.FormattableString;
+using MusicLibraryApi.Client;
+using MusicLibraryApi.Client.Contracts.Discs;
+using MusicLibraryApi.Client.Exceptions;
+using MusicLibraryApi.Client.Interfaces;
 
 namespace MusicLibraryApi.IntegrationTests
 {
 	public sealed partial class GraphQLTests
 	{
+		private class DiscDataComparer : IComparer
+		{
+			public int Compare(object? x, object? y)
+			{
+				var d1 = x as OutputDiscData;
+				var d2 = y as OutputDiscData;
+
+				if (Object.ReferenceEquals(d1, null) && Object.ReferenceEquals(d2, null))
+				{
+					return 0;
+				}
+
+				if (Object.ReferenceEquals(d1, null))
+				{
+					return -1;
+				}
+
+				if (Object.ReferenceEquals(d2, null))
+				{
+					return 1;
+				}
+
+				var cmp = Nullable.Compare(d1.Id, d2.Id);
+				if (cmp != 0)
+				{
+					return cmp;
+				}
+
+				cmp = Nullable.Compare(d1.Year, d2.Year);
+				if (cmp != 0)
+				{
+					return cmp;
+				}
+
+				cmp = String.Compare(d1.Title, d2.Title, StringComparison.Ordinal);
+				if (cmp != 0)
+				{
+					return cmp;
+				}
+
+				cmp = String.Compare(d1.AlbumTitle, d2.AlbumTitle, StringComparison.Ordinal);
+				if (cmp != 0)
+				{
+					return cmp;
+				}
+
+				cmp = Nullable.Compare(d1.AlbumOrder, d2.AlbumOrder);
+				if (cmp != 0)
+				{
+					return cmp;
+				}
+
+				cmp = Nullable.Compare(d1.DeleteDate, d2.DeleteDate);
+				if (cmp != 0)
+				{
+					return cmp;
+				}
+
+				return String.Compare(d1.DeleteComment, d2.DeleteComment, StringComparison.Ordinal);
+			}
+		}
+
 		[TestMethod]
 		public async Task DiscsQuery_ReturnsCorrectData()
 		{
 			// Arrange
 
-			var client = webApplicationFactory.CreateClient();
+			var expectedDiscs = new[]
+			{
+				new OutputDiscData(1, 1988, "Князь тишины", null, null, null, null),
+				new OutputDiscData(2, 2001, "Platinum Hits (CD 1)", "Platinum Hits", 1, new DateTimeOffset(2019, 11, 10, 15, 38, 01, TimeSpan.FromHours(2)), "Boring"),
+				new OutputDiscData(3, 2001, "Platinum Hits (CD 2)", "Platinum Hits", 2, new DateTimeOffset(2019, 11, 10, 15, 38, 02, TimeSpan.FromHours(2)), "Boring"),
+				new OutputDiscData(4, null, "Foreign", null, null, null, null),
+			};
+
+			var client = CreateClient<IDiscsQuery>();
 
 			// Act
 
-			var response = await GetDiscsData(client);
+			var receivedDiscs = await client.GetDiscs(DiscFields.All, CancellationToken.None);
 
 			// Assert
 
-			var expectedData = new
-			{
-				data = new
-				{
-					discs = new[]
-					{
-						new
-						{
-							id = 1,
-							year = (int?)1988,
-							title = "Князь тишины",
-							albumTitle = (string?)null,
-							albumOrder = (int?)null,
-							deleteDate = (DateTimeOffset?)null,
-							deleteComment = (string?)null,
-						},
-
-						new
-						{
-							id = 2,
-							year = (int?)2001,
-							title = "Platinum Hits (CD 1)",
-							albumTitle = (string?)"Platinum Hits",
-							albumOrder = (int?)1,
-							deleteDate = (DateTimeOffset?)new DateTimeOffset(2019, 11, 10, 15, 38, 01, TimeSpan.FromHours(2)).ToUniversalTime(),
-							deleteComment = (string?)"Boring",
-						},
-
-						new
-						{
-							id = 3,
-							year = (int?)2001,
-							title = "Platinum Hits (CD 2)",
-							albumTitle = (string?)"Platinum Hits",
-							albumOrder = (int?)2,
-							deleteDate = (DateTimeOffset?)new DateTimeOffset(2019, 11, 10, 15, 38, 02, TimeSpan.FromHours(2)).ToUniversalTime(),
-							deleteComment = (string?)"Boring",
-						},
-
-						new
-						{
-							id = 4,
-							year = (int?)null,
-							title = "Foreign",
-							albumTitle = (string?)null,
-							albumOrder = (int?)null,
-							deleteDate = (DateTimeOffset?)null,
-							deleteComment = (string?)null,
-						},
-					},
-				},
-			};
-
-			await AssertResponse(response, expectedData);
+			CollectionAssert.AreEqual(expectedDiscs, receivedDiscs.ToList(), new DiscDataComparer());
 		}
 
 		[TestMethod]
@@ -82,32 +104,18 @@ namespace MusicLibraryApi.IntegrationTests
 		{
 			// Arrange
 
-			var client = webApplicationFactory.CreateClient();
+			var expectedData = new OutputDiscData(2, 2001, "Platinum Hits (CD 1)", "Platinum Hits", 1, new DateTimeOffset(2019, 11, 10, 15, 38, 01, TimeSpan.FromHours(2)), "Boring");
+
+			var client = CreateClient<IDiscsQuery>();
 
 			// Act
 
-			var response = await ExecuteGetDiscQuery(client, 2);
+			var receivedData = await client.GetDisc(2, DiscFields.All, CancellationToken.None);
 
 			// Assert
 
-			var expectedData = new
-			{
-				data = new
-				{
-					disc = new
-					{
-						id = 2,
-						year = 2001,
-						title = "Platinum Hits (CD 1)",
-						albumTitle = "Platinum Hits",
-						albumOrder = 1,
-						deleteDate = new DateTimeOffset(2019, 11, 10, 15, 38, 01, TimeSpan.FromHours(2)).ToUniversalTime(),
-						deleteComment = "Boring",
-					},
-				},
-			};
-
-			await AssertResponse(response, expectedData);
+			var cmp = new DiscDataComparer().Compare(expectedData, receivedData);
+			Assert.AreEqual(0, cmp, "Discs data does not match");
 		}
 
 		[TestMethod]
@@ -115,32 +123,18 @@ namespace MusicLibraryApi.IntegrationTests
 		{
 			// Arrange
 
-			var client = webApplicationFactory.CreateClient();
+			var expectedData = new OutputDiscData(4, null, "Foreign", null, null, null, null);
+
+			var client = CreateClient<IDiscsQuery>();
 
 			// Act
 
-			var response = await ExecuteGetDiscQuery(client, 4);
+			var receivedData = await client.GetDisc(4, DiscFields.All, CancellationToken.None);
 
 			// Assert
 
-			var expectedData = new
-			{
-				data = new
-				{
-					disc = new
-					{
-						id = 4,
-						year = (int?)null,
-						title = "Foreign",
-						albumTitle = (string?)null,
-						albumOrder = (int?)null,
-						deleteDate = (DateTimeOffset?)null,
-						deleteComment = (string?)null,
-					},
-				},
-			};
-
-			await AssertResponse(response, expectedData);
+			var cmp = new DiscDataComparer().Compare(expectedData, receivedData);
+			Assert.AreEqual(0, cmp, "Discs data does not match");
 		}
 
 		[TestMethod]
@@ -148,40 +142,16 @@ namespace MusicLibraryApi.IntegrationTests
 		{
 			// Arrange
 
-			var client = webApplicationFactory.CreateClient();
+			var client = CreateClient<IDiscsQuery>();
 
 			// Act
 
-			var response = await ExecuteGetDiscQuery(client, 12345);
+			var getDiscTask = client.GetDisc(12345, DiscFields.All, CancellationToken.None);
 
 			// Assert
 
-			var expectedData = new
-			{
-				data = new
-				{
-					disc = (object?)null,
-				},
-
-				errors = new[]
-				{
-					new
-					{
-						message = "The disc with id of '12345' does not exist",
-						locations = new[]
-						{
-							new
-							{
-								line = 2,
-								column = 8,
-							},
-						},
-						path = new[] { "disc" },
-					},
-				},
-			};
-
-			await AssertResponse(response, expectedData);
+			var exception = await Assert.ThrowsExceptionAsync<GraphQLRequestFailedException>(() => getDiscTask);
+			Assert.AreEqual("The disc with id of '12345' does not exist", exception.Message);
 		}
 
 		[TestMethod]
@@ -189,105 +159,33 @@ namespace MusicLibraryApi.IntegrationTests
 		{
 			// Arrange
 
-			var client = webApplicationFactory.CreateClient();
+			var newDiscData = new InputDiscData(1994, "Битва на мотоциклах (CD 2)", "Битва на мотоциклах", 2, new DateTimeOffset(2019, 11, 10, 18, 50, 24, TimeSpan.FromHours(2)), "Deleted just for test :)");
 
-			var discData = new
-			{
-				year = 1994,
-				title = "Битва на мотоциклах (CD 2)",
-				albumTitle = "Битва на мотоциклах",
-				albumOrder = 2,
-				deleteDate = new DateTimeOffset(2019, 11, 10, 18, 50, 24, TimeSpan.FromHours(2)),
-				deleteComment = "Deleted just for test :)",
-			};
+			var client = CreateClient<IDiscsMutation>();
 
 			// Act
 
-			var response = await ExecuteCreateDiscMutation(client, discData, 4);
+			var newDiscId = await client.CreateDisc(4, newDiscData, CancellationToken.None);
 
 			// Assert
 
-			var expectedData = new
+			Assert.AreEqual(5, newDiscId);
+
+			// Checking new discs data
+
+			var expectedDiscs = new[]
 			{
-				data = new
-				{
-					createDisc = new
-					{
-						newDiscId = 5,
-					},
-				},
+				new OutputDiscData(1, 1988, "Князь тишины", null, null, null, null),
+				new OutputDiscData(2, 2001, "Platinum Hits (CD 1)", "Platinum Hits", 1, new DateTimeOffset(2019, 11, 10, 15, 38, 01, TimeSpan.FromHours(2)), "Boring"),
+				new OutputDiscData(3, 2001, "Platinum Hits (CD 2)", "Platinum Hits", 2, new DateTimeOffset(2019, 11, 10, 15, 38, 02, TimeSpan.FromHours(2)), "Boring"),
+				new OutputDiscData(4, null, "Foreign", null, null, null, null),
+				new OutputDiscData(5, 1994, "Битва на мотоциклах (CD 2)", "Битва на мотоциклах", 2, new DateTimeOffset(2019, 11, 10, 18, 50, 24, TimeSpan.FromHours(2)), "Deleted just for test :)"),
 			};
 
-			await AssertResponse(response, expectedData);
+			var discsQuery = CreateClient<IDiscsQuery>();
+			var receivedDiscs = await discsQuery.GetDiscs(DiscFields.All, CancellationToken.None);
 
-			// Checking the genre data
-
-			var expectedDiscsData = new
-			{
-				data = new
-				{
-					discs = new[]
-					{
-						new
-						{
-							id = 1,
-							year = (int?)1988,
-							title = "Князь тишины",
-							albumTitle = (string?)null,
-							albumOrder = (int?)null,
-							deleteDate = (DateTimeOffset?)null,
-							deleteComment = (string?)null,
-						},
-
-						new
-						{
-							id = 2,
-							year = (int?)2001,
-							title = "Platinum Hits (CD 1)",
-							albumTitle = (string?)"Platinum Hits",
-							albumOrder = (int?)1,
-							deleteDate = (DateTimeOffset?)new DateTimeOffset(2019, 11, 10, 15, 38, 01, TimeSpan.FromHours(2)).ToUniversalTime(),
-							deleteComment = (string?)"Boring",
-						},
-
-						new
-						{
-							id = 3,
-							year = (int?)2001,
-							title = "Platinum Hits (CD 2)",
-							albumTitle = (string?)"Platinum Hits",
-							albumOrder = (int?)2,
-							deleteDate = (DateTimeOffset?)new DateTimeOffset(2019, 11, 10, 15, 38, 02, TimeSpan.FromHours(2)).ToUniversalTime(),
-							deleteComment = (string?)"Boring",
-						},
-
-						new
-						{
-							id = 4,
-							year = (int?)null,
-							title = "Foreign",
-							albumTitle = (string?)null,
-							albumOrder = (int?)null,
-							deleteDate = (DateTimeOffset?)null,
-							deleteComment = (string?)null,
-						},
-
-						new
-						{
-							id = 5,
-							year = (int?)1994,
-							title = "Битва на мотоциклах (CD 2)",
-							albumTitle = (string?)"Битва на мотоциклах",
-							albumOrder = (int?)2,
-							deleteDate = (DateTimeOffset?)new DateTimeOffset(2019, 11, 10, 18, 50, 24, TimeSpan.FromHours(2)).ToUniversalTime(),
-							deleteComment = (string?)"Deleted just for test :)",
-						},
-					},
-				},
-			};
-
-			var response2 = await GetDiscsData(client);
-			await AssertResponse(response2, expectedDiscsData);
+			CollectionAssert.AreEqual(expectedDiscs, receivedDiscs.ToList(), new DiscDataComparer());
 		}
 
 		[TestMethod]
@@ -295,100 +193,33 @@ namespace MusicLibraryApi.IntegrationTests
 		{
 			// Arrange
 
-			var client = webApplicationFactory.CreateClient();
+			var newDiscData = new InputDiscData(null, "Russian", null, null, null, null);
 
-			var discData = new
-			{
-				title = "Russian",
-			};
+			var client = CreateClient<IDiscsMutation>();
 
 			// Act
 
-			var response = await ExecuteCreateDiscMutation(client, discData, 4);
+			var newDiscId = await client.CreateDisc(4, newDiscData, CancellationToken.None);
 
 			// Assert
 
-			var expectedData = new
+			Assert.AreEqual(5, newDiscId);
+
+			// Checking new discs data
+
+			var expectedDiscs = new[]
 			{
-				data = new
-				{
-					createDisc = new
-					{
-						newDiscId = 5,
-					},
-				},
+				new OutputDiscData(1, 1988, "Князь тишины", null, null, null, null),
+				new OutputDiscData(2, 2001, "Platinum Hits (CD 1)", "Platinum Hits", 1, new DateTimeOffset(2019, 11, 10, 15, 38, 01, TimeSpan.FromHours(2)), "Boring"),
+				new OutputDiscData(3, 2001, "Platinum Hits (CD 2)", "Platinum Hits", 2, new DateTimeOffset(2019, 11, 10, 15, 38, 02, TimeSpan.FromHours(2)), "Boring"),
+				new OutputDiscData(4, null, "Foreign", null, null, null, null),
+				new OutputDiscData(5, null, "Russian", null, null, null, null),
 			};
 
-			await AssertResponse(response, expectedData);
+			var discsQuery = CreateClient<IDiscsQuery>();
+			var receivedDiscs = await discsQuery.GetDiscs(DiscFields.All, CancellationToken.None);
 
-			// Checking the genre data
-
-			var expectedDiscsData = new
-			{
-				data = new
-				{
-					discs = new[]
-					{
-						new
-						{
-							id = 1,
-							year = (int?)1988,
-							title = "Князь тишины",
-							albumTitle = (string?)null,
-							albumOrder = (int?)null,
-							deleteDate = (DateTimeOffset?)null,
-							deleteComment = (string?)null,
-						},
-
-						new
-						{
-							id = 2,
-							year = (int?)2001,
-							title = "Platinum Hits (CD 1)",
-							albumTitle = (string?)"Platinum Hits",
-							albumOrder = (int?)1,
-							deleteDate = (DateTimeOffset?)new DateTimeOffset(2019, 11, 10, 15, 38, 01, TimeSpan.FromHours(2)).ToUniversalTime(),
-							deleteComment = (string?)"Boring",
-						},
-
-						new
-						{
-							id = 3,
-							year = (int?)2001,
-							title = "Platinum Hits (CD 2)",
-							albumTitle = (string?)"Platinum Hits",
-							albumOrder = (int?)2,
-							deleteDate = (DateTimeOffset?)new DateTimeOffset(2019, 11, 10, 15, 38, 02, TimeSpan.FromHours(2)).ToUniversalTime(),
-							deleteComment = (string?)"Boring",
-						},
-
-						new
-						{
-							id = 4,
-							year = (int?)null,
-							title = "Foreign",
-							albumTitle = (string?)null,
-							albumOrder = (int?)null,
-							deleteDate = (DateTimeOffset?)null,
-							deleteComment = (string?)null,
-						},
-
-						new
-						{
-							id = 5,
-							year = (int?)null,
-							title = "Russian",
-							albumTitle = (string?)null,
-							albumOrder = (int?)null,
-							deleteDate = (DateTimeOffset?)null,
-							deleteComment = (string?)null,
-						},
-					},
-				},
-			};
-
-			var response2 = await GetDiscsData(client);
-			await AssertResponse(response2, expectedDiscsData);
+			CollectionAssert.AreEqual(expectedDiscs, receivedDiscs.ToList(), new DiscDataComparer());
 		}
 
 		[TestMethod]
@@ -396,138 +227,33 @@ namespace MusicLibraryApi.IntegrationTests
 		{
 			// Arrange
 
-			var client = webApplicationFactory.CreateClient();
+			var newDiscData = new InputDiscData(null, "Some New Disc", null, null, null, null);
 
-			var discData = new
-			{
-				title = "Some New Disc",
-			};
+			var client = CreateClient<IDiscsMutation>();
 
 			// Act
 
-			var response = await ExecuteCreateDiscMutation(client, discData, 12345);
+			var createDiscTask = client.CreateDisc(12345, newDiscData, CancellationToken.None);
 
-			// Assert
+			// Arrange
 
-			var expectedData = new
+			var exception = await Assert.ThrowsExceptionAsync<GraphQLRequestFailedException>(() => createDiscTask);
+			Assert.AreEqual("The folder with id of '12345' does not exist", exception.Message);
+
+			// Checking that no changes to the discs were made
+
+			var expectedDiscs = new[]
 			{
-				data = new
-				{
-					createDisc = (object?)null,
-				},
-
-				errors = new[]
-				{
-					new
-					{
-						message = "The folder with id of '12345' does not exist",
-						locations = new[]
-						{
-							new
-							{
-								line = 2,
-								column = 8,
-							},
-						},
-						path = new[] { "createDisc" },
-					},
-				},
+				new OutputDiscData(1, null, null, null, null, null, null),
+				new OutputDiscData(2, null, null, null, null, null, null),
+				new OutputDiscData(3, null, null, null, null, null, null),
+				new OutputDiscData(4, null, null, null, null, null, null),
 			};
 
-			await AssertResponse(response, expectedData);
+			var discsQuery = CreateClient<IDiscsQuery>();
+			var receivedDiscs = await discsQuery.GetDiscs(DiscFields.Id, CancellationToken.None);
 
-			// Checking the genre data
-
-			var expectedDiscsData = new
-			{
-				data = new
-				{
-					discs = new[]
-					{
-						new { id = 1, },
-						new { id = 2, },
-						new { id = 3, },
-						new { id = 4, },
-					},
-				},
-			};
-
-			var response2 = await GetDiscsIds(client);
-			await AssertResponse(response2, expectedDiscsData);
-		}
-
-		private Task<HttpResponseMessage> GetDiscsData(HttpClient client)
-		{
-			var requestBody = new
-			{
-				query = @"{
-							discs {
-								id
-								year
-								title
-								albumTitle
-								albumOrder
-								deleteDate
-								deleteComment
-							}
-						}",
-			};
-
-			return client.PostAsJsonAsync(new Uri("/graphql", UriKind.Relative), requestBody);
-		}
-
-		private Task<HttpResponseMessage> GetDiscsIds(HttpClient client)
-		{
-			var requestBody = new
-			{
-				query = @"{
-							discs {
-								id
-							}
-						}",
-			};
-
-			return client.PostAsJsonAsync(new Uri("/graphql", UriKind.Relative), requestBody);
-		}
-
-		private Task<HttpResponseMessage> ExecuteGetDiscQuery(HttpClient client, int discId)
-		{
-			var requestBody = new
-			{
-				query = Invariant($@"{{
-							disc(id: {discId}) {{
-								id
-								year
-								title
-								albumTitle
-								albumOrder
-								deleteDate
-								deleteComment
-							}}
-						}}"),
-			};
-
-			return client.PostAsJsonAsync(new Uri("/graphql", UriKind.Relative), requestBody);
-		}
-
-		private Task<HttpResponseMessage> ExecuteCreateDiscMutation(HttpClient client, object discData, int folderId)
-		{
-			var requestBody = new
-			{
-				query = @"mutation ($disc: DiscInput!, $folderId: ID!) {
-							createDisc(disc: $disc, folderId: $folderId) {
-								newDiscId
-							}
-						}",
-
-				variables = new
-				{
-					disc = discData,
-					folderId = folderId,
-				},
-			};
-
-			return client.PostAsJsonAsync(new Uri("/graphql", UriKind.Relative), requestBody);
+			CollectionAssert.AreEqual(expectedDiscs, receivedDiscs.ToList(), new GenreDataComparer());
 		}
 	}
 }
