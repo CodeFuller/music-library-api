@@ -4,47 +4,51 @@ using System.Collections.Generic;
 namespace MusicLibraryApi.Client.Fields
 {
 #pragma warning disable CA1710 // Identifiers should have correct suffix
-	public class QueryFieldSet : IEnumerable<QueryField>
+	public class QueryFieldSet<TQuery> : IEnumerable<QueryField<TQuery>>
 #pragma warning restore CA1710 // Identifiers should have correct suffix
 	{
-		private readonly IReadOnlyCollection<QueryField> fields;
+		private readonly IReadOnlyCollection<QueryField<TQuery>> fields;
 
-		public QueryFieldSet(QueryField field)
+		public QueryFieldSet(QueryField<TQuery> field)
 		{
-			fields = new List<QueryField> { field };
+			fields = new List<QueryField<TQuery>> { field };
 		}
 
-		public QueryFieldSet(QueryField f1, QueryField f2)
+		public QueryFieldSet(QueryField<TQuery> f1, QueryField<TQuery> f2)
 		{
-			fields = new List<QueryField> { f1, f2 };
+			fields = new List<QueryField<TQuery>> { f1, f2 };
 		}
 
-		public QueryFieldSet(QueryFieldSet set, QueryField field)
+		public QueryFieldSet(QueryFieldSet<TQuery> set, QueryField<TQuery> field)
 		{
-			fields = new List<QueryField>(set.fields) { field };
+			fields = new List<QueryField<TQuery>>(set.fields) { field };
 		}
 
-		public static implicit operator QueryFieldSet(QueryField field)
+		public static implicit operator QueryFieldSet<TQuery>(QueryField<TQuery> field)
 		{
-			return new QueryFieldSet(field);
+			return new QueryFieldSet<TQuery>(field);
 		}
 
-		public static QueryFieldSet FromQueryField(QueryField field)
+#pragma warning disable CA1000 // Do not declare static members on generic types
+		public static QueryFieldSet<TQuery> FromQueryField(QueryField<TQuery> field)
+#pragma warning restore CA1000 // Do not declare static members on generic types
 		{
-			return new QueryFieldSet(field);
+			return new QueryFieldSet<TQuery>(field);
 		}
 
-		public static QueryFieldSet operator +(QueryFieldSet set, QueryField field)
+		public static QueryFieldSet<TQuery> operator +(QueryFieldSet<TQuery> set, QueryField<TQuery> field)
 		{
-			return new QueryFieldSet(set, field);
+			return new QueryFieldSet<TQuery>(set, field);
 		}
 
-		public static QueryFieldSet Add(QueryFieldSet set, QueryField field)
+#pragma warning disable CA1000 // Do not declare static members on generic types
+		public static QueryFieldSet<TQuery> Add(QueryFieldSet<TQuery> set, QueryField<TQuery> field)
+#pragma warning restore CA1000 // Do not declare static members on generic types
 		{
 			return set + field;
 		}
 
-		public IEnumerator<QueryField> GetEnumerator()
+		public IEnumerator<QueryField<TQuery>> GetEnumerator()
 		{
 			return fields.GetEnumerator();
 		}

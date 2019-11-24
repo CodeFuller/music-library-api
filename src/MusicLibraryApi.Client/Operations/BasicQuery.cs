@@ -28,7 +28,7 @@ namespace MusicLibraryApi.Client.Operations
 			this.Logger = logger ?? throw new ArgumentNullException(nameof(logger));
 		}
 
-		protected async Task<TData> ExecuteQuery<TData>(string queryName, QueryFieldSet fields, CancellationToken cancellationToken)
+		protected async Task<TData> ExecuteQuery<TQuery, TData>(string queryName, QueryFieldSet<TQuery> fields, CancellationToken cancellationToken)
 			where TData : class
 		{
 			var requestedFields = JoinRequestFields(fields);
@@ -91,7 +91,7 @@ namespace MusicLibraryApi.Client.Operations
 			return new StringContent(jsonData, Encoding.UTF8, "application/json");
 		}
 
-		protected static string JoinRequestFields(QueryFieldSet fields)
+		protected static string JoinRequestFields<TQuery>(QueryFieldSet<TQuery> fields)
 		{
 			return String.Join(" ", fields.Select(f => f.Name));
 		}

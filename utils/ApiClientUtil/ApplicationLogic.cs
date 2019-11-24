@@ -3,7 +3,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using CF.Library.Bootstrap;
 using Microsoft.Extensions.Logging;
-using MusicLibraryApi.Client;
 using MusicLibraryApi.Client.Contracts.Discs;
 using MusicLibraryApi.Client.Contracts.Genres;
 using MusicLibraryApi.Client.Fields;

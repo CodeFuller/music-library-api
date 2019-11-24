@@ -1,21 +1,23 @@
-﻿namespace MusicLibraryApi.Client.Fields
+﻿using MusicLibraryApi.Client.Fields.QueryTypes;
+
+namespace MusicLibraryApi.Client.Fields
 {
 	public static class DiscFields
 	{
-		public static QueryField Id { get; } = new QueryField("id");
+		public static QueryField<DiscQuery> Id { get; } = new QueryField<DiscQuery>("id");
 
-		public static QueryField Year { get; } = new QueryField("year");
+		public static QueryField<DiscQuery> Year { get; } = new QueryField<DiscQuery>("year");
 
-		public static QueryField Title { get; } = new QueryField("title");
+		public static QueryField<DiscQuery> Title { get; } = new QueryField<DiscQuery>("title");
 
-		public static QueryField AlbumTitle { get; } = new QueryField("albumTitle");
+		public static QueryField<DiscQuery> AlbumTitle { get; } = new QueryField<DiscQuery>("albumTitle");
 
-		public static QueryField AlbumOrder { get; } = new QueryField("albumOrder");
+		public static QueryField<DiscQuery> AlbumOrder { get; } = new QueryField<DiscQuery>("albumOrder");
 
-		public static QueryField DeleteDate { get; } = new QueryField("deleteDate");
+		public static QueryField<DiscQuery> DeleteDate { get; } = new QueryField<DiscQuery>("deleteDate");
 
-		public static QueryField DeleteComment { get; } = new QueryField("deleteComment");
+		public static QueryField<DiscQuery> DeleteComment { get; } = new QueryField<DiscQuery>("deleteComment");
 
-		public static QueryFieldSet All { get; } = Id + Year + Title + AlbumTitle + AlbumOrder + DeleteDate + DeleteComment;
+		public static QueryFieldSet<DiscQuery> All { get; } = Id + Year + Title + AlbumTitle + AlbumOrder + DeleteDate + DeleteComment;
 	}
 }
