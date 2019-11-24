@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using MusicLibraryApi.Client.Contracts.Genres;
 using MusicLibraryApi.Client.Exceptions;
+using MusicLibraryApi.Client.Fields;
 using MusicLibraryApi.Client.GraphQL;
 using MusicLibraryApi.Client.Interfaces;
 using static System.FormattableString;

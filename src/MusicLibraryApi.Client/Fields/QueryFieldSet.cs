@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 
-namespace MusicLibraryApi.Client
+namespace MusicLibraryApi.Client.Fields
 {
 #pragma warning disable CA1710 // Identifiers should have correct suffix
 	public class QueryFieldSet : IEnumerable<QueryField>

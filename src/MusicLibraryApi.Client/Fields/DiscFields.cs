@@ -1,4 +1,4 @@
-﻿namespace MusicLibraryApi.Client
+﻿namespace MusicLibraryApi.Client.Fields
 {
 	public static class DiscFields
 	{

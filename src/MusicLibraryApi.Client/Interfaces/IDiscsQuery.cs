@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using MusicLibraryApi.Client.Contracts.Discs;
+using MusicLibraryApi.Client.Fields;
 
 namespace MusicLibraryApi.Client.Interfaces
 {

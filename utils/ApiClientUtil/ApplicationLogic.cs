@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using MusicLibraryApi.Client;
 using MusicLibraryApi.Client.Contracts.Discs;
 using MusicLibraryApi.Client.Contracts.Genres;
+using MusicLibraryApi.Client.Fields;
 using MusicLibraryApi.Client.Interfaces;
 
 namespace ApiClientUtil

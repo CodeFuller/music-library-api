@@ -7,6 +7,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MusicLibraryApi.Client;
 using MusicLibraryApi.Client.Contracts.Discs;
 using MusicLibraryApi.Client.Exceptions;
+using MusicLibraryApi.Client.Fields;
 using MusicLibraryApi.Client.Interfaces;
 
 namespace MusicLibraryApi.IntegrationTests

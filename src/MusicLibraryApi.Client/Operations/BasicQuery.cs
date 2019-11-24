@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using MusicLibraryApi.Client.Exceptions;
+using MusicLibraryApi.Client.Fields;
 using MusicLibraryApi.Client.GraphQL;
 using Newtonsoft.Json;
 

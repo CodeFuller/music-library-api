@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MusicLibraryApi.Client
+namespace MusicLibraryApi.Client.Fields
 {
 	public class QueryField
 	{
