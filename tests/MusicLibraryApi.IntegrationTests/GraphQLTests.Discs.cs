@@ -17,8 +17,9 @@ namespace MusicLibraryApi.IntegrationTests
 		{
 			public int Compare(object? x, object? y)
 			{
-				var d1 = x as OutputDiscData;
-				var d2 = y as OutputDiscData;
+				// Using unsafe type cast to catch objects of incorrect type. Otherwise Compare() will return 0 and asserts will always pass.
+				var d1 = (OutputDiscData?)x;
+				var d2 = (OutputDiscData?)y;
 
 				if (Object.ReferenceEquals(d1, null) && Object.ReferenceEquals(d2, null))
 				{
@@ -253,7 +254,7 @@ namespace MusicLibraryApi.IntegrationTests
 			var discsQuery = CreateClient<IDiscsQuery>();
 			var receivedDiscs = await discsQuery.GetDiscs(DiscFields.Id, CancellationToken.None);
 
-			CollectionAssert.AreEqual(expectedDiscs, receivedDiscs.ToList(), new GenreDataComparer());
+			CollectionAssert.AreEqual(expectedDiscs, receivedDiscs.ToList(), new DiscDataComparer());
 		}
 	}
 }

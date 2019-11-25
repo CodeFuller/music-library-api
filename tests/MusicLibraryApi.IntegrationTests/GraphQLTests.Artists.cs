@@ -17,31 +17,32 @@ namespace MusicLibraryApi.IntegrationTests
 		{
 			public int Compare(object? x, object? y)
 			{
-				var g1 = x as OutputArtistData;
-				var g2 = y as OutputArtistData;
+				// Using unsafe type cast to catch objects of incorrect type. Otherwise Compare() will return 0 and asserts will always pass.
+				var a1 = (OutputArtistData?)x;
+				var a2 = (OutputArtistData?)y;
 
-				if (Object.ReferenceEquals(g1, null) && Object.ReferenceEquals(g2, null))
+				if (Object.ReferenceEquals(a1, null) && Object.ReferenceEquals(a2, null))
 				{
 					return 0;
 				}
 
-				if (Object.ReferenceEquals(g1, null))
+				if (Object.ReferenceEquals(a1, null))
 				{
 					return -1;
 				}
 
-				if (Object.ReferenceEquals(g2, null))
+				if (Object.ReferenceEquals(a2, null))
 				{
 					return 1;
 				}
 
-				var cmp = Nullable.Compare(g1.Id, g2.Id);
+				var cmp = Nullable.Compare(a1.Id, a2.Id);
 				if (cmp != 0)
 				{
 					return cmp;
 				}
 
-				return String.Compare(g1.Name, g2.Name, StringComparison.Ordinal);
+				return String.Compare(a1.Name, a2.Name, StringComparison.Ordinal);
 			}
 		}
 
