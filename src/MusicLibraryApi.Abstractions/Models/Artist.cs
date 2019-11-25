@@ -6,10 +6,15 @@
 
 		public string Name { get; }
 
+		public Artist(string name)
+		{
+			Name = name;
+		}
+
 		public Artist(int id, string name)
+			: this(name)
 		{
 			Id = id;
-			Name = name;
 		}
 	}
 }

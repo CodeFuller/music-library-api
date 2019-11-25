@@ -13,6 +13,8 @@ namespace MusicLibraryApi.Internal
 
 		public IGenresRepository GenresRepository => GetRepository<IGenresRepository>();
 
+		public IArtistsRepository ArtistsRepository => GetRepository<IArtistsRepository>();
+
 		public IDiscsRepository DiscsRepository => GetRepository<IDiscsRepository>();
 
 		public ContextRepositoryAccessor(IHttpContextAccessor httpContextAccessor)

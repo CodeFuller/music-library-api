@@ -7,6 +7,8 @@ namespace MusicLibraryApi.Dal.EfCore
 	{
 		public DbSet<GenreEntity> Genres { get; set; } = null!;
 
+		public DbSet<ArtistEntity> Artists { get; set; } = null!;
+
 		public DbSet<FolderEntity> Folders { get; set; } = null!;
 
 		public DbSet<DiscEntity> Discs { get; set; } = null!;
@@ -41,6 +43,7 @@ namespace MusicLibraryApi.Dal.EfCore
 			modelBuilder.Entity<ArtistEntity>(b =>
 			{
 				b.ToTable("Artists");
+				b.HasIndex(e => e.Name).IsUnique();
 			});
 
 			modelBuilder.Entity<FolderEntity>(b =>

@@ -62,6 +62,7 @@ namespace MusicLibraryApi.IntegrationTests
 			context.Songs.RemoveRange(context.Songs);
 			context.Discs.RemoveRange(context.Discs);
 			context.Folders.RemoveRange(context.Folders);
+			context.Artists.RemoveRange(context.Artists);
 			context.Genres.RemoveRange(context.Genres);
 			context.SaveChanges();
 
@@ -110,9 +111,16 @@ namespace MusicLibraryApi.IntegrationTests
 
 		private static void SeedArtistsData(MusicLibraryDbContext context, IIdentityInsert identityInsert)
 		{
+			var artist1 = new ArtistEntity(1, "Nautilus Pompilius");
+			var artist2 = new ArtistEntity(2, "AC/DC");
+			var artist3 = new ArtistEntity(3, "Кино");
+
 			identityInsert.InitializeIdentityInsert(context, "Artists");
 
+			context.Artists.AddRange(artist1, artist2, artist3);
 			context.SaveChanges();
+
+			identityInsert.FinalizeIdentityInsert(context, "Artists", 4);
 		}
 
 		private static void SeedDiscsData(MusicLibraryDbContext context, IIdentityInsert identityInsert)

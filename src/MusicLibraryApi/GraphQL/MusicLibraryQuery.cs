@@ -17,6 +17,10 @@ namespace MusicLibraryApi.GraphQL
 				"genres",
 				resolve: async context => await repositoryAccessor.GenresRepository.GetAllGenres(context.CancellationToken));
 
+			FieldAsync<ListGraphType<ArtistType>>(
+				"artists",
+				resolve: async context => await repositoryAccessor.ArtistsRepository.GetAllArtists(context.CancellationToken));
+
 			FieldAsync<DiscType>(
 				"disc",
 				arguments: new QueryArguments(new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "id" }),

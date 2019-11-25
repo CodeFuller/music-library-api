@@ -34,6 +34,27 @@ namespace MusicLibraryApi.GraphQL
 					}
 				});
 
+			FieldAsync<CreateArtistResultType>(
+				"createArtist",
+				arguments: new QueryArguments(
+					new QueryArgument<NonNullGraphType<ArtistInputType>> { Name = "artist" }),
+				resolve: async context =>
+				{
+					var artistInput = context.GetArgument<ArtistInput>("artist");
+					var artist = artistInput.ToModel();
+
+					try
+					{
+						var newArtistId = await repositoryAccessor.ArtistsRepository.AddArtist(artist, context.CancellationToken);
+						return new CreateArtistResult(newArtistId);
+					}
+					catch (DuplicateKeyException e)
+					{
+						logger.LogError(e, "Artist {ArtistName} already exists", artist.Name);
+						throw new ExecutionError(Invariant($"Artist '{artist.Name}' already exists"));
+					}
+				});
+
 			FieldAsync<CreateDiscResultType>(
 				"createDisc",
 				arguments: new QueryArguments(
