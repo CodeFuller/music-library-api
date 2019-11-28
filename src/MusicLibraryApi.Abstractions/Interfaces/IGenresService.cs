@@ -5,7 +5,7 @@ using MusicLibraryApi.Abstractions.Models;
 
 namespace MusicLibraryApi.Abstractions.Interfaces
 {
-	public interface IGenresRepository
+	public interface IGenresService
 	{
 		Task<int> CreateGenre(Genre genre, CancellationToken cancellationToken);
 

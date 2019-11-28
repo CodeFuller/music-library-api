@@ -8,7 +8,10 @@ namespace MusicLibraryApi.Logic
 	{
 		public static IServiceCollection AddLogic(this IServiceCollection services)
 		{
+			services.AddTransient<IGenresService, GenresService>();
+			services.AddTransient<IArtistsService, ArtistsService>();
 			services.AddTransient<IFoldersService, FoldersService>();
+			services.AddTransient<IDiscsService, DiscsService>();
 
 			return services;
 		}

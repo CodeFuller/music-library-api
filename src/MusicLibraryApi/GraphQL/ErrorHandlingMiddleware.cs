@@ -4,6 +4,7 @@ using GraphQL;
 using GraphQL.Instrumentation;
 using GraphQL.Types;
 using Microsoft.Extensions.Logging;
+using MusicLibraryApi.Abstractions.Exceptions;
 using static System.FormattableString;
 
 namespace MusicLibraryApi.GraphQL
@@ -19,6 +20,10 @@ namespace MusicLibraryApi.GraphQL
 			try
 			{
 				return await next(context);
+			}
+			catch (ServiceOperationFailedException e)
+			{
+				throw new ExecutionError(e.Message, e);
 			}
 			catch (Exception e) when (!(e is ExecutionError))
 			{

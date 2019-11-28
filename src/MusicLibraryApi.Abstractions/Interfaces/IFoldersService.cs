@@ -9,6 +9,6 @@ namespace MusicLibraryApi.Abstractions.Interfaces
 	{
 		Task<int> CreateFolder(int? parentFolderId, string folderName, CancellationToken cancellationToken);
 
-		Task<IReadOnlyCollection<Folder>> GetSubfolders(int? parentFolderId, CancellationToken cancellationToken);
+		Task<IReadOnlyCollection<Folder>> GetSubfolders(int? folderId, CancellationToken cancellationToken);
 	}
 }

@@ -25,7 +25,7 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 			this.mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
 		}
 
-		public async Task<int> AddDisc(int folderId, Disc disc, CancellationToken cancellationToken)
+		public async Task<int> CreateDisc(int folderId, Disc disc, CancellationToken cancellationToken)
 		{
 			var folder = await context.Folders.SingleOrDefaultAsync(f => f.Id == folderId, cancellationToken);
 			if (folder == null)
@@ -42,7 +42,7 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 			return discEntity.Id;
 		}
 
-		public async Task<IEnumerable<Disc>> GetAllDiscs(CancellationToken cancellationToken)
+		public async Task<IReadOnlyCollection<Disc>> GetAllDiscs(CancellationToken cancellationToken)
 		{
 			return await context.Discs
 				.OrderBy(d => d.Id)

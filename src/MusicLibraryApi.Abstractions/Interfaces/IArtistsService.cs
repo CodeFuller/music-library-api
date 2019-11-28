@@ -5,7 +5,7 @@ using MusicLibraryApi.Abstractions.Models;
 
 namespace MusicLibraryApi.Abstractions.Interfaces
 {
-	public interface IArtistsRepository
+	public interface IArtistsService
 	{
 		Task<int> CreateArtist(Artist artist, CancellationToken cancellationToken);
 

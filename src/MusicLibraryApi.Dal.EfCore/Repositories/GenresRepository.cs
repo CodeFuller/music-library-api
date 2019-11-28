@@ -24,7 +24,7 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 			this.mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
 		}
 
-		public async Task<int> AddGenre(Genre genre, CancellationToken cancellationToken)
+		public async Task<int> CreateGenre(Genre genre, CancellationToken cancellationToken)
 		{
 			var genreEntity = mapper.Map<GenreEntity>(genre);
 
@@ -42,7 +42,7 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 			return genreEntity.Id;
 		}
 
-		public async Task<IEnumerable<Genre>> GetAllGenres(CancellationToken cancellationToken)
+		public async Task<IReadOnlyCollection<Genre>> GetAllGenres(CancellationToken cancellationToken)
 		{
 			return await context.Genres
 				.OrderBy(g => g.Id)

@@ -11,13 +11,13 @@ namespace MusicLibraryApi.Internal
 	{
 		private readonly IHttpContextAccessor httpContextAccessor;
 
-		public IGenresRepository GenresRepository => GetService<IGenresRepository>();
+		public IGenresService GenresService => GetService<IGenresService>();
 
-		public IArtistsRepository ArtistsRepository => GetService<IArtistsRepository>();
+		public IArtistsService ArtistsService => GetService<IArtistsService>();
 
 		public IFoldersService FoldersService => GetService<IFoldersService>();
 
-		public IDiscsRepository DiscsRepository => GetService<IDiscsRepository>();
+		public IDiscsService DiscsService => GetService<IDiscsService>();
 
 		public ContextServiceAccessor(IHttpContextAccessor httpContextAccessor)
 		{

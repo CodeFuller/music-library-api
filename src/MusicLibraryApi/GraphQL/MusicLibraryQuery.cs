@@ -1,25 +1,21 @@
 ﻿using System;
-using GraphQL;
 using GraphQL.Types;
-using Microsoft.Extensions.Logging;
-using MusicLibraryApi.Abstractions.Exceptions;
 using MusicLibraryApi.GraphQL.Types;
 using MusicLibraryApi.Interfaces;
-using static System.FormattableString;
 
 namespace MusicLibraryApi.GraphQL
 {
 	public class MusicLibraryQuery : ObjectGraphType
 	{
-		public MusicLibraryQuery(IContextServiceAccessor serviceAccessor, ILogger<MusicLibraryMutation> logger)
+		public MusicLibraryQuery(IContextServiceAccessor serviceAccessor)
 		{
 			FieldAsync<ListGraphType<GenreType>>(
 				"genres",
-				resolve: async context => await serviceAccessor.GenresRepository.GetAllGenres(context.CancellationToken));
+				resolve: async context => await serviceAccessor.GenresService.GetAllGenres(context.CancellationToken));
 
 			FieldAsync<ListGraphType<ArtistType>>(
 				"artists",
-				resolve: async context => await serviceAccessor.ArtistsRepository.GetAllArtists(context.CancellationToken));
+				resolve: async context => await serviceAccessor.ArtistsService.GetAllArtists(context.CancellationToken));
 
 			FieldAsync<ListGraphType<FolderType>>(
 				"subfolders",
@@ -27,16 +23,7 @@ namespace MusicLibraryApi.GraphQL
 				resolve: async context =>
 				{
 					var folderId = context.GetArgument<int?>("folderId");
-
-					try
-					{
-						return await serviceAccessor.FoldersService.GetSubfolders(folderId, context.CancellationToken);
-					}
-					catch (NotFoundException e)
-					{
-						logger.LogError(e, "The folder with id of {FolderId} does not exist", folderId);
-						throw new ExecutionError(Invariant($"The folder with id of '{folderId}' does not exist"));
-					}
+					return await serviceAccessor.FoldersService.GetSubfolders(folderId, context.CancellationToken);
 				});
 
 			FieldAsync<DiscType>(
@@ -45,21 +32,12 @@ namespace MusicLibraryApi.GraphQL
 				resolve: async context =>
 				{
 					var discId = context.GetArgument<int>("id");
-
-					try
-					{
-						return await serviceAccessor.DiscsRepository.GetDisc(discId, context.CancellationToken);
-					}
-					catch (NotFoundException e)
-					{
-						logger.LogError(e, "The disc with id of {DiscId} does not exist", discId);
-						throw new ExecutionError(Invariant($"The disc with id of '{discId}' does not exist"));
-					}
+					return await serviceAccessor.DiscsService.GetDisc(discId, context.CancellationToken);
 				});
 
 			FieldAsync<ListGraphType<DiscType>>(
 				"discs",
-				resolve: async context => await serviceAccessor.DiscsRepository.GetAllDiscs(context.CancellationToken));
+				resolve: async context => await serviceAccessor.DiscsService.GetAllDiscs(context.CancellationToken));
 
 			// This 'error' field was added for IT purpose.
 			// It is required for testing of error handling middleware that hides internal sensitive exceptions.

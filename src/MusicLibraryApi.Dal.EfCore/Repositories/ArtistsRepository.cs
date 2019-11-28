@@ -24,7 +24,7 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 			this.mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
 		}
 
-		public async Task<int> AddArtist(Artist artist, CancellationToken cancellationToken)
+		public async Task<int> CreateArtist(Artist artist, CancellationToken cancellationToken)
 		{
 			var artistEntity = mapper.Map<ArtistEntity>(artist);
 
@@ -42,7 +42,7 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 			return artistEntity.Id;
 		}
 
-		public async Task<IEnumerable<Artist>> GetAllArtists(CancellationToken cancellationToken)
+		public async Task<IReadOnlyCollection<Artist>> GetAllArtists(CancellationToken cancellationToken)
 		{
 			return await context.Artists
 				.OrderBy(a => a.Name)
