@@ -15,6 +15,7 @@ using MusicLibraryApi.Dal.EfCore;
 using MusicLibraryApi.GraphQL;
 using MusicLibraryApi.Interfaces;
 using MusicLibraryApi.Internal;
+using MusicLibraryApi.Logic;
 
 namespace MusicLibraryApi
 {
@@ -33,7 +34,7 @@ namespace MusicLibraryApi
 				.AddNewtonsoftJson();
 
 			services.AddHttpContextAccessor();
-			services.AddSingleton<IContextRepositoryAccessor, ContextRepositoryAccessor>();
+			services.AddSingleton<IContextServiceAccessor, ContextServiceAccessor>();
 
 			var connectionString = Configuration.GetConnectionString("musicLibraryDB");
 			if (String.IsNullOrWhiteSpace(connectionString))
@@ -41,6 +42,7 @@ namespace MusicLibraryApi
 				throw new InvalidOperationException("Database connection string is not set");
 			}
 
+			services.AddLogic();
 			services.AddDal(connectionString);
 
 			services.AddSingleton<MusicLibraryQuery>();

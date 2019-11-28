@@ -9,6 +9,7 @@ using MusicLibraryApi.Client.Exceptions;
 using MusicLibraryApi.Client.Fields;
 using MusicLibraryApi.Client.GraphQL;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace MusicLibraryApi.Client.Operations
 {
@@ -76,7 +77,7 @@ namespace MusicLibraryApi.Client.Operations
 				throw new GraphQLRequestFailedException(errorMessage ?? $"The field {queryName} is missing in query result");
 			}
 
-			if (!dataToken.HasValues)
+			if (dataToken.Type == JTokenType.Null)
 			{
 				Logger.LogError("The field {QueryName} is null in query result", queryName);
 				throw new GraphQLRequestFailedException(errorMessage ?? $"The field {queryName} is null in query result");

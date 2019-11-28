@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace MusicLibraryApi.Abstractions.Models
+﻿namespace MusicLibraryApi.Abstractions.Models
 {
 	public class Folder
 	{
@@ -10,13 +8,16 @@ namespace MusicLibraryApi.Abstractions.Models
 
 		public Folder? ParentFolder { get; }
 
-		public IReadOnlyCollection<Disc> Discs { get; } = new List<Disc>();
-
-		public Folder(int id, string name, Folder? parentFolder)
+		public Folder(string name, Folder? parentFolder)
 		{
-			Id = id;
 			Name = name;
 			ParentFolder = parentFolder;
+		}
+
+		public Folder(int id, string name, Folder? parentFolder)
+			: this(name, parentFolder)
+		{
+			Id = id;
 		}
 	}
 }

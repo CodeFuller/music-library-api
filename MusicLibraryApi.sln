@@ -25,6 +25,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "utils", "utils", "{3DCBA823
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiClientUtil", "utils\ApiClientUtil\ApiClientUtil.csproj", "{4CF14D0C-796F-41FD-9E19-246EDBEBF6BD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MusicLibraryApi.Logic", "src\MusicLibraryApi.Logic\MusicLibraryApi.Logic.csproj", "{89273748-CAF8-471F-B55A-6F4621CDE384}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,10 @@ Global
 		{4CF14D0C-796F-41FD-9E19-246EDBEBF6BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4CF14D0C-796F-41FD-9E19-246EDBEBF6BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4CF14D0C-796F-41FD-9E19-246EDBEBF6BD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89273748-CAF8-471F-B55A-6F4621CDE384}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89273748-CAF8-471F-B55A-6F4621CDE384}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89273748-CAF8-471F-B55A-6F4621CDE384}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89273748-CAF8-471F-B55A-6F4621CDE384}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -76,6 +82,7 @@ Global
 		{A5721454-BAEE-4FBB-886D-856B20F14096} = {4F6FFF4D-F723-4840-8F14-466DD8011422}
 		{D879E714-9C2F-4BFD-BF7E-4BCFA116C2C0} = {D1FAA998-E5ED-4437-A4BF-2530E8754108}
 		{4CF14D0C-796F-41FD-9E19-246EDBEBF6BD} = {3DCBA823-570A-4CF3-B5FE-773410A91AF6}
+		{89273748-CAF8-471F-B55A-6F4621CDE384} = {D1FAA998-E5ED-4437-A4BF-2530E8754108}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {82D63505-EB18-49C6-81EE-79AF3E8A8DB3}

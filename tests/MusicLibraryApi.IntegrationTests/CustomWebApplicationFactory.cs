@@ -84,15 +84,18 @@ namespace MusicLibraryApi.IntegrationTests
 			folder4.ParentFolder = folder3;
 
 			var folder5 = new FolderEntity(5, "Foreign");
-			var folder6 = new FolderEntity(6, "AC-DC");
+			var folder6 = new FolderEntity(6, "Korn");
 			folder6.ParentFolder = folder5;
+
+			var folder7 = new FolderEntity(7, "AC-DC");
+			folder7.ParentFolder = folder5;
 
 			identityInsert.InitializeIdentityInsert(context, "Folders");
 
-			context.Folders.AddRange(folder1, folder2, folder3, folder4, folder5, folder6);
+			context.Folders.AddRange(folder1, folder2, folder3, folder4, folder5, folder6, folder7);
 			context.SaveChanges();
 
-			identityInsert.FinalizeIdentityInsert(context, "Folders", 7);
+			identityInsert.FinalizeIdentityInsert(context, "Folders", 8);
 		}
 
 		private static void SeedGenresData(MusicLibraryDbContext context, IIdentityInsert identityInsert)

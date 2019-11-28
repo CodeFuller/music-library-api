@@ -11,7 +11,7 @@ namespace MusicLibraryApi.GraphQL
 {
 	public class MusicLibraryMutation : ObjectGraphType
 	{
-		public MusicLibraryMutation(IContextRepositoryAccessor repositoryAccessor, ILogger<MusicLibraryMutation> logger)
+		public MusicLibraryMutation(IContextServiceAccessor serviceAccessor, ILogger<MusicLibraryMutation> logger)
 		{
 			FieldAsync<CreateGenreResultType>(
 				"createGenre",
@@ -24,7 +24,7 @@ namespace MusicLibraryApi.GraphQL
 
 					try
 					{
-						var newGenreId = await repositoryAccessor.GenresRepository.AddGenre(genre, context.CancellationToken);
+						var newGenreId = await serviceAccessor.GenresRepository.AddGenre(genre, context.CancellationToken);
 						return new CreateGenreResult(newGenreId);
 					}
 					catch (DuplicateKeyException e)
@@ -45,13 +45,33 @@ namespace MusicLibraryApi.GraphQL
 
 					try
 					{
-						var newArtistId = await repositoryAccessor.ArtistsRepository.AddArtist(artist, context.CancellationToken);
+						var newArtistId = await serviceAccessor.ArtistsRepository.AddArtist(artist, context.CancellationToken);
 						return new CreateArtistResult(newArtistId);
 					}
 					catch (DuplicateKeyException e)
 					{
 						logger.LogError(e, "Artist {ArtistName} already exists", artist.Name);
 						throw new ExecutionError(Invariant($"Artist '{artist.Name}' already exists"));
+					}
+				});
+
+			FieldAsync<CreateFolderResultType>(
+				"createFolder",
+				arguments: new QueryArguments(
+					new QueryArgument<NonNullGraphType<FolderInputType>> { Name = "folder" }),
+				resolve: async context =>
+				{
+					var folderInput = context.GetArgument<FolderInput>("folder");
+
+					try
+					{
+						var newFolderId = await serviceAccessor.FoldersService.CreateFolder(folderInput.ParentFolderId, folderInput.GetFolderName(), context.CancellationToken);
+						return new CreateFolderResult(newFolderId);
+					}
+					catch (DuplicateKeyException e)
+					{
+						logger.LogError(e, "Folder {FolderName} already exists", folderInput.Name);
+						throw new ExecutionError(Invariant($"Folder '{folderInput.Name}' already exists"));
 					}
 				});
 
@@ -68,7 +88,7 @@ namespace MusicLibraryApi.GraphQL
 
 					try
 					{
-						var newDiscId = await repositoryAccessor.DiscsRepository.AddDisc(folderId, disc, context.CancellationToken);
+						var newDiscId = await serviceAccessor.DiscsRepository.AddDisc(folderId, disc, context.CancellationToken);
 						return new CreateDiscResult(newDiscId);
 					}
 					catch (NotFoundException e)

@@ -2,11 +2,13 @@
 
 namespace MusicLibraryApi.Interfaces
 {
-	public interface IContextRepositoryAccessor
+	public interface IContextServiceAccessor
 	{
 		IGenresRepository GenresRepository { get; }
 
 		IArtistsRepository ArtistsRepository { get; }
+
+		IFoldersService FoldersService { get; }
 
 		IDiscsRepository DiscsRepository { get; }
 	}

@@ -9,7 +9,6 @@ using MusicLibraryApi.Abstractions.Exceptions;
 using MusicLibraryApi.Abstractions.Interfaces;
 using MusicLibraryApi.Abstractions.Models;
 using MusicLibraryApi.Dal.EfCore.Entities;
-using Npgsql;
 
 namespace MusicLibraryApi.Dal.EfCore.Repositories
 {
@@ -35,7 +34,7 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 			{
 				await context.SaveChangesAsync(cancellationToken);
 			}
-			catch (DbUpdateException e) when (e.InnerException is PostgresException pgException && pgException.SqlState == PostgresErrors.UniqueViolation)
+			catch (DbUpdateException e) when (e.IsUniqueViolationException())
 			{
 				throw new DuplicateKeyException($"Failed to add artist '{artist.Name}' to the database", e);
 			}

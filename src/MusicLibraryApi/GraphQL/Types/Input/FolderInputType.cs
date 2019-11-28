@@ -8,6 +8,7 @@ namespace MusicLibraryApi.GraphQL.Types.Input
 		{
 			Name = "FolderInput";
 			Field<NonNullGraphType<StringGraphType>>("name");
+			Field<IdGraphType>("parentFolderId");
 		}
 	}
 }

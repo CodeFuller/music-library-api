@@ -27,9 +27,6 @@ namespace MusicLibraryApi.Dal.EfCore
 			modelBuilder.Entity<DiscEntity>(b =>
 			{
 				b.ToTable("Discs");
-				b.HasOne(d => d.Folder)
-					.WithMany(f => f.Discs)
-					.IsRequired();
 			});
 
 			modelBuilder.Entity<SongEntity>(b =>
@@ -49,6 +46,9 @@ namespace MusicLibraryApi.Dal.EfCore
 			modelBuilder.Entity<FolderEntity>(b =>
 			{
 				b.ToTable("Folders");
+
+				// https://stackoverflow.com/a/47930643/5740031
+				b.HasIndex("ParentFolderId", nameof(FolderEntity.Name)).IsUnique();
 				b.HasOne(f => f.ParentFolder)
 					.WithMany(f => f!.ChildFolders);
 			});

@@ -13,6 +13,7 @@ namespace MusicLibraryApi.Dal.EfCore
 		{
 			services.AddTransient<IDatabaseMigrator, DatabaseMigrator>();
 			services.AddTransient<IGenresRepository, GenresRepository>();
+			services.AddTransient<IFoldersRepository, FoldersRepository>();
 			services.AddTransient<IArtistsRepository, ArtistsRepository>();
 			services.AddTransient<IDiscsRepository, DiscsRepository>();
 

@@ -15,6 +15,8 @@ namespace MusicLibraryApi.Client
 			services.AddTransient<IGenresMutation, GenreOperations>();
 			services.AddTransient<IArtistsQuery, ArtistOperations>();
 			services.AddTransient<IArtistsMutation, ArtistOperations>();
+			services.AddTransient<IFoldersQuery, FolderOperations>();
+			services.AddTransient<IFoldersMutation, FolderOperations>();
 			services.AddTransient<IDiscsQuery, DiscOperations>();
 			services.AddTransient<IDiscsMutation, DiscOperations>();
 

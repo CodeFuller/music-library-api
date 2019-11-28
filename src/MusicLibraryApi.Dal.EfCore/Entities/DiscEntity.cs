@@ -31,12 +31,7 @@ namespace MusicLibraryApi.Dal.EfCore.Entities
 			Title = title;
 			AlbumTitle = albumTitle;
 			AlbumOrder = albumOrder;
-
-			// We convert date to universal time mostly because of integration tests.
-			// PostgreSQL does not store timezone in 'timestamp with timezone' column.
-			// When the value is read from the database, the local timezone is set.
-			// This makes difficult baseline-based testing.
-			DeleteDate = deleteDate?.ToUniversalTime();
+			DeleteDate = deleteDate;
 			DeleteComment = deleteComment;
 		}
 	}
