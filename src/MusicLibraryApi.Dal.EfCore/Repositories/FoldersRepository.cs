@@ -63,7 +63,6 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 
 			return await context.Folders
 				.Where(f => (f.ParentFolder != null ? (int?)f.ParentFolder.Id : null) == parentFolderId)
-				.OrderBy(f => f.Name)
 				.Select(f => mapper.Map<Folder>(f))
 				.ToListAsync(cancellationToken);
 		}

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -35,9 +36,10 @@ namespace MusicLibraryApi.Logic.Services
 			}
 		}
 
-		public Task<IReadOnlyCollection<Genre>> GetAllGenres(CancellationToken cancellationToken)
+		public async Task<IReadOnlyCollection<Genre>> GetAllGenres(CancellationToken cancellationToken)
 		{
-			return repository.GetAllGenres(cancellationToken);
+			var genres = await repository.GetAllGenres(cancellationToken);
+			return genres.OrderBy(g => g.Name).ToList();
 		}
 	}
 }

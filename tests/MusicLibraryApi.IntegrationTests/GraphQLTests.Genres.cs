@@ -53,9 +53,9 @@ namespace MusicLibraryApi.IntegrationTests
 
 			var expectedGenres = new[]
 			{
-				new OutputGenreData(1, "Russian Rock"),
-				new OutputGenreData(2, "Nu Metal"),
 				new OutputGenreData(3, "Alternative Rock"),
+				new OutputGenreData(2, "Nu Metal"),
+				new OutputGenreData(1, "Russian Rock"),
 			};
 
 			var client = CreateClient<IGenresQuery>();
@@ -88,10 +88,10 @@ namespace MusicLibraryApi.IntegrationTests
 
 			var expectedGenres = new[]
 			{
-				new OutputGenreData(1, "Russian Rock"),
-				new OutputGenreData(2, "Nu Metal"),
 				new OutputGenreData(3, "Alternative Rock"),
 				new OutputGenreData(4, "Gothic Metal"),
+				new OutputGenreData(2, "Nu Metal"),
+				new OutputGenreData(1, "Russian Rock"),
 			};
 
 			var genresQuery = CreateClient<IGenresQuery>();
@@ -120,9 +120,9 @@ namespace MusicLibraryApi.IntegrationTests
 
 			var expectedGenres = new[]
 			{
-				new OutputGenreData(1, "Russian Rock"),
-				new OutputGenreData(2, "Nu Metal"),
 				new OutputGenreData(3, "Alternative Rock"),
+				new OutputGenreData(2, "Nu Metal"),
+				new OutputGenreData(1, "Russian Rock"),
 			};
 
 			var genresQuery = CreateClient<IGenresQuery>();

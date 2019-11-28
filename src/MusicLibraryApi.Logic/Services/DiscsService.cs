@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -48,9 +49,10 @@ namespace MusicLibraryApi.Logic.Services
 			}
 		}
 
-		public Task<IReadOnlyCollection<Disc>> GetAllDiscs(CancellationToken cancellationToken)
+		public async Task<IReadOnlyCollection<Disc>> GetAllDiscs(CancellationToken cancellationToken)
 		{
-			return repository.GetAllDiscs(cancellationToken);
+			var discs = await repository.GetAllDiscs(cancellationToken);
+			return discs.OrderBy(d => d.Id).ToList();
 		}
 	}
 }

@@ -45,7 +45,6 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 		public async Task<IReadOnlyCollection<Artist>> GetAllArtists(CancellationToken cancellationToken)
 		{
 			return await context.Artists
-				.OrderBy(a => a.Name)
 				.Select(a => mapper.Map<Artist>(a))
 				.ToListAsync(cancellationToken);
 		}

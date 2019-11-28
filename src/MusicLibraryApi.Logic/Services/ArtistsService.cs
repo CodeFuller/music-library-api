@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -35,9 +36,10 @@ namespace MusicLibraryApi.Logic.Services
 			}
 		}
 
-		public Task<IReadOnlyCollection<Artist>> GetAllArtists(CancellationToken cancellationToken)
+		public async Task<IReadOnlyCollection<Artist>> GetAllArtists(CancellationToken cancellationToken)
 		{
-			return repository.GetAllArtists(cancellationToken);
+			var artists = await repository.GetAllArtists(cancellationToken);
+			return artists.OrderBy(a => a.Name).ToList();
 		}
 	}
 }

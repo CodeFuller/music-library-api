@@ -45,7 +45,6 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 		public async Task<IReadOnlyCollection<Disc>> GetAllDiscs(CancellationToken cancellationToken)
 		{
 			return await context.Discs
-				.OrderBy(d => d.Id)
 				.Select(d => mapper.Map<Disc>(d))
 				.ToListAsync(cancellationToken);
 		}
