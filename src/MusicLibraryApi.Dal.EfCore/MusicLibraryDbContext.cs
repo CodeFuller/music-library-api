@@ -50,7 +50,7 @@ namespace MusicLibraryApi.Dal.EfCore
 				// https://stackoverflow.com/a/47930643/5740031
 				b.HasIndex("ParentFolderId", nameof(FolderEntity.Name)).IsUnique();
 				b.HasOne(f => f.ParentFolder)
-					.WithMany(f => f!.ChildFolders);
+					.WithMany(f => f!.Subfolders);
 			});
 
 			modelBuilder.Entity<GenreEntity>(b =>

@@ -31,7 +31,7 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 
 			if (parentFolderId != null)
 			{
-				folderEntity.ParentFolder = await FindFolder(parentFolderId.Value, includeChildFolders: false, includeDiscs: false, cancellationToken);
+				folderEntity.ParentFolder = await FindFolder(parentFolderId.Value, includeSubfolders: false, includeDiscs: false, cancellationToken);
 			}
 
 			context.Folders.Add(folderEntity);
@@ -54,11 +54,11 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 			// In first case we should verify that passed folder exist.
 			// For root folder, when null is passed, no verification is required.
 			// Second reason for logic difference: we don't have synthetic root folder entity,
-			// which we could fetch and call ChildFolders on it.
+			// which we could fetch and call Subfolders on it.
 			if (folderId != null)
 			{
-				var parentFolder = await FindFolder(folderId.Value, includeChildFolders: true, includeDiscs: false, cancellationToken);
-				return parentFolder.ChildFolders.Select(e => mapper.Map<Folder>(e)).ToList();
+				var parentFolder = await FindFolder(folderId.Value, includeSubfolders: true, includeDiscs: false, cancellationToken);
+				return parentFolder.Subfolders.Select(e => mapper.Map<Folder>(e)).ToList();
 			}
 
 			return await context.Folders
@@ -71,7 +71,7 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 		{
 			if (folderId != null)
 			{
-				var folder = await FindFolder(folderId.Value, includeChildFolders: false, includeDiscs: true, cancellationToken);
+				var folder = await FindFolder(folderId.Value, includeSubfolders: false, includeDiscs: true, cancellationToken);
 				return folder.Discs.Select(e => mapper.Map<Disc>(e)).ToList();
 			}
 
@@ -81,14 +81,14 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 				.ToListAsync(cancellationToken);
 		}
 
-		private async Task<FolderEntity> FindFolder(int folderId, bool includeChildFolders, bool includeDiscs, CancellationToken cancellationToken)
+		private async Task<FolderEntity> FindFolder(int folderId, bool includeSubfolders, bool includeDiscs, CancellationToken cancellationToken)
 		{
 			IQueryable<FolderEntity> query = context.Folders
 				.Include(f => f.ParentFolder);
 
-			if (includeChildFolders)
+			if (includeSubfolders)
 			{
-				query = query.Include(f => f.ChildFolders);
+				query = query.Include(f => f.Subfolders);
 			}
 
 			if (includeDiscs)
