@@ -79,23 +79,19 @@ namespace MusicLibraryApi.IntegrationTests
 			var folder2 = new FolderEntity(2, "Nautilus Pompilius");
 			folder2.ParentFolder = folder1;
 
-			var folder3 = new FolderEntity(3, "Сборники");
-			var folder4 = new FolderEntity(4, "Best");
+			var folder3 = new FolderEntity(3, "Foreign");
+			var folder4 = new FolderEntity(4, "Korn");
 			folder4.ParentFolder = folder3;
 
-			var folder5 = new FolderEntity(5, "Foreign");
-			var folder6 = new FolderEntity(6, "Korn");
-			folder6.ParentFolder = folder5;
-
-			var folder7 = new FolderEntity(7, "AC-DC");
-			folder7.ParentFolder = folder5;
+			var folder5 = new FolderEntity(5, "AC-DC");
+			folder5.ParentFolder = folder3;
 
 			identityInsert.InitializeIdentityInsert(context, "Folders");
 
-			context.Folders.AddRange(folder1, folder2, folder3, folder4, folder5, folder6, folder7);
+			context.Folders.AddRange(folder1, folder2, folder3, folder4, folder5);
 			context.SaveChanges();
 
-			identityInsert.FinalizeIdentityInsert(context, "Folders", 8);
+			identityInsert.FinalizeIdentityInsert(context, "Folders", 6);
 		}
 
 		private static void SeedGenresData(MusicLibraryDbContext context, IIdentityInsert identityInsert)
@@ -137,8 +133,8 @@ namespace MusicLibraryApi.IntegrationTests
 			var disc3 = new DiscEntity(3, 2001, "Platinum Hits (CD 2)", "Platinum Hits", 2, new DateTimeOffset(2019, 11, 10, 15, 38, 02, TimeSpan.FromHours(2)), "Boring");
 			disc3.Folder = FindFolder(context, "AC-DC");
 
-			var disc4 = new DiscEntity(4, null, "Foreign");
-			disc4.Folder = FindFolder(context, "Best");
+			var disc4 = new DiscEntity(4, null, "Foreign Best");
+			disc4.Folder = null;
 
 			identityInsert.InitializeIdentityInsert(context, "Discs");
 

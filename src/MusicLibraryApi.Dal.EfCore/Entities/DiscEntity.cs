@@ -15,8 +15,7 @@ namespace MusicLibraryApi.Dal.EfCore.Entities
 
 		public int? AlbumOrder { get; private set; }
 
-		// CF TEMP: Make all other properties also settable?
-		public FolderEntity Folder { get; set; } = null!;
+		public FolderEntity? Folder { get; set; }
 
 		public DateTimeOffset? DeleteDate { get; private set; }
 

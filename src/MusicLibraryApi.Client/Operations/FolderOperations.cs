@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using MusicLibraryApi.Client.Contracts.Discs;
 using MusicLibraryApi.Client.Contracts.Folders;
 using MusicLibraryApi.Client.Exceptions;
 using MusicLibraryApi.Client.Fields;
@@ -24,8 +25,8 @@ namespace MusicLibraryApi.Client.Operations
 		{
 			var requestedFields = JoinRequestFields(fields);
 
-			var query = Invariant($@"query GetSubfolders($folderId: ID) {{
-										subfolders(folderId: $folderId) {{ {requestedFields} }}
+			var query = Invariant($@"query GetFolderSubfolders($folderId: ID) {{
+										folderSubfolders(folderId: $folderId) {{ {requestedFields} }}
 									}}");
 
 			var request = new GraphQLRequest
@@ -37,7 +38,27 @@ namespace MusicLibraryApi.Client.Operations
 				},
 			};
 
-			return await ExecuteRequest<OutputFolderData[]>("subfolders", request, cancellationToken);
+			return await ExecuteRequest<OutputFolderData[]>("folderSubfolders", request, cancellationToken);
+		}
+
+		public async Task<IReadOnlyCollection<OutputDiscData>> GetFolderDiscs(int? folderId, QueryFieldSet<DiscQuery> fields, CancellationToken cancellationToken)
+		{
+			var requestedFields = JoinRequestFields(fields);
+
+			var query = Invariant($@"query GetFolderDiscs($folderId: ID) {{
+										folderDiscs(folderId: $folderId) {{ {requestedFields} }}
+									}}");
+
+			var request = new GraphQLRequest
+			{
+				Query = query,
+				Variables = new
+				{
+					folderId = folderId,
+				},
+			};
+
+			return await ExecuteRequest<OutputDiscData[]>("folderDiscs", request, cancellationToken);
 		}
 
 		public async Task<int> CreateFolder(InputFolderData folderData, CancellationToken cancellationToken)

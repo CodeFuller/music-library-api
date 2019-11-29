@@ -12,6 +12,8 @@ namespace MusicLibraryApi.Dal.EfCore.Entities
 
 		public IReadOnlyCollection<FolderEntity> ChildFolders { get; } = new List<FolderEntity>();
 
+		public IReadOnlyCollection<DiscEntity> Discs { get; } = new List<DiscEntity>();
+
 		public FolderEntity(int id, string name)
 		{
 			Id = id;

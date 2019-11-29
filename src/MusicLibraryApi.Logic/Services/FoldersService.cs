@@ -50,5 +50,18 @@ namespace MusicLibraryApi.Logic.Services
 				throw new ServiceOperationFailedException(Invariant($"The folder with id of '{folderId}' does not exist"), e);
 			}
 		}
+
+		public async Task<IReadOnlyCollection<Disc>> GetFolderDiscs(int? folderId, CancellationToken cancellationToken)
+		{
+			try
+			{
+				return await repository.GetFolderDiscs(folderId, cancellationToken);
+			}
+			catch (NotFoundException e)
+			{
+				logger.LogError(e, "The folder with id of {FolderId} does not exist", folderId);
+				throw new ServiceOperationFailedException(Invariant($"The folder with id of '{folderId}' does not exist"), e);
+			}
+		}
 	}
 }

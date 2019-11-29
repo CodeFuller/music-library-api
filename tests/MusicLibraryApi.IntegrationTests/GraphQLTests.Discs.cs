@@ -86,7 +86,7 @@ namespace MusicLibraryApi.IntegrationTests
 				new OutputDiscData(1, 1988, "Князь тишины", null, null, null, null),
 				new OutputDiscData(2, 2001, "Platinum Hits (CD 1)", "Platinum Hits", 1, new DateTimeOffset(2019, 11, 10, 15, 38, 01, TimeSpan.FromHours(2)), "Boring"),
 				new OutputDiscData(3, 2001, "Platinum Hits (CD 2)", "Platinum Hits", 2, new DateTimeOffset(2019, 11, 10, 15, 38, 02, TimeSpan.FromHours(2)), "Boring"),
-				new OutputDiscData(4, null, "Foreign", null, null, null, null),
+				new OutputDiscData(4, null, "Foreign Best", null, null, null, null),
 			};
 
 			var client = CreateClient<IDiscsQuery>();
@@ -124,7 +124,7 @@ namespace MusicLibraryApi.IntegrationTests
 		{
 			// Arrange
 
-			var expectedData = new OutputDiscData(4, null, "Foreign", null, null, null, null);
+			var expectedData = new OutputDiscData(4, null, "Foreign Best", null, null, null, null);
 
 			var client = CreateClient<IDiscsQuery>();
 
@@ -179,7 +179,7 @@ namespace MusicLibraryApi.IntegrationTests
 				new OutputDiscData(1, 1988, "Князь тишины", null, null, null, null),
 				new OutputDiscData(2, 2001, "Platinum Hits (CD 1)", "Platinum Hits", 1, new DateTimeOffset(2019, 11, 10, 15, 38, 01, TimeSpan.FromHours(2)), "Boring"),
 				new OutputDiscData(3, 2001, "Platinum Hits (CD 2)", "Platinum Hits", 2, new DateTimeOffset(2019, 11, 10, 15, 38, 02, TimeSpan.FromHours(2)), "Boring"),
-				new OutputDiscData(4, null, "Foreign", null, null, null, null),
+				new OutputDiscData(4, null, "Foreign Best", null, null, null, null),
 				new OutputDiscData(5, 1994, "Битва на мотоциклах (CD 2)", "Битва на мотоциклах", 2, new DateTimeOffset(2019, 11, 10, 18, 50, 24, TimeSpan.FromHours(2)), "Deleted just for test :)"),
 			};
 
@@ -213,7 +213,7 @@ namespace MusicLibraryApi.IntegrationTests
 				new OutputDiscData(1, 1988, "Князь тишины", null, null, null, null),
 				new OutputDiscData(2, 2001, "Platinum Hits (CD 1)", "Platinum Hits", 1, new DateTimeOffset(2019, 11, 10, 15, 38, 01, TimeSpan.FromHours(2)), "Boring"),
 				new OutputDiscData(3, 2001, "Platinum Hits (CD 2)", "Platinum Hits", 2, new DateTimeOffset(2019, 11, 10, 15, 38, 02, TimeSpan.FromHours(2)), "Boring"),
-				new OutputDiscData(4, null, "Foreign", null, null, null, null),
+				new OutputDiscData(4, null, "Foreign Best", null, null, null, null),
 				new OutputDiscData(5, null, "Russian", null, null, null, null),
 			};
 
