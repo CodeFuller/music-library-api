@@ -86,12 +86,14 @@ namespace MusicLibraryApi.IntegrationTests
 			var folder5 = new FolderEntity(5, "AC-DC");
 			folder5.ParentFolder = folder3;
 
+			var folder6 = new FolderEntity(6, "Empty Folder");
+
 			identityInsert.InitializeIdentityInsert(context, "Folders");
 
-			context.Folders.AddRange(folder1, folder2, folder3, folder4, folder5);
+			context.Folders.AddRange(folder1, folder2, folder3, folder4, folder5, folder6);
 			context.SaveChanges();
 
-			identityInsert.FinalizeIdentityInsert(context, "Folders", 6);
+			identityInsert.FinalizeIdentityInsert(context, "Folders", 7);
 		}
 
 		private static void SeedGenresData(MusicLibraryDbContext context, IIdentityInsert identityInsert)

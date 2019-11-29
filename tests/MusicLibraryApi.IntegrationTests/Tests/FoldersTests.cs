@@ -22,6 +22,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var expectedFolders = new[]
 			{
+				new OutputFolderData(6, "Empty Folder", null),
 				new OutputFolderData(3, "Foreign", null),
 				new OutputFolderData(1, "Russian", null),
 			};
@@ -60,6 +61,22 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		}
 
 		[TestMethod]
+		public async Task SubfoldersQuery_ForFolderWithoutSubfolders_ReturnsNoData()
+		{
+			// Arrange
+
+			var client = CreateClient<IFoldersQuery>();
+
+			// Act
+
+			var receivedFolders = await client.GetSubfolders(6, FolderFields.All, CancellationToken.None);
+
+			// Assert
+
+			Assert.IsFalse(receivedFolders.Any());
+		}
+
+		[TestMethod]
 		public async Task SubfoldersQuery_ForUnknownFolder_ReturnsError()
 		{
 			// Arrange
@@ -90,11 +107,11 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Act
 
-			var receivedFolders = await client.GetFolderDiscs(null, DiscFields.All, CancellationToken.None);
+			var receivedDiscs = await client.GetFolderDiscs(null, DiscFields.All, CancellationToken.None);
 
 			// Assert
 
-			CollectionAssert.AreEqual(expectedDiscs, receivedFolders.ToList(), new DiscDataComparer());
+			CollectionAssert.AreEqual(expectedDiscs, receivedDiscs.ToList(), new DiscDataComparer());
 		}
 
 		[TestMethod]
@@ -102,7 +119,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		{
 			// Arrange
 
-			var expectedFolders = new[]
+			var expectedDiscs = new[]
 			{
 				new OutputDiscData(2, 2001, "Platinum Hits (CD 1)", "Platinum Hits", 1, new DateTimeOffset(2019, 11, 10, 15, 38, 01, TimeSpan.FromHours(2)), "Boring"),
 				new OutputDiscData(3, 2001, "Platinum Hits (CD 2)", "Platinum Hits", 2, new DateTimeOffset(2019, 11, 10, 15, 38, 02, TimeSpan.FromHours(2)), "Boring"),
@@ -112,11 +129,27 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Act
 
-			var receivedFolders = await client.GetFolderDiscs(5, DiscFields.All, CancellationToken.None);
+			var receivedDiscs = await client.GetFolderDiscs(5, DiscFields.All, CancellationToken.None);
 
 			// Assert
 
-			CollectionAssert.AreEqual(expectedFolders, receivedFolders.ToList(), new DiscDataComparer());
+			CollectionAssert.AreEqual(expectedDiscs, receivedDiscs.ToList(), new DiscDataComparer());
+		}
+
+		[TestMethod]
+		public async Task DiscsQuery_ForFolderWithoutDiscs_ReturnsNoData()
+		{
+			// Arrange
+
+			var client = CreateClient<IFoldersQuery>();
+
+			// Act
+
+			var receivedDiscs = await client.GetFolderDiscs(6, DiscFields.All, CancellationToken.None);
+
+			// Assert
+
+			Assert.IsFalse(receivedDiscs.Any());
 		}
 
 		[TestMethod]
@@ -128,11 +161,11 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Act
 
-			var getSubfoldersTask = client.GetFolderDiscs(12345, DiscFields.All, CancellationToken.None);
+			var getFolderDiscsTask = client.GetFolderDiscs(12345, DiscFields.All, CancellationToken.None);
 
 			// Assert
 
-			var exception = await Assert.ThrowsExceptionAsync<GraphQLRequestFailedException>(() => getSubfoldersTask);
+			var exception = await Assert.ThrowsExceptionAsync<GraphQLRequestFailedException>(() => getFolderDiscsTask);
 			Assert.AreEqual("The folder with id of '12345' does not exist", exception.Message);
 		}
 
@@ -151,13 +184,14 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Assert
 
-			Assert.AreEqual(6, newFolderId);
+			Assert.AreEqual(7, newFolderId);
 
 			// Checking new folders data
 
 			var expectedFolders = new[]
 			{
-				new OutputFolderData(6, "Belarussian", null),
+				new OutputFolderData(7, "Belarussian", null),
+				new OutputFolderData(6, "Empty Folder", null),
 				new OutputFolderData(3, "Foreign", null),
 				new OutputFolderData(1, "Russian", null),
 			};
@@ -188,14 +222,14 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Assert
 
-			Assert.AreEqual(6, newFolderId);
+			Assert.AreEqual(7, newFolderId);
 
 			// Checking new folders data
 
 			var expectedFolders = new[]
 			{
 				new OutputFolderData(5, "AC-DC", 3),
-				new OutputFolderData(6, "Guano Apes", 3),
+				new OutputFolderData(7, "Guano Apes", 3),
 				new OutputFolderData(4, "Korn", 3),
 			};
 
@@ -257,7 +291,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Assert
 
-			Assert.AreEqual(6, newFolderId);
+			Assert.AreEqual(7, newFolderId);
 
 			// Checking new folders data
 
@@ -265,7 +299,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			{
 				new OutputFolderData(5, "AC-DC", 3),
 				new OutputFolderData(4, "Korn", 3),
-				new OutputFolderData(6, "Nautilus Pompilius", 3),
+				new OutputFolderData(7, "Nautilus Pompilius", 3),
 			};
 
 			var foldersClient = CreateClient<IFoldersQuery>();
