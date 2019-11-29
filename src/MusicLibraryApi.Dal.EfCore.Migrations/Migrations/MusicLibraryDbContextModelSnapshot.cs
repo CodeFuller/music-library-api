@@ -2,8 +2,6 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using MusicLibraryApi.Dal.EfCore;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace MusicLibraryApi.Dal.EfCore.Migrations.Migrations

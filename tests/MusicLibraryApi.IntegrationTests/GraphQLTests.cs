@@ -4,25 +4,33 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace MusicLibraryApi.IntegrationTests
 {
-	[TestClass]
-	public sealed partial class GraphQLTests : IDisposable
+	public abstract class GraphQLTests : IDisposable
 	{
-		private readonly CustomWebApplicationFactory webApplicationFactory = new CustomWebApplicationFactory();
+		protected CustomWebApplicationFactory WebApplicationFactory { get; } = new CustomWebApplicationFactory();
 
 		[TestInitialize]
 		public void Initialize()
 		{
-			webApplicationFactory.SeedData();
+			WebApplicationFactory.SeedData();
 		}
 
-		private TClient CreateClient<TClient>()
+		protected TClient CreateClient<TClient>()
 		{
-			return webApplicationFactory.Services.GetRequiredService<TClient>();
+			return WebApplicationFactory.Services.GetRequiredService<TClient>();
+		}
+
+		protected virtual void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				WebApplicationFactory?.Dispose();
+			}
 		}
 
 		public void Dispose()
 		{
-			webApplicationFactory?.Dispose();
+			Dispose(true);
+			GC.SuppressFinalize(this);
 		}
 	}
 }

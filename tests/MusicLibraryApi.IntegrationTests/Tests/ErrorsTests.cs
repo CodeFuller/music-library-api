@@ -5,9 +5,10 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 
-namespace MusicLibraryApi.IntegrationTests
+namespace MusicLibraryApi.IntegrationTests.Tests
 {
-	public sealed partial class GraphQLTests
+	[TestClass]
+	public class ErrorsTests : GraphQLTests
 	{
 		[TestMethod]
 		public async Task ErrorsQuery_DoesNotExposeInternalSensitiveError()
@@ -21,7 +22,7 @@ namespace MusicLibraryApi.IntegrationTests
 						}",
 			};
 
-			var client = webApplicationFactory.CreateClient();
+			var client = WebApplicationFactory.CreateClient();
 
 			// Act
 
