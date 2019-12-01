@@ -52,6 +52,8 @@ namespace MusicLibraryApi.Logic.Services
 		public async Task<IReadOnlyCollection<Disc>> GetAllDiscs(CancellationToken cancellationToken)
 		{
 			var discs = await repository.GetAllDiscs(cancellationToken);
+
+			// There is no meaningful sorting for all discs. We sort discs by id here mostly for steady IT baselines.
 			return discs.OrderBy(d => d.Id).ToList();
 		}
 	}

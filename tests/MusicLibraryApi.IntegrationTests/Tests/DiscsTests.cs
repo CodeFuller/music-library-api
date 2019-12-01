@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -21,10 +20,11 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var expectedDiscs = new[]
 			{
-				new OutputDiscData(1, 1988, "Князь тишины", null, null, null, null),
-				new OutputDiscData(2, 2001, "Platinum Hits (CD 1)", "Platinum Hits", 1, new DateTimeOffset(2019, 11, 10, 15, 38, 01, TimeSpan.FromHours(2)), "Boring"),
-				new OutputDiscData(3, 2001, "Platinum Hits (CD 2)", "Platinum Hits", 2, new DateTimeOffset(2019, 11, 10, 15, 38, 02, TimeSpan.FromHours(2)), "Boring"),
-				new OutputDiscData(4, null, "Foreign Best", null, null, null, null),
+				new OutputDiscData(1, 2001, "Platinum Hits (CD 2)", "Platinum Hits", 2),
+				new OutputDiscData(2, 2001, "Platinum Hits (CD 1)", "Platinum Hits", 1),
+				new OutputDiscData(3, 2000, "Don't Give Me Names"),
+				new OutputDiscData(4, null, "Rarities"),
+				new OutputDiscData(5, 1997, "Proud Like A God"),
 			};
 
 			var client = CreateClient<IDiscsQuery>();
@@ -43,7 +43,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		{
 			// Arrange
 
-			var expectedData = new OutputDiscData(2, 2001, "Platinum Hits (CD 1)", "Platinum Hits", 1, new DateTimeOffset(2019, 11, 10, 15, 38, 01, TimeSpan.FromHours(2)), "Boring");
+			var expectedData = new OutputDiscData(2, 2001, "Platinum Hits (CD 1)", "Platinum Hits", 1);
 
 			var client = CreateClient<IDiscsQuery>();
 
@@ -62,7 +62,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		{
 			// Arrange
 
-			var expectedData = new OutputDiscData(4, null, "Foreign Best", null, null, null, null);
+			var expectedData = new OutputDiscData(4, null, "Rarities");
 
 			var client = CreateClient<IDiscsQuery>();
 
@@ -98,7 +98,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		{
 			// Arrange
 
-			var newDiscData = new InputDiscData(1994, "Битва на мотоциклах (CD 2)", "Битва на мотоциклах", 2, new DateTimeOffset(2019, 11, 10, 18, 50, 24, TimeSpan.FromHours(2)), "Deleted just for test :)");
+			var newDiscData = new InputDiscData(1994, "Битва на мотоциклах (CD 2)", "Битва на мотоциклах", 2);
 
 			var client = CreateClient<IDiscsMutation>();
 
@@ -108,23 +108,22 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Assert
 
-			Assert.AreEqual(5, newDiscId);
+			Assert.AreEqual(6, newDiscId);
 
 			// Checking new discs data
 
 			var expectedDiscs = new[]
 			{
-				new OutputDiscData(1, 1988, "Князь тишины", null, null, null, null),
-				new OutputDiscData(2, 2001, "Platinum Hits (CD 1)", "Platinum Hits", 1, new DateTimeOffset(2019, 11, 10, 15, 38, 01, TimeSpan.FromHours(2)), "Boring"),
-				new OutputDiscData(3, 2001, "Platinum Hits (CD 2)", "Platinum Hits", 2, new DateTimeOffset(2019, 11, 10, 15, 38, 02, TimeSpan.FromHours(2)), "Boring"),
-				new OutputDiscData(4, null, "Foreign Best", null, null, null, null),
-				new OutputDiscData(5, 1994, "Битва на мотоциклах (CD 2)", "Битва на мотоциклах", 2, new DateTimeOffset(2019, 11, 10, 18, 50, 24, TimeSpan.FromHours(2)), "Deleted just for test :)"),
+				new OutputDiscData(6, 1994, "Битва на мотоциклах (CD 2)", "Битва на мотоциклах", 2),
+				new OutputDiscData(5, 1997, "Proud Like A God"),
+				new OutputDiscData(3, 2000, "Don't Give Me Names"),
+				new OutputDiscData(4, null, "Rarities"),
 			};
 
-			var discsQuery = CreateClient<IDiscsQuery>();
-			var receivedDiscs = await discsQuery.GetDiscs(DiscFields.All, CancellationToken.None);
+			var foldersQuery = CreateClient<IFoldersQuery>();
+			var folderData = await foldersQuery.GetFolder(4, FolderFields.Discs, CancellationToken.None);
 
-			CollectionAssert.AreEqual(expectedDiscs, receivedDiscs.ToList(), new DiscDataComparer());
+			CollectionAssert.AreEqual(expectedDiscs, folderData.Discs.ToList(), new DiscDataComparer());
 		}
 
 		[TestMethod]
@@ -132,7 +131,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		{
 			// Arrange
 
-			var newDiscData = new InputDiscData(null, "Russian", null, null, null, null);
+			var newDiscData = new InputDiscData(null, "Russian");
 
 			var client = CreateClient<IDiscsMutation>();
 
@@ -142,23 +141,22 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Assert
 
-			Assert.AreEqual(5, newDiscId);
+			Assert.AreEqual(6, newDiscId);
 
 			// Checking new discs data
 
 			var expectedDiscs = new[]
 			{
-				new OutputDiscData(1, 1988, "Князь тишины", null, null, null, null),
-				new OutputDiscData(2, 2001, "Platinum Hits (CD 1)", "Platinum Hits", 1, new DateTimeOffset(2019, 11, 10, 15, 38, 01, TimeSpan.FromHours(2)), "Boring"),
-				new OutputDiscData(3, 2001, "Platinum Hits (CD 2)", "Platinum Hits", 2, new DateTimeOffset(2019, 11, 10, 15, 38, 02, TimeSpan.FromHours(2)), "Boring"),
-				new OutputDiscData(4, null, "Foreign Best", null, null, null, null),
-				new OutputDiscData(5, null, "Russian", null, null, null, null),
+				new OutputDiscData(5, 1997, "Proud Like A God"),
+				new OutputDiscData(3, 2000, "Don't Give Me Names"),
+				new OutputDiscData(4, null, "Rarities"),
+				new OutputDiscData(6, null, "Russian"),
 			};
 
-			var discsQuery = CreateClient<IDiscsQuery>();
-			var receivedDiscs = await discsQuery.GetDiscs(DiscFields.All, CancellationToken.None);
+			var foldersQuery = CreateClient<IFoldersQuery>();
+			var folderData = await foldersQuery.GetFolder(4, FolderFields.Discs, CancellationToken.None);
 
-			CollectionAssert.AreEqual(expectedDiscs, receivedDiscs.ToList(), new DiscDataComparer());
+			CollectionAssert.AreEqual(expectedDiscs, folderData.Discs.ToList(), new DiscDataComparer());
 		}
 
 		[TestMethod]
@@ -166,7 +164,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		{
 			// Arrange
 
-			var newDiscData = new InputDiscData(null, "Some New Disc", null, null, null, null);
+			var newDiscData = new InputDiscData(null, "Some New Disc");
 
 			var client = CreateClient<IDiscsMutation>();
 
@@ -179,14 +177,15 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			var exception = await Assert.ThrowsExceptionAsync<GraphQLRequestFailedException>(() => createDiscTask);
 			Assert.AreEqual("The folder with id of '12345' does not exist", exception.Message);
 
-			// Checking that no changes to the discs were made
+			// Checking that no disc was created
 
 			var expectedDiscs = new[]
 			{
-				new OutputDiscData(1, null, null, null, null, null, null),
-				new OutputDiscData(2, null, null, null, null, null, null),
-				new OutputDiscData(3, null, null, null, null, null, null),
-				new OutputDiscData(4, null, null, null, null, null, null),
+				new OutputDiscData(1, null, null),
+				new OutputDiscData(2, null, null),
+				new OutputDiscData(3, null, null),
+				new OutputDiscData(4, null, null),
+				new OutputDiscData(5, null, null),
 			};
 
 			var discsQuery = CreateClient<IDiscsQuery>();

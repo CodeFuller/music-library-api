@@ -33,7 +33,7 @@ namespace MusicLibraryApi.Client.Operations
 
 			if (fields.Contains(FolderFields.Discs))
 			{
-				requestedFields += " discs { id title }";
+				requestedFields += " discs { id year title albumTitle albumOrder deleteDate deleteComment }";
 			}
 
 			var query = Invariant($@"query GetFolder($folderId: ID) {{

@@ -9,7 +9,7 @@ namespace MusicLibraryApi.Client.Contracts.Discs
 		[DataMember(Name = "id")]
 		public int? Id { get; }
 
-		public OutputDiscData(int? id, int? year, string? title, string? albumTitle, int? albumOrder, DateTimeOffset? deleteDate, string? deleteComment)
+		public OutputDiscData(int? id, int? year, string? title, string? albumTitle = null, int? albumOrder = null, DateTimeOffset? deleteDate = null, string? deleteComment = null)
 			: base(year, title, albumTitle, albumOrder, deleteDate, deleteComment)
 		{
 			Id = id;
