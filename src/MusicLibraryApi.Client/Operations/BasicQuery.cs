@@ -32,8 +32,7 @@ namespace MusicLibraryApi.Client.Operations
 		protected async Task<TData> ExecuteQuery<TQuery, TData>(string queryName, QueryFieldSet<TQuery> fields, CancellationToken cancellationToken)
 			where TData : class
 		{
-			var requestedFields = JoinRequestFields(fields);
-			var query = $@"{{ {queryName} {{ {requestedFields} }} }}";
+			var query = $@"{{ {queryName} {{ {fields.QuerySelection} }} }}";
 			var request = new GraphQLRequest { Query = query };
 
 			return await ExecuteRequest<TData>(queryName, request, cancellationToken);
@@ -90,11 +89,6 @@ namespace MusicLibraryApi.Client.Operations
 		{
 			var jsonData = JsonConvert.SerializeObject(requestData);
 			return new StringContent(jsonData, Encoding.UTF8, "application/json");
-		}
-
-		protected static string JoinRequestFields<TQuery>(QueryFieldSet<TQuery> fields)
-		{
-			return String.Join(" ", fields.Select(f => f.Name));
 		}
 	}
 }

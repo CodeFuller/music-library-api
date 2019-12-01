@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -22,22 +21,8 @@ namespace MusicLibraryApi.Client.Operations
 
 		public async Task<OutputFolderData> GetFolder(int? folderId, QueryFieldSet<FolderQuery> fields, CancellationToken cancellationToken)
 		{
-			// TBD: Implement selection on complex fields.
-			var plainFields = fields.Where(f => !(f == FolderFields.Subfolders || f == FolderFields.Discs));
-			var requestedFields = JoinRequestFields(new QueryFieldSet<FolderQuery>(plainFields));
-
-			if (fields.Contains(FolderFields.Subfolders))
-			{
-				requestedFields += " subfolders { id name }";
-			}
-
-			if (fields.Contains(FolderFields.Discs))
-			{
-				requestedFields += " discs { id year title albumTitle albumOrder deleteDate deleteComment }";
-			}
-
 			var query = Invariant($@"query GetFolder($folderId: ID) {{
-										folder(folderId: $folderId) {{ {requestedFields} }}
+										folder(folderId: $folderId) {{ {fields.QuerySelection} }}
 									}}");
 
 			var request = new GraphQLRequest

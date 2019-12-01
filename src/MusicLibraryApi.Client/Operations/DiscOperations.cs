@@ -27,10 +27,8 @@ namespace MusicLibraryApi.Client.Operations
 
 		public async Task<OutputDiscData> GetDisc(int discId, QueryFieldSet<DiscQuery> fields, CancellationToken cancellationToken)
 		{
-			var requestedFields = JoinRequestFields(fields);
-
 			var query = Invariant($@"query GetDiscById($id: ID!) {{
-										disc(id: $id) {{ {requestedFields} }}
+										disc(id: $id) {{ {fields.QuerySelection} }}
 									}}");
 
 			var request = new GraphQLRequest

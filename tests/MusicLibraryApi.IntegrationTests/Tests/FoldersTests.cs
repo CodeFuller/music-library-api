@@ -124,7 +124,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Act
 
-			var receivedFolderData = await foldersClient.GetFolder(null, FolderFields.Subfolders, CancellationToken.None);
+			var receivedFolderData = await foldersClient.GetFolder(null, FolderFields.Subfolders(FolderFields.Id + FolderFields.Name), CancellationToken.None);
 
 			// Assert
 
@@ -161,7 +161,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Act
 
-			var receivedFolderData = await foldersClient.GetFolder(2, FolderFields.Subfolders, CancellationToken.None);
+			var receivedFolderData = await foldersClient.GetFolder(2, FolderFields.Subfolders(FolderFields.Id + FolderFields.Name), CancellationToken.None);
 
 			// Assert
 
@@ -195,7 +195,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			};
 
 			var foldersClient = CreateClient<IFoldersQuery>();
-			var receivedFolderData = await foldersClient.GetFolder(2, FolderFields.Subfolders, CancellationToken.None);
+			var receivedFolderData = await foldersClient.GetFolder(2, FolderFields.Subfolders(FolderFields.Id + FolderFields.Name), CancellationToken.None);
 
 			CollectionAssert.AreEqual(expectedFolders, receivedFolderData.Subfolders.ToList(), new FolderDataComparer());
 		}
@@ -228,7 +228,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Act
 
-			var receivedFolderData = await foldersClient.GetFolder(1, FolderFields.Subfolders, CancellationToken.None);
+			var receivedFolderData = await foldersClient.GetFolder(1, FolderFields.Subfolders(FolderFields.Id + FolderFields.Name), CancellationToken.None);
 
 			// Assert
 

@@ -121,7 +121,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			};
 
 			var foldersQuery = CreateClient<IFoldersQuery>();
-			var folderData = await foldersQuery.GetFolder(4, FolderFields.Discs, CancellationToken.None);
+			var folderData = await foldersQuery.GetFolder(4, FolderFields.Discs(DiscFields.All), CancellationToken.None);
 
 			CollectionAssert.AreEqual(expectedDiscs, folderData.Discs.ToList(), new DiscDataComparer());
 		}
@@ -154,7 +154,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			};
 
 			var foldersQuery = CreateClient<IFoldersQuery>();
-			var folderData = await foldersQuery.GetFolder(4, FolderFields.Discs, CancellationToken.None);
+			var folderData = await foldersQuery.GetFolder(4, FolderFields.Discs(DiscFields.All), CancellationToken.None);
 
 			CollectionAssert.AreEqual(expectedDiscs, folderData.Discs.ToList(), new DiscDataComparer());
 		}
