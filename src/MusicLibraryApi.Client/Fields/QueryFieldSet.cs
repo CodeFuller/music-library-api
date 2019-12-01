@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MusicLibraryApi.Client.Fields
 {
@@ -22,6 +23,11 @@ namespace MusicLibraryApi.Client.Fields
 		public QueryFieldSet(QueryFieldSet<TQuery> set, QueryField<TQuery> field)
 		{
 			fields = new List<QueryField<TQuery>>(set.fields) { field };
+		}
+
+		public QueryFieldSet(IEnumerable<QueryField<TQuery>> fields)
+		{
+			this.fields = fields.ToList();
 		}
 
 		public static implicit operator QueryFieldSet<TQuery>(QueryField<TQuery> field)

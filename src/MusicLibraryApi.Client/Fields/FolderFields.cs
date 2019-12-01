@@ -8,8 +8,10 @@ namespace MusicLibraryApi.Client.Fields
 
 		public static QueryField<FolderQuery> Name { get; } = new QueryField<FolderQuery>("name");
 
-		public static QueryField<FolderQuery> ParentFolderId { get; } = new QueryField<FolderQuery>("parentFolderId");
+		public static QueryField<FolderQuery> Subfolders { get; } = new QueryField<FolderQuery>("subfolders");
 
-		public static QueryFieldSet<FolderQuery> All { get; } = Id + Name + ParentFolderId;
+		public static QueryField<FolderQuery> Discs { get; } = new QueryField<FolderQuery>("discs");
+
+		public static QueryFieldSet<FolderQuery> All { get; } = Id + Name + Subfolders + Discs;
 	}
 }

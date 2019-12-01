@@ -8,13 +8,9 @@ namespace MusicLibraryApi.Client.Contracts.Folders
 		[DataMember(Name = "name")]
 		public string? Name { get; }
 
-		[DataMember(Name = "parentFolderId")]
-		public int? ParentFolderId { get; }
-
-		protected BasicFolderData(string? name, int? parentFolderId)
+		protected BasicFolderData(string? name)
 		{
 			Name = name;
-			ParentFolderId = parentFolderId;
 		}
 	}
 }

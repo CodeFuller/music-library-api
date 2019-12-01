@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -48,37 +47,25 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 			return folderEntity.Id;
 		}
 
-		public async Task<IReadOnlyCollection<Folder>> GetSubfolders(int? folderId, CancellationToken cancellationToken)
+		public async Task<Folder> GetFolder(int? folderId, bool loadSubfolders, bool loadDiscs, CancellationToken cancellationToken)
 		{
-			// The logic differs for non-root and root folders.
-			// In first case we should verify that passed folder exist.
-			// For root folder, when null is passed, no verification is required.
-			// Second reason for logic difference: we don't have synthetic root folder entity,
-			// which we could fetch and call Subfolders on it.
-			if (folderId != null)
+			if (folderId == null)
 			{
-				var parentFolder = await FindFolder(folderId.Value, includeSubfolders: true, includeDiscs: false, cancellationToken);
-				return parentFolder.Subfolders.Select(e => mapper.Map<Folder>(e)).ToList();
+				var subfolders = loadSubfolders ? await context.Folders
+					.Where(f => f.ParentFolder == null)
+					.Select(f => mapper.Map<Folder>(f))
+					.ToListAsync(cancellationToken) : null;
+
+				var discs = loadDiscs ? await context.Discs
+					.Where(d => d.Folder == null)
+					.Select(d => mapper.Map<Disc>(d))
+					.ToListAsync(cancellationToken) : null;
+
+				return new Folder("<ROOT>", subfolders, discs);
 			}
 
-			return await context.Folders
-				.Where(f => f.ParentFolder == null)
-				.Select(f => mapper.Map<Folder>(f))
-				.ToListAsync(cancellationToken);
-		}
-
-		public async Task<IReadOnlyCollection<Disc>> GetFolderDiscs(int? folderId, CancellationToken cancellationToken)
-		{
-			if (folderId != null)
-			{
-				var folder = await FindFolder(folderId.Value, includeSubfolders: false, includeDiscs: true, cancellationToken);
-				return folder.Discs.Select(e => mapper.Map<Disc>(e)).ToList();
-			}
-
-			return await context.Discs
-				.Where(d => d.Folder == null)
-				.Select(d => mapper.Map<Disc>(d))
-				.ToListAsync(cancellationToken);
+			var folder = await FindFolder(folderId.Value, loadSubfolders, loadDiscs, cancellationToken);
+			return mapper.Map<Folder>(folder);
 		}
 
 		private async Task<FolderEntity> FindFolder(int folderId, bool includeSubfolders, bool includeDiscs, CancellationToken cancellationToken)

@@ -9,7 +9,8 @@ namespace MusicLibraryApi.GraphQL.Types
 		{
 			Field(x => x.Id);
 			Field(x => x.Name);
-			Field<IntGraphType>("parentFolderId", resolve: context => context.Source.ParentFolder?.Id);
+			Field(name: "subfolders", type: typeof(ListGraphType<FolderType>), resolve: context => context.Source.Subfolders);
+			Field(name: "discs", type: typeof(ListGraphType<DiscType>), resolve: context => context.Source.Discs);
 		}
 	}
 }

@@ -16,128 +16,66 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 	public class FoldersTests : GraphQLTests
 	{
 		[TestMethod]
-		public async Task SubfoldersQuery_ForRootFolder_ReturnsCorrectData()
+		public async Task FolderQuery_ForRootFolder_ReturnsCorrectData()
 		{
 			// Arrange
 
-			var expectedFolders = new[]
+			var subfolders = new[]
 			{
-				new OutputFolderData(6, "Empty Folder", null),
-				new OutputFolderData(3, "Foreign", null),
-				new OutputFolderData(1, "Russian", null),
+				new OutputFolderData(1, "Russian"),
+				new OutputFolderData(3, "Foreign"),
+				new OutputFolderData(6, "Empty Folder"),
 			};
 
-			var client = CreateClient<IFoldersQuery>();
-
-			// Act
-
-			var receivedFolders = await client.GetSubfolders(null, FolderFields.All, CancellationToken.None);
-
-			// Assert
-
-			CollectionAssert.AreEqual(expectedFolders, receivedFolders.ToList(), new FolderDataComparer());
-		}
-
-		[TestMethod]
-		public async Task SubfoldersQuery_ForNonRootFolder_ReturnsCorrectData()
-		{
-			// Arrange
-
-			var expectedFolders = new[]
-			{
-				new OutputFolderData(5, "AC-DC", 3),
-				new OutputFolderData(4, "Korn", 3),
-			};
-
-			var client = CreateClient<IFoldersQuery>();
-
-			// Act
-
-			var receivedFolders = await client.GetSubfolders(3, FolderFields.All, CancellationToken.None);
-
-			// Assert
-
-			CollectionAssert.AreEqual(expectedFolders, receivedFolders.ToList(), new FolderDataComparer());
-		}
-
-		[TestMethod]
-		public async Task SubfoldersQuery_ForFolderWithoutSubfolders_ReturnsNoData()
-		{
-			// Arrange
-
-			var client = CreateClient<IFoldersQuery>();
-
-			// Act
-
-			var receivedFolders = await client.GetSubfolders(6, FolderFields.All, CancellationToken.None);
-
-			// Assert
-
-			Assert.IsFalse(receivedFolders.Any());
-		}
-
-		[TestMethod]
-		public async Task SubfoldersQuery_ForUnknownFolder_ReturnsError()
-		{
-			// Arrange
-
-			var client = CreateClient<IFoldersQuery>();
-
-			// Act
-
-			var getSubfoldersTask = client.GetSubfolders(12345, FolderFields.All, CancellationToken.None);
-
-			// Assert
-
-			var exception = await Assert.ThrowsExceptionAsync<GraphQLRequestFailedException>(() => getSubfoldersTask);
-			Assert.AreEqual("The folder with id of '12345' does not exist", exception.Message);
-		}
-
-		[TestMethod]
-		public async Task DiscsQuery_ForRootFolder_ReturnsCorrectData()
-		{
-			// Arrange
-
-			var expectedDiscs = new[]
+			var discs = new[]
 			{
 				new OutputDiscData(4, null, "Foreign Best", null, null, null, null),
 			};
 
+			var expectedFolder = new OutputFolderData(0, "<ROOT>", subfolders, discs);
+
 			var client = CreateClient<IFoldersQuery>();
 
 			// Act
 
-			var receivedDiscs = await client.GetFolderDiscs(null, DiscFields.All, CancellationToken.None);
+			var receivedFolder = await client.GetFolder(null, FolderFields.All, CancellationToken.None);
 
 			// Assert
 
-			CollectionAssert.AreEqual(expectedDiscs, receivedDiscs.ToList(), new DiscDataComparer());
+			var cmp = new FolderDataComparer().Compare(expectedFolder, receivedFolder);
+			Assert.AreEqual(0, cmp, "Folders data does not match");
 		}
 
 		[TestMethod]
-		public async Task DiscsQuery_ForNonRootFolder_ReturnsCorrectData()
+		public async Task FolderQuery_ForNonRootFolder_ReturnsCorrectData()
 		{
 			// Arrange
 
-			var expectedDiscs = new[]
+			var subfolders = new[]
 			{
-				new OutputDiscData(2, 2001, "Platinum Hits (CD 1)", "Platinum Hits", 1, new DateTimeOffset(2019, 11, 10, 15, 38, 01, TimeSpan.FromHours(2)), "Boring"),
-				new OutputDiscData(3, 2001, "Platinum Hits (CD 2)", "Platinum Hits", 2, new DateTimeOffset(2019, 11, 10, 15, 38, 02, TimeSpan.FromHours(2)), "Boring"),
+				new OutputFolderData(5, "AC-DC"),
+				new OutputFolderData(4, "Korn"),
 			};
 
+			// TBD: Add discs to non-root folder
+			var discs = Array.Empty<OutputDiscData>();
+
+			var expectedFolder = new OutputFolderData(3, "Foreign", subfolders, discs);
+
 			var client = CreateClient<IFoldersQuery>();
 
 			// Act
 
-			var receivedDiscs = await client.GetFolderDiscs(5, DiscFields.All, CancellationToken.None);
+			var receivedFolder = await client.GetFolder(3, FolderFields.All, CancellationToken.None);
 
 			// Assert
 
-			CollectionAssert.AreEqual(expectedDiscs, receivedDiscs.ToList(), new DiscDataComparer());
+			var cmp = new FolderDataComparer().Compare(expectedFolder, receivedFolder);
+			Assert.AreEqual(0, cmp, "Folders data does not match");
 		}
 
 		[TestMethod]
-		public async Task DiscsQuery_ForFolderWithoutDiscs_ReturnsNoData()
+		public async Task FolderQuery_ForUnknownFolder_ReturnsError()
 		{
 			// Arrange
 
@@ -145,27 +83,11 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Act
 
-			var receivedDiscs = await client.GetFolderDiscs(6, DiscFields.All, CancellationToken.None);
+			var getSubfoldersTask = client.GetFolder(12345, FolderFields.All, CancellationToken.None);
 
 			// Assert
 
-			Assert.IsFalse(receivedDiscs.Any());
-		}
-
-		[TestMethod]
-		public async Task DiscsQuery_ForUnknownFolder_ReturnsError()
-		{
-			// Arrange
-
-			var client = CreateClient<IFoldersQuery>();
-
-			// Act
-
-			var getFolderDiscsTask = client.GetFolderDiscs(12345, DiscFields.All, CancellationToken.None);
-
-			// Assert
-
-			var exception = await Assert.ThrowsExceptionAsync<GraphQLRequestFailedException>(() => getFolderDiscsTask);
+			var exception = await Assert.ThrowsExceptionAsync<GraphQLRequestFailedException>(() => getSubfoldersTask);
 			Assert.AreEqual("The folder with id of '12345' does not exist", exception.Message);
 		}
 
@@ -190,21 +112,21 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var expectedFolders = new[]
 			{
-				new OutputFolderData(7, "Belarussian", null),
-				new OutputFolderData(6, "Empty Folder", null),
-				new OutputFolderData(3, "Foreign", null),
-				new OutputFolderData(1, "Russian", null),
+				new OutputFolderData(7, "Belarussian"),
+				new OutputFolderData(6, "Empty Folder"),
+				new OutputFolderData(3, "Foreign"),
+				new OutputFolderData(1, "Russian"),
 			};
 
 			var foldersClient = CreateClient<IFoldersQuery>();
 
 			// Act
 
-			var receivedFolders = await foldersClient.GetSubfolders(null, FolderFields.All, CancellationToken.None);
+			var receivedFolderData = await foldersClient.GetFolder(null, FolderFields.Subfolders, CancellationToken.None);
 
 			// Assert
 
-			CollectionAssert.AreEqual(expectedFolders, receivedFolders.ToList(), new FolderDataComparer());
+			CollectionAssert.AreEqual(expectedFolders, receivedFolderData.Subfolders.ToList(), new FolderDataComparer());
 		}
 
 		[TestMethod]
@@ -228,20 +150,20 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var expectedFolders = new[]
 			{
-				new OutputFolderData(5, "AC-DC", 3),
-				new OutputFolderData(7, "Guano Apes", 3),
-				new OutputFolderData(4, "Korn", 3),
+				new OutputFolderData(5, "AC-DC"),
+				new OutputFolderData(7, "Guano Apes"),
+				new OutputFolderData(4, "Korn"),
 			};
 
 			var foldersClient = CreateClient<IFoldersQuery>();
 
 			// Act
 
-			var receivedFolders = await foldersClient.GetSubfolders(3, FolderFields.All, CancellationToken.None);
+			var receivedFolderData = await foldersClient.GetFolder(3, FolderFields.Subfolders, CancellationToken.None);
 
 			// Assert
 
-			CollectionAssert.AreEqual(expectedFolders, receivedFolders.ToList(), new FolderDataComparer());
+			CollectionAssert.AreEqual(expectedFolders, receivedFolderData.Subfolders.ToList(), new FolderDataComparer());
 		}
 
 		[TestMethod]
@@ -266,14 +188,14 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var expectedFolders = new[]
 			{
-				new OutputFolderData(5, "AC-DC", 3),
-				new OutputFolderData(4, "Korn", 3),
+				new OutputFolderData(5, "AC-DC"),
+				new OutputFolderData(4, "Korn"),
 			};
 
 			var foldersClient = CreateClient<IFoldersQuery>();
-			var receivedFolders = await foldersClient.GetSubfolders(3, FolderFields.All, CancellationToken.None);
+			var receivedFolderData = await foldersClient.GetFolder(3, FolderFields.Subfolders, CancellationToken.None);
 
-			CollectionAssert.AreEqual(expectedFolders, receivedFolders.ToList(), new FolderDataComparer());
+			CollectionAssert.AreEqual(expectedFolders, receivedFolderData.Subfolders.ToList(), new FolderDataComparer());
 		}
 
 		[TestMethod]
@@ -297,20 +219,20 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var expectedFolders = new[]
 			{
-				new OutputFolderData(5, "AC-DC", 3),
-				new OutputFolderData(4, "Korn", 3),
-				new OutputFolderData(7, "Nautilus Pompilius", 3),
+				new OutputFolderData(5, "AC-DC"),
+				new OutputFolderData(4, "Korn"),
+				new OutputFolderData(7, "Nautilus Pompilius"),
 			};
 
 			var foldersClient = CreateClient<IFoldersQuery>();
 
 			// Act
 
-			var receivedFolders = await foldersClient.GetSubfolders(3, FolderFields.All, CancellationToken.None);
+			var receivedFolderData = await foldersClient.GetFolder(3, FolderFields.Subfolders, CancellationToken.None);
 
 			// Assert
 
-			CollectionAssert.AreEqual(expectedFolders, receivedFolders.ToList(), new FolderDataComparer());
+			CollectionAssert.AreEqual(expectedFolders, receivedFolderData.Subfolders.ToList(), new FolderDataComparer());
 		}
 	}
 }

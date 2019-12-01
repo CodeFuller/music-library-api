@@ -17,22 +17,15 @@ namespace MusicLibraryApi.GraphQL
 				"artists",
 				resolve: async context => await serviceAccessor.ArtistsService.GetAllArtists(context.CancellationToken));
 
-			FieldAsync<ListGraphType<FolderType>>(
-				"folderSubfolders",
+			FieldAsync<FolderType>(
+				"folder",
 				arguments: new QueryArguments(new QueryArgument<IdGraphType> { Name = "folderId" }),
 				resolve: async context =>
 				{
 					var folderId = context.GetArgument<int?>("folderId");
-					return await serviceAccessor.FoldersService.GetSubfolders(folderId, context.CancellationToken);
-				});
-
-			FieldAsync<ListGraphType<DiscType>>(
-				"folderDiscs",
-				arguments: new QueryArguments(new QueryArgument<IdGraphType> { Name = "folderId" }),
-				resolve: async context =>
-				{
-					var folderId = context.GetArgument<int?>("folderId");
-					return await serviceAccessor.FoldersService.GetFolderDiscs(folderId, context.CancellationToken);
+					var loadSubfolders = context.SubFields.ContainsKey("subfolders");
+					var loadDiscs = context.SubFields.ContainsKey("discs");
+					return await serviceAccessor.FoldersService.GetFolder(folderId, loadSubfolders, loadDiscs, context.CancellationToken);
 				});
 
 			FieldAsync<DiscType>(

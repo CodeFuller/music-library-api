@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -27,7 +26,7 @@ namespace MusicLibraryApi.Logic.Services
 		{
 			try
 			{
-				var folder = new Folder(folderName, null);
+				var folder = new Folder(folderName, null, null);
 				return await repository.CreateFolder(parentFolderId, folder, cancellationToken);
 			}
 			catch (DuplicateKeyException e)
@@ -37,31 +36,24 @@ namespace MusicLibraryApi.Logic.Services
 			}
 		}
 
-		public async Task<IReadOnlyCollection<Folder>> GetSubfolders(int? folderId, CancellationToken cancellationToken)
+		public async Task<Folder> GetFolder(int? folderId, bool loadSubfolders, bool loadDiscs, CancellationToken cancellationToken)
 		{
-			try
-			{
-				var subfolders = await repository.GetSubfolders(folderId, cancellationToken);
-				return subfolders.OrderBy(f => f.Name).ToList();
-			}
-			catch (NotFoundException e)
-			{
-				logger.LogError(e, "The folder with id of {FolderId} does not exist", folderId);
-				throw new ServiceOperationFailedException(Invariant($"The folder with id of '{folderId}' does not exist"), e);
-			}
-		}
+			Folder folder;
 
-		public async Task<IReadOnlyCollection<Disc>> GetFolderDiscs(int? folderId, CancellationToken cancellationToken)
-		{
 			try
 			{
-				return await repository.GetFolderDiscs(folderId, cancellationToken);
+				folder = await repository.GetFolder(folderId, loadSubfolders, loadDiscs, cancellationToken);
 			}
 			catch (NotFoundException e)
 			{
 				logger.LogError(e, "The folder with id of {FolderId} does not exist", folderId);
 				throw new ServiceOperationFailedException(Invariant($"The folder with id of '{folderId}' does not exist"), e);
 			}
+
+			var sortedSubfolders = folder.Subfolders?.OrderBy(f => f.Name).ToList();
+			var sortedDiscs = folder.Discs?.OrderBy(d => d.Year).ThenBy(d => d.Title).ToList();
+
+			return new Folder(folder.Id, folder.Name, sortedSubfolders, sortedDiscs);
 		}
 	}
 }

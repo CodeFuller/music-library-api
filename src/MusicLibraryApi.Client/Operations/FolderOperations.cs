@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using MusicLibraryApi.Client.Contracts.Discs;
 using MusicLibraryApi.Client.Contracts.Folders;
 using MusicLibraryApi.Client.Exceptions;
 using MusicLibraryApi.Client.Fields;
@@ -21,12 +20,24 @@ namespace MusicLibraryApi.Client.Operations
 		{
 		}
 
-		public async Task<IReadOnlyCollection<OutputFolderData>> GetSubfolders(int? folderId, QueryFieldSet<FolderQuery> fields, CancellationToken cancellationToken)
+		public async Task<OutputFolderData> GetFolder(int? folderId, QueryFieldSet<FolderQuery> fields, CancellationToken cancellationToken)
 		{
-			var requestedFields = JoinRequestFields(fields);
+			// TBD: Implement selection on complex fields.
+			var plainFields = fields.Where(f => !(f == FolderFields.Subfolders || f == FolderFields.Discs));
+			var requestedFields = JoinRequestFields(new QueryFieldSet<FolderQuery>(plainFields));
 
-			var query = Invariant($@"query GetFolderSubfolders($folderId: ID) {{
-										folderSubfolders(folderId: $folderId) {{ {requestedFields} }}
+			if (fields.Contains(FolderFields.Subfolders))
+			{
+				requestedFields += " subfolders { id name }";
+			}
+
+			if (fields.Contains(FolderFields.Discs))
+			{
+				requestedFields += " discs { id title }";
+			}
+
+			var query = Invariant($@"query GetFolder($folderId: ID) {{
+										folder(folderId: $folderId) {{ {requestedFields} }}
 									}}");
 
 			var request = new GraphQLRequest
@@ -38,27 +49,7 @@ namespace MusicLibraryApi.Client.Operations
 				},
 			};
 
-			return await ExecuteRequest<OutputFolderData[]>("folderSubfolders", request, cancellationToken);
-		}
-
-		public async Task<IReadOnlyCollection<OutputDiscData>> GetFolderDiscs(int? folderId, QueryFieldSet<DiscQuery> fields, CancellationToken cancellationToken)
-		{
-			var requestedFields = JoinRequestFields(fields);
-
-			var query = Invariant($@"query GetFolderDiscs($folderId: ID) {{
-										folderDiscs(folderId: $folderId) {{ {requestedFields} }}
-									}}");
-
-			var request = new GraphQLRequest
-			{
-				Query = query,
-				Variables = new
-				{
-					folderId = folderId,
-				},
-			};
-
-			return await ExecuteRequest<OutputDiscData[]>("folderDiscs", request, cancellationToken);
+			return await ExecuteRequest<OutputFolderData>("folder", request, cancellationToken);
 		}
 
 		public async Task<int> CreateFolder(InputFolderData folderData, CancellationToken cancellationToken)
