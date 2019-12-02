@@ -27,11 +27,7 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 
 		public async Task<int> CreateDisc(int folderId, Disc disc, CancellationToken cancellationToken)
 		{
-			var folder = await context.Folders.SingleOrDefaultAsync(f => f.Id == folderId, cancellationToken);
-			if (folder == null)
-			{
-				throw new NotFoundException(Invariant($"The folder with id of {folderId} does not exist"));
-			}
+			var folder = await context.FindFolder(folderId, false, false, cancellationToken);
 
 			var discEntity = mapper.Map<DiscEntity>(disc);
 			discEntity.Folder = folder;

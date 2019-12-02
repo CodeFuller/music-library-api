@@ -8,7 +8,6 @@ using MusicLibraryApi.Abstractions.Exceptions;
 using MusicLibraryApi.Abstractions.Interfaces;
 using MusicLibraryApi.Abstractions.Models;
 using MusicLibraryApi.Dal.EfCore.Entities;
-using static System.FormattableString;
 
 namespace MusicLibraryApi.Dal.EfCore.Repositories
 {
@@ -30,7 +29,7 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 
 			if (parentFolderId != null)
 			{
-				folderEntity.ParentFolder = await FindFolder(parentFolderId.Value, includeSubfolders: false, includeDiscs: false, cancellationToken);
+				folderEntity.ParentFolder = await context.FindFolder(parentFolderId.Value, includeSubfolders: false, includeDiscs: false, cancellationToken);
 			}
 
 			context.Folders.Add(folderEntity);
@@ -64,35 +63,8 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 				return new Folder("<ROOT>", subfolders, discs);
 			}
 
-			var folder = await FindFolder(folderId.Value, loadSubfolders, loadDiscs, cancellationToken);
+			var folder = await context.FindFolder(folderId.Value, loadSubfolders, loadDiscs, cancellationToken);
 			return mapper.Map<Folder>(folder);
-		}
-
-		private async Task<FolderEntity> FindFolder(int folderId, bool includeSubfolders, bool includeDiscs, CancellationToken cancellationToken)
-		{
-			IQueryable<FolderEntity> query = context.Folders
-				.Include(f => f.ParentFolder);
-
-			if (includeSubfolders)
-			{
-				query = query.Include(f => f.Subfolders);
-			}
-
-			if (includeDiscs)
-			{
-				query = query.Include(f => f.Discs);
-			}
-
-			var folderEntity = await query
-				.Where(x => x.Id == folderId)
-				.SingleOrDefaultAsync(cancellationToken);
-
-			if (folderEntity == null)
-			{
-				throw new NotFoundException(Invariant($"The folder with id of {folderId} does not exist"));
-			}
-
-			return folderEntity;
 		}
 	}
 }
