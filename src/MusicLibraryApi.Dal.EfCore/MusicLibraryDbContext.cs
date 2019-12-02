@@ -27,6 +27,9 @@ namespace MusicLibraryApi.Dal.EfCore
 			modelBuilder.Entity<DiscEntity>(b =>
 			{
 				b.ToTable("Discs");
+				b.HasOne(s => s.Folder)
+					.WithMany(f => f!.Discs)
+					.OnDelete(DeleteBehavior.Restrict);
 			});
 
 			modelBuilder.Entity<SongEntity>(b =>
@@ -34,7 +37,12 @@ namespace MusicLibraryApi.Dal.EfCore
 				b.ToTable("Songs");
 				b.HasOne(s => s.Disc)
 					.WithMany(d => d.Songs)
-					.IsRequired();
+					.IsRequired()
+					.OnDelete(DeleteBehavior.Restrict);
+
+				b.HasOne(s => s.Artist)
+					.WithMany(a => a!.Songs)
+					.OnDelete(DeleteBehavior.Restrict);
 			});
 
 			modelBuilder.Entity<ArtistEntity>(b =>
@@ -50,7 +58,8 @@ namespace MusicLibraryApi.Dal.EfCore
 				// https://stackoverflow.com/a/47930643/5740031
 				b.HasIndex("ParentFolderId", nameof(FolderEntity.Name)).IsUnique();
 				b.HasOne(f => f.ParentFolder)
-					.WithMany(f => f!.Subfolders);
+					.WithMany(f => f!.Subfolders)
+					.OnDelete(DeleteBehavior.Restrict);
 			});
 
 			modelBuilder.Entity<GenreEntity>(b =>
@@ -64,7 +73,8 @@ namespace MusicLibraryApi.Dal.EfCore
 				b.ToTable("Playbacks");
 				b.HasOne(p => p.Song)
 					.WithMany(s => s.Playbacks)
-					.IsRequired();
+					.IsRequired()
+					.OnDelete(DeleteBehavior.Restrict);
 			});
 		}
 	}
