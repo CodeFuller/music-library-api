@@ -51,7 +51,12 @@ namespace MusicLibraryApi.Logic.Services
 			}
 
 			var sortedSubfolders = folder.Subfolders?.OrderBy(f => f.Name).ToList();
-			var sortedDiscs = folder.Discs?.OrderBy(f => f.Year == null).ThenBy(d => d.Year).ThenBy(d => d.Title).ToList();
+			var sortedDiscs = folder.Discs?
+				.Where(d => !d.IsDeleted)
+				.OrderBy(f => f.Year == null)
+				.ThenBy(d => d.Year)
+				.ThenBy(d => d.Title)
+				.ToList();
 
 			return new Folder(folder.Id, folder.Name, sortedSubfolders, sortedDiscs);
 		}

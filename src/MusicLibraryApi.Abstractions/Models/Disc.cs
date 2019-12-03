@@ -23,6 +23,8 @@ namespace MusicLibraryApi.Abstractions.Models
 
 		public string? DeleteComment { get; }
 
+		public bool IsDeleted => DeleteDate != null;
+
 		public Disc(int? year, string title, string? albumTitle, int? albumOrder, DateTimeOffset? deleteDate, string? deleteComment)
 		{
 			Year = year;

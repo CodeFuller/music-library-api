@@ -54,7 +54,9 @@ namespace MusicLibraryApi.Logic.Services
 			var discs = await repository.GetAllDiscs(cancellationToken);
 
 			// There is no meaningful sorting for all discs. We sort discs by id here mostly for steady IT baselines.
-			return discs.OrderBy(d => d.Id).ToList();
+			return discs
+				.Where(d => !d.IsDeleted)
+				.OrderBy(d => d.Id).ToList();
 		}
 	}
 }

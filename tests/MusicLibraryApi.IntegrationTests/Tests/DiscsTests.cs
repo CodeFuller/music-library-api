@@ -108,13 +108,13 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Assert
 
-			Assert.AreEqual(6, newDiscId);
+			Assert.AreEqual(8, newDiscId);
 
 			// Checking new discs data
 
 			var expectedDiscs = new[]
 			{
-				new OutputDiscData(6, 1994, "Битва на мотоциклах (CD 2)", "Битва на мотоциклах", 2),
+				new OutputDiscData(8, 1994, "Битва на мотоциклах (CD 2)", "Битва на мотоциклах", 2),
 				new OutputDiscData(5, 1997, "Proud Like A God"),
 				new OutputDiscData(3, 2000, "Don't Give Me Names"),
 				new OutputDiscData(4, null, "Rarities"),
@@ -141,7 +141,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Assert
 
-			Assert.AreEqual(6, newDiscId);
+			Assert.AreEqual(8, newDiscId);
 
 			// Checking new discs data
 
@@ -150,7 +150,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 				new OutputDiscData(5, 1997, "Proud Like A God"),
 				new OutputDiscData(3, 2000, "Don't Give Me Names"),
 				new OutputDiscData(4, null, "Rarities"),
-				new OutputDiscData(6, null, "Russian"),
+				new OutputDiscData(8, null, "Russian"),
 			};
 
 			var foldersQuery = CreateClient<IFoldersQuery>();

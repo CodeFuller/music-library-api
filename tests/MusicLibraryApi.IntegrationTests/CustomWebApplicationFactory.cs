@@ -84,11 +84,12 @@ namespace MusicLibraryApi.IntegrationTests
 		 *				Disc "1997 - Proud Like A God" (Disc id: 5)
 		 *				Disc "2000 - Don't Give Me Names" (Disc id: 3)
 		 *				Disc "Rarities" (Disc id: 4)
+		 *				Disc "2006 - Lost (T)apes" (Disc id: 7, deleted)
 		 *			Folder "Rammstein" (Folder id: 3)
 		 *		Folder "Russian" (Folder id: 1)
 		 *		Disc "2001 - Platinum Hits (CD 1)" (Disc id: 2)
 		 *		Disc "2001 - Platinum Hits (CD 2)" (Disc id: 1)
-		 *
+		 *		Disc "Some deleted disc" (Disc id: 6, deleted)
 		 */
 		private static void SeedFoldersData(MusicLibraryDbContext context, IIdentityInsert identityInsert)
 		{
@@ -160,12 +161,18 @@ namespace MusicLibraryApi.IntegrationTests
 			var disc5 = new DiscEntity(5, 1997, "Proud Like A God");
 			disc5.Folder = FindFolder(context, "Guano Apes");
 
+			var disc6 = new DiscEntity(6, null, "Some deleted disc", null, null, new DateTimeOffset(2019, 12, 03, 07, 56, 06, TimeSpan.FromHours(2)));
+			disc6.Folder = null;
+
+			var disc7 = new DiscEntity(7, 2006, "Lost (T)apes", null, null, new DateTimeOffset(2019, 12, 03, 07, 57, 01, TimeSpan.FromHours(2)));
+			disc7.Folder = FindFolder(context, "Guano Apes");
+
 			identityInsert.InitializeIdentityInsert(context, "Discs");
 
-			context.Discs.AddRange(disc1, disc2, disc3, disc4, disc5);
+			context.Discs.AddRange(disc1, disc2, disc3, disc4, disc5, disc6, disc7);
 			context.SaveChanges();
 
-			identityInsert.FinalizeIdentityInsert(context, "Discs", 6);
+			identityInsert.FinalizeIdentityInsert(context, "Discs", 8);
 		}
 
 		private static void SeedSongsData(MusicLibraryDbContext context, IIdentityInsert identityInsert)
