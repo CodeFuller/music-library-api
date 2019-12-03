@@ -8,6 +8,6 @@ namespace MusicLibraryApi.Abstractions.Interfaces
 	{
 		Task<int> CreateFolder(int? parentFolderId, string folderName, CancellationToken cancellationToken);
 
-		Task<Folder> GetFolder(int? folderId, bool loadSubfolders, bool loadDiscs, CancellationToken cancellationToken);
+		Task<Folder> GetFolder(int? folderId, bool loadSubfolders, bool loadDiscs, bool includeDeletedDiscs, CancellationToken cancellationToken);
 	}
 }

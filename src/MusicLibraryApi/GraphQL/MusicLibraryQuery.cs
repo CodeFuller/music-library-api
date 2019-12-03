@@ -19,13 +19,16 @@ namespace MusicLibraryApi.GraphQL
 
 			FieldAsync<FolderType>(
 				"folder",
-				arguments: new QueryArguments(new QueryArgument<IdGraphType> { Name = "folderId" }),
+				arguments: new QueryArguments(
+					new QueryArgument<IdGraphType> { Name = "folderId" },
+					new QueryArgument<BooleanGraphType> { Name = "includeDeletedDiscs" }),
 				resolve: async context =>
 				{
 					var folderId = context.GetArgument<int?>("folderId");
 					var loadSubfolders = context.SubFields.ContainsKey("subfolders");
 					var loadDiscs = context.SubFields.ContainsKey("discs");
-					return await serviceAccessor.FoldersService.GetFolder(folderId, loadSubfolders, loadDiscs, context.CancellationToken);
+					var includeDeletedDiscs = context.GetArgument<bool?>("includeDeletedDiscs") ?? false;
+					return await serviceAccessor.FoldersService.GetFolder(folderId, loadSubfolders, loadDiscs, includeDeletedDiscs, context.CancellationToken);
 				});
 
 			FieldAsync<DiscType>(

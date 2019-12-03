@@ -78,6 +78,39 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		}
 
 		[TestMethod]
+		public async Task FolderQuery_IfIncludeDeletedDiscs_ReturnsDeletedDiscs()
+		{
+			// Arrange
+
+			var subfolders = new[]
+			{
+				new OutputFolderData(6, "Empty folder"),
+				new OutputFolderData(5, "Some subfolder"),
+			};
+
+			var discs = new[]
+			{
+				new OutputDiscData(3, 2000, "Don't Give Me Names"),
+				new OutputDiscData(4, null, "Rarities"),
+				new OutputDiscData(5, 1997, "Proud Like A God"),
+				new OutputDiscData(7, 2006, "Lost (T)apes"),
+			};
+
+			var expectedFolder = new OutputFolderData(4, "Guano Apes", subfolders, discs);
+
+			var client = CreateClient<IFoldersQuery>();
+
+			// Act
+
+			var receivedFolder = await client.GetFolder(4, FolderFields.All, CancellationToken.None, true);
+
+			// Assert
+
+			var cmp = new FolderDataComparer().Compare(expectedFolder, receivedFolder);
+			Assert.AreEqual(0, cmp, "Folders data does not match");
+		}
+
+		[TestMethod]
 		public async Task FolderQuery_ForUnknownFolder_ReturnsError()
 		{
 			// Arrange

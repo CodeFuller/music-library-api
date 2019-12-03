@@ -36,7 +36,7 @@ namespace MusicLibraryApi.Logic.Services
 			}
 		}
 
-		public async Task<Folder> GetFolder(int? folderId, bool loadSubfolders, bool loadDiscs, CancellationToken cancellationToken)
+		public async Task<Folder> GetFolder(int? folderId, bool loadSubfolders, bool loadDiscs, bool includeDeletedDiscs, CancellationToken cancellationToken)
 		{
 			Folder folder;
 
@@ -52,7 +52,7 @@ namespace MusicLibraryApi.Logic.Services
 
 			var sortedSubfolders = folder.Subfolders?.OrderBy(f => f.Name).ToList();
 			var sortedDiscs = folder.Discs?
-				.Where(d => !d.IsDeleted)
+				.Where(d => includeDeletedDiscs || !d.IsDeleted)
 				.OrderBy(f => f.Year == null)
 				.ThenBy(d => d.Year)
 				.ThenBy(d => d.Title)

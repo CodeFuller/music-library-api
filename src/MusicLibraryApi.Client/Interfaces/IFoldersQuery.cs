@@ -8,6 +8,6 @@ namespace MusicLibraryApi.Client.Interfaces
 {
 	public interface IFoldersQuery
 	{
-		Task<OutputFolderData> GetFolder(int? folderId, QueryFieldSet<FolderQuery> fields, CancellationToken cancellationToken);
+		Task<OutputFolderData> GetFolder(int? folderId, QueryFieldSet<FolderQuery> fields, CancellationToken cancellationToken, bool includeDeletedDiscs = false);
 	}
 }
