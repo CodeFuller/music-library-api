@@ -164,7 +164,7 @@ namespace MusicLibraryApi.IntegrationTests
 			var disc6 = new DiscEntity(6, null, "Some deleted disc", null, null, new DateTimeOffset(2019, 12, 03, 07, 56, 06, TimeSpan.FromHours(2)));
 			disc6.Folder = null;
 
-			var disc7 = new DiscEntity(7, 2006, "Lost (T)apes", null, null, new DateTimeOffset(2019, 12, 03, 07, 57, 01, TimeSpan.FromHours(2)));
+			var disc7 = new DiscEntity(7, 2006, "Lost (T)apes", null, null, new DateTimeOffset(2019, 12, 03, 07, 57, 01, TimeSpan.FromHours(2)), "Deleted for a test");
 			disc7.Folder = FindFolder(context, "Guano Apes");
 
 			identityInsert.InitializeIdentityInsert(context, "Discs");

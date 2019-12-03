@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -27,8 +28,8 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var discs = new[]
 			{
-				new OutputDiscData(1, 2001, "Platinum Hits (CD 2)", "Platinum Hits", 2),
 				new OutputDiscData(2, 2001, "Platinum Hits (CD 1)", "Platinum Hits", 1),
+				new OutputDiscData(1, 2001, "Platinum Hits (CD 2)", "Platinum Hits", 2),
 			};
 
 			var expectedFolder = new OutputFolderData(0, "<ROOT>", subfolders, discs);
@@ -58,9 +59,9 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var discs = new[]
 			{
+				new OutputDiscData(5, 1997, "Proud Like A God"),
 				new OutputDiscData(3, 2000, "Don't Give Me Names"),
 				new OutputDiscData(4, null, "Rarities"),
-				new OutputDiscData(5, 1997, "Proud Like A God"),
 			};
 
 			var expectedFolder = new OutputFolderData(4, "Guano Apes", subfolders, discs);
@@ -90,10 +91,10 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var discs = new[]
 			{
-				new OutputDiscData(3, 2000, "Don't Give Me Names"),
-				new OutputDiscData(4, null, "Rarities"),
 				new OutputDiscData(5, 1997, "Proud Like A God"),
-				new OutputDiscData(7, 2006, "Lost (T)apes"),
+				new OutputDiscData(3, 2000, "Don't Give Me Names"),
+				new OutputDiscData(7, 2006, "Lost (T)apes", null, null, new DateTimeOffset(2019, 12, 03, 07, 57, 01, TimeSpan.FromHours(2)), "Deleted for a test"),
+				new OutputDiscData(4, null, "Rarities"),
 			};
 
 			var expectedFolder = new OutputFolderData(4, "Guano Apes", subfolders, discs);

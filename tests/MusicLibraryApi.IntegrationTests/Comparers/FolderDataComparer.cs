@@ -80,7 +80,7 @@ namespace MusicLibraryApi.IntegrationTests.Comparers
 				return c1.Count < c2.Count ? -1 : 1;
 			}
 
-			foreach (var pair in c1.Zip(c1))
+			foreach (var pair in c1.Zip(c2))
 			{
 				var cmp = comparer.Compare(pair.First, pair.Second);
 				if (cmp != 0)
