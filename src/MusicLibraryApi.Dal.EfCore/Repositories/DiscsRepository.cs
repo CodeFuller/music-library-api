@@ -25,12 +25,10 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 			this.mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
 		}
 
-		public async Task<int> CreateDisc(int folderId, Disc disc, CancellationToken cancellationToken)
+		public async Task<int> CreateDisc(int? folderId, Disc disc, CancellationToken cancellationToken)
 		{
-			var folder = await context.FindFolder(folderId, false, false, cancellationToken);
-
 			var discEntity = mapper.Map<DiscEntity>(disc);
-			discEntity.Folder = folder;
+			discEntity.Folder = folderId == null ? null : await context.FindFolder(folderId.Value, false, false, cancellationToken);
 
 			context.Discs.Add(discEntity);
 			await context.SaveChangesAsync(cancellationToken);

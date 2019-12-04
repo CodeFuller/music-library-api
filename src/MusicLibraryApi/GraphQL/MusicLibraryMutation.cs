@@ -50,10 +50,10 @@ namespace MusicLibraryApi.GraphQL
 				"createDisc",
 				arguments: new QueryArguments(
 					new QueryArgument<NonNullGraphType<DiscInputType>> { Name = "disc" },
-					new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "folderId" }),
+					new QueryArgument<IdGraphType> { Name = "folderId" }),
 				resolve: async context =>
 				{
-					var folderId = context.GetArgument<int>("folderId");
+					var folderId = context.GetArgument<int?>("folderId");
 					var discInput = context.GetArgument<DiscInput>("disc");
 					var disc = discInput.ToModel();
 

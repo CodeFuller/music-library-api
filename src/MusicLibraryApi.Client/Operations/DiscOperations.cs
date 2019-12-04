@@ -43,11 +43,11 @@ namespace MusicLibraryApi.Client.Operations
 			return await ExecuteRequest<OutputDiscData>("disc", request, cancellationToken);
 		}
 
-		public async Task<int> CreateDisc(int folderId, InputDiscData discData, CancellationToken cancellationToken)
+		public async Task<int> CreateDisc(int? folderId, InputDiscData discData, CancellationToken cancellationToken)
 		{
 			Logger.LogInformation("Creating new disc {DiscTitle} ...", discData.Title);
 
-			var query = Invariant($@"mutation ($disc: DiscInput!, $folderId: ID!) {{
+			var query = Invariant($@"mutation ($disc: DiscInput!, $folderId: ID) {{
 										createDisc(disc: $disc, folderId: $folderId) {{ newDiscId }}
 									}}");
 

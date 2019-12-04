@@ -161,6 +161,38 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		}
 
 		[TestMethod]
+		public async Task CreateDiscMutation_ForRootFolder_CreatesDiscSuccessfully()
+		{
+			// Arrange
+
+			var newDiscData = new InputDiscData(2000, "Hybrid Theory", "Hybrid Theory");
+
+			var client = CreateClient<IDiscsMutation>();
+
+			// Act
+
+			var newDiscId = await client.CreateDisc(null, newDiscData, CancellationToken.None);
+
+			// Assert
+
+			Assert.AreEqual(8, newDiscId);
+
+			// Checking new discs data
+
+			var expectedDiscs = new[]
+			{
+				new OutputDiscData(8, 2000, "Hybrid Theory", "Hybrid Theory"),
+				new OutputDiscData(2, 2001, "Platinum Hits (CD 1)", "Platinum Hits", "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", 1),
+				new OutputDiscData(1, 2001, "Platinum Hits (CD 2)", "Platinum Hits", "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", 2),
+			};
+
+			var foldersQuery = CreateClient<IFoldersQuery>();
+			var folderData = await foldersQuery.GetFolder(null, FolderFields.Discs(DiscFields.All), CancellationToken.None);
+
+			CollectionAssert.AreEqual(expectedDiscs, folderData.Discs.ToList(), new DiscDataComparer());
+		}
+
+		[TestMethod]
 		public async Task CreateDiscMutation_IfFolderDoesNotExist_ReturnsError()
 		{
 			// Arrange

@@ -23,7 +23,7 @@ namespace MusicLibraryApi.Logic.Services
 			this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
 		}
 
-		public async Task<int> CreateDisc(int folderId, Disc disc, CancellationToken cancellationToken)
+		public async Task<int> CreateDisc(int? folderId, Disc disc, CancellationToken cancellationToken)
 		{
 			try
 			{
