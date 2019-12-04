@@ -29,7 +29,7 @@ namespace ApiClientUtil
 
 		public async Task<int> Run(string[] args, CancellationToken cancellationToken)
 		{
-			var newDisc = new InputDiscData(1997, "Proud Like A God", null, null, null, null);
+			var newDisc = new InputDiscData(1997, "Proud Like A God", "Proud Like A God");
 			var newDiscId = await discsMutation.CreateDisc(1, newDisc, cancellationToken);
 
 			var newGenre = new InputGenreData($"Some Genre - {DateTimeOffset.Now:yyyy/MM/dd HH:mm:ss}");

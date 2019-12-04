@@ -11,6 +11,8 @@ namespace MusicLibraryApi.GraphQL.Types.Input
 
 		public string? AlbumTitle { get; set; }
 
+		public string? AlbumId { get; set; }
+
 		public int? AlbumOrder { get; set; }
 
 		public DateTimeOffset? DeleteDate { get; set; }
@@ -24,7 +26,12 @@ namespace MusicLibraryApi.GraphQL.Types.Input
 				throw new InvalidOperationException("Disc title is not set");
 			}
 
-			return new Disc(Year, Title, AlbumTitle, AlbumOrder, DeleteDate, DeleteComment);
+			if (AlbumTitle == null)
+			{
+				throw new InvalidOperationException("Disc album title is not set");
+			}
+
+			return new Disc(Year, Title, AlbumTitle, AlbumId, AlbumOrder, DeleteDate, DeleteComment);
 		}
 	}
 }

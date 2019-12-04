@@ -55,7 +55,8 @@ namespace MusicLibraryApi.Logic.Services
 				.Where(d => includeDeletedDiscs || !d.IsDeleted)
 				.OrderBy(f => f.Year == null)
 				.ThenBy(d => d.Year)
-				.ThenBy(d => d.Title)
+				.ThenBy(d => d.AlbumTitle)
+				.ThenBy(d => d.AlbumOrder)
 				.ToList();
 
 			return new Folder(folder.Id, folder.Name, sortedSubfolders, sortedDiscs);

@@ -11,7 +11,9 @@ namespace MusicLibraryApi.Dal.EfCore.Entities
 
 		public string Title { get; private set; }
 
-		public string? AlbumTitle { get; private set; }
+		public string AlbumTitle { get; private set; }
+
+		public string? AlbumId { get; private set; }
 
 		public int? AlbumOrder { get; private set; }
 
@@ -23,12 +25,13 @@ namespace MusicLibraryApi.Dal.EfCore.Entities
 
 		public IReadOnlyCollection<SongEntity> Songs { get; } = new List<SongEntity>();
 
-		public DiscEntity(int id, int? year, string title, string? albumTitle = null, int? albumOrder = null, DateTimeOffset? deleteDate = null, string? deleteComment = null)
+		public DiscEntity(int id, int? year, string title, string albumTitle, string? albumId = null, int? albumOrder = null, DateTimeOffset? deleteDate = null, string? deleteComment = null)
 		{
 			Id = id;
 			Year = year;
 			Title = title;
 			AlbumTitle = albumTitle;
+			AlbumId = albumId;
 			AlbumOrder = albumOrder;
 			DeleteDate = deleteDate;
 			DeleteComment = deleteComment;

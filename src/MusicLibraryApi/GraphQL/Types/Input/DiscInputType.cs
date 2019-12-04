@@ -10,7 +10,8 @@ namespace MusicLibraryApi.GraphQL.Types.Input
 
 			Field<IntGraphType>("year");
 			Field<NonNullGraphType<StringGraphType>>("title");
-			Field<StringGraphType>("albumTitle");
+			Field<NonNullGraphType<StringGraphType>>("albumTitle");
+			Field<StringGraphType>("albumId");
 			Field<IntGraphType>("albumOrder");
 			Field<DateTimeOffsetGraphType>("deleteDate");
 			Field<StringGraphType>("deleteComment");

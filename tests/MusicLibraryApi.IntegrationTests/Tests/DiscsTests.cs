@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -20,11 +21,11 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var expectedDiscs = new[]
 			{
-				new OutputDiscData(1, 2001, "Platinum Hits (CD 2)", "Platinum Hits", 2),
-				new OutputDiscData(2, 2001, "Platinum Hits (CD 1)", "Platinum Hits", 1),
-				new OutputDiscData(3, 2000, "Don't Give Me Names"),
-				new OutputDiscData(4, null, "Rarities"),
-				new OutputDiscData(5, 1997, "Proud Like A God"),
+				new OutputDiscData(1, 2001, "Platinum Hits (CD 2)", "Platinum Hits", "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", 2),
+				new OutputDiscData(2, 2001, "Platinum Hits (CD 1)", "Platinum Hits", "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", 1),
+				new OutputDiscData(3, 2000, "Don't Give Me Names", "Don't Give Me Names"),
+				new OutputDiscData(4, null, "Rarities", String.Empty),
+				new OutputDiscData(5, 1997, "Proud Like A God", "Proud Like A God"),
 			};
 
 			var client = CreateClient<IDiscsQuery>();
@@ -43,7 +44,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		{
 			// Arrange
 
-			var expectedData = new OutputDiscData(2, 2001, "Platinum Hits (CD 1)", "Platinum Hits", 1);
+			var expectedData = new OutputDiscData(2, 2001, "Platinum Hits (CD 1)", "Platinum Hits", "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", 1);
 
 			var client = CreateClient<IDiscsQuery>();
 
@@ -62,7 +63,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		{
 			// Arrange
 
-			var expectedData = new OutputDiscData(4, null, "Rarities");
+			var expectedData = new OutputDiscData(4, null, "Rarities", String.Empty);
 
 			var client = CreateClient<IDiscsQuery>();
 
@@ -98,7 +99,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		{
 			// Arrange
 
-			var newDiscData = new InputDiscData(1994, "Битва на мотоциклах (CD 2)", "Битва на мотоциклах", 2);
+			var newDiscData = new InputDiscData(1994, "Битва на мотоциклах (CD 2)", "Битва на мотоциклах", "{C7BEC024-8979-4477-8247-419A476C1DFB}", 2);
 
 			var client = CreateClient<IDiscsMutation>();
 
@@ -114,10 +115,10 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var expectedDiscs = new[]
 			{
-				new OutputDiscData(8, 1994, "Битва на мотоциклах (CD 2)", "Битва на мотоциклах", 2),
-				new OutputDiscData(5, 1997, "Proud Like A God"),
-				new OutputDiscData(3, 2000, "Don't Give Me Names"),
-				new OutputDiscData(4, null, "Rarities"),
+				new OutputDiscData(8, 1994, "Битва на мотоциклах (CD 2)", "Битва на мотоциклах", "{C7BEC024-8979-4477-8247-419A476C1DFB}", 2),
+				new OutputDiscData(5, 1997, "Proud Like A God", "Proud Like A God"),
+				new OutputDiscData(3, 2000, "Don't Give Me Names", "Don't Give Me Names"),
+				new OutputDiscData(4, null, "Rarities", String.Empty),
 			};
 
 			var foldersQuery = CreateClient<IFoldersQuery>();
@@ -131,7 +132,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		{
 			// Arrange
 
-			var newDiscData = new InputDiscData(null, "Russian");
+			var newDiscData = new InputDiscData(null, "Russian", String.Empty);
 
 			var client = CreateClient<IDiscsMutation>();
 
@@ -147,10 +148,10 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var expectedDiscs = new[]
 			{
-				new OutputDiscData(5, 1997, "Proud Like A God"),
-				new OutputDiscData(3, 2000, "Don't Give Me Names"),
-				new OutputDiscData(4, null, "Rarities"),
-				new OutputDiscData(8, null, "Russian"),
+				new OutputDiscData(5, 1997, "Proud Like A God", "Proud Like A God"),
+				new OutputDiscData(3, 2000, "Don't Give Me Names", "Don't Give Me Names"),
+				new OutputDiscData(4, null, "Rarities", String.Empty),
+				new OutputDiscData(8, null, "Russian", String.Empty),
 			};
 
 			var foldersQuery = CreateClient<IFoldersQuery>();
@@ -164,7 +165,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		{
 			// Arrange
 
-			var newDiscData = new InputDiscData(null, "Some New Disc");
+			var newDiscData = new InputDiscData(null, "Some New Disc", "Some New Disc");
 
 			var client = CreateClient<IDiscsMutation>();
 
@@ -181,11 +182,11 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var expectedDiscs = new[]
 			{
-				new OutputDiscData(1, null, null),
-				new OutputDiscData(2, null, null),
-				new OutputDiscData(3, null, null),
-				new OutputDiscData(4, null, null),
-				new OutputDiscData(5, null, null),
+				new OutputDiscData(1, null, null, null),
+				new OutputDiscData(2, null, null, null),
+				new OutputDiscData(3, null, null, null),
+				new OutputDiscData(4, null, null, null),
+				new OutputDiscData(5, null, null, null),
 			};
 
 			var discsQuery = CreateClient<IDiscsQuery>();

@@ -51,6 +51,12 @@ namespace MusicLibraryApi.IntegrationTests.Comparers
 				return cmp;
 			}
 
+			cmp = String.Compare(d1.AlbumId, d2.AlbumId, StringComparison.Ordinal);
+			if (cmp != 0)
+			{
+				return cmp;
+			}
+
 			cmp = Nullable.Compare(d1.AlbumOrder, d2.AlbumOrder);
 			if (cmp != 0)
 			{
