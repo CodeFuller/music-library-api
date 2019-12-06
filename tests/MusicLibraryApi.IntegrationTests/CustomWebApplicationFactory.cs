@@ -146,25 +146,25 @@ namespace MusicLibraryApi.IntegrationTests
 
 		private static void SeedDiscsData(MusicLibraryDbContext context, IIdentityInsert identityInsert)
 		{
-			var disc1 = new DiscEntity(1, 2001, "Platinum Hits (CD 2)", "Platinum Hits", "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", 2);
+			var disc1 = new DiscEntity(1, 2001, "Platinum Hits (CD 2)", "2001 - Platinum Hits (CD 2)", "Platinum Hits", "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", 2);
 			disc1.Folder = null;
 
-			var disc2 = new DiscEntity(2, 2001, "Platinum Hits (CD 1)", "Platinum Hits", "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", 1);
+			var disc2 = new DiscEntity(2, 2001, "Platinum Hits (CD 1)", "2001 - Platinum Hits (CD 1)", "Platinum Hits", "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", 1);
 			disc2.Folder = null;
 
-			var disc3 = new DiscEntity(3, 2000, "Don't Give Me Names", "Don't Give Me Names");
+			var disc3 = new DiscEntity(3, 2000, "Don't Give Me Names", "2000 - Don't Give Me Names", "Don't Give Me Names");
 			disc3.Folder = FindFolder(context, "Guano Apes");
 
-			var disc4 = new DiscEntity(4, null, "Rarities", String.Empty);
+			var disc4 = new DiscEntity(4, null, "Rarities", "Rarities", String.Empty);
 			disc4.Folder = FindFolder(context, "Guano Apes");
 
-			var disc5 = new DiscEntity(5, 1997, "Proud Like A God", "Proud Like A God");
+			var disc5 = new DiscEntity(5, 1997, "Proud Like A God", "1997 - Proud Like A God", "Proud Like A God");
 			disc5.Folder = FindFolder(context, "Guano Apes");
 
-			var disc6 = new DiscEntity(6, null, "Some deleted disc", "Some deleted disc", null, null, new DateTimeOffset(2019, 12, 03, 07, 56, 06, TimeSpan.FromHours(2)));
+			var disc6 = new DiscEntity(6, null, "Some deleted disc", "2007 - Some deleted disc", "Some deleted disc", null, null, new DateTimeOffset(2019, 12, 03, 07, 56, 06, TimeSpan.FromHours(2)));
 			disc6.Folder = null;
 
-			var disc7 = new DiscEntity(7, 2006, "Lost (T)apes", "Lost (T)apes", null, null, new DateTimeOffset(2019, 12, 03, 07, 57, 01, TimeSpan.FromHours(2)), "Deleted for a test");
+			var disc7 = new DiscEntity(7, 2006, "Lost (T)apes", "2006 - Lost (T)apes", "Lost (T)apes", null, null, new DateTimeOffset(2019, 12, 03, 07, 57, 01, TimeSpan.FromHours(2)), "Deleted for a test");
 			disc7.Folder = FindFolder(context, "Guano Apes");
 
 			identityInsert.InitializeIdentityInsert(context, "Discs");

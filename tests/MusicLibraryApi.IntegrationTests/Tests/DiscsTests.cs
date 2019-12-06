@@ -21,11 +21,11 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var expectedDiscs = new[]
 			{
-				new OutputDiscData(1, 2001, "Platinum Hits (CD 2)", "Platinum Hits", "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", 2),
-				new OutputDiscData(2, 2001, "Platinum Hits (CD 1)", "Platinum Hits", "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", 1),
-				new OutputDiscData(3, 2000, "Don't Give Me Names", "Don't Give Me Names"),
-				new OutputDiscData(4, null, "Rarities", String.Empty),
-				new OutputDiscData(5, 1997, "Proud Like A God", "Proud Like A God"),
+				new OutputDiscData(1, 2001, "Platinum Hits (CD 2)", "2001 - Platinum Hits (CD 2)", "Platinum Hits", "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", 2),
+				new OutputDiscData(2, 2001, "Platinum Hits (CD 1)", "2001 - Platinum Hits (CD 1)", "Platinum Hits", "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", 1),
+				new OutputDiscData(3, 2000, "Don't Give Me Names", "2000 - Don't Give Me Names", "Don't Give Me Names"),
+				new OutputDiscData(4, null, "Rarities", "Rarities", String.Empty),
+				new OutputDiscData(5, 1997, "Proud Like A God", "1997 - Proud Like A God", "Proud Like A God"),
 			};
 
 			var client = CreateClient<IDiscsQuery>();
@@ -44,7 +44,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		{
 			// Arrange
 
-			var expectedData = new OutputDiscData(2, 2001, "Platinum Hits (CD 1)", "Platinum Hits", "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", 1);
+			var expectedData = new OutputDiscData(2, 2001, "Platinum Hits (CD 1)", "2001 - Platinum Hits (CD 1)", "Platinum Hits", "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", 1);
 
 			var client = CreateClient<IDiscsQuery>();
 
@@ -63,7 +63,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		{
 			// Arrange
 
-			var expectedData = new OutputDiscData(4, null, "Rarities", String.Empty);
+			var expectedData = new OutputDiscData(4, null, "Rarities", "Rarities", String.Empty);
 
 			var client = CreateClient<IDiscsQuery>();
 
@@ -99,7 +99,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		{
 			// Arrange
 
-			var newDiscData = new InputDiscData(1994, "Битва на мотоциклах (CD 2)", "Битва на мотоциклах", "{C7BEC024-8979-4477-8247-419A476C1DFB}", 2);
+			var newDiscData = new InputDiscData(1994, "Битва на мотоциклах (CD 2)", "1994 - Битва на мотоциклах (CD 2)", "Битва на мотоциклах", "{C7BEC024-8979-4477-8247-419A476C1DFB}", 2);
 
 			var client = CreateClient<IDiscsMutation>();
 
@@ -115,10 +115,10 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var expectedDiscs = new[]
 			{
-				new OutputDiscData(8, 1994, "Битва на мотоциклах (CD 2)", "Битва на мотоциклах", "{C7BEC024-8979-4477-8247-419A476C1DFB}", 2),
-				new OutputDiscData(5, 1997, "Proud Like A God", "Proud Like A God"),
-				new OutputDiscData(3, 2000, "Don't Give Me Names", "Don't Give Me Names"),
-				new OutputDiscData(4, null, "Rarities", String.Empty),
+				new OutputDiscData(8, 1994, "Битва на мотоциклах (CD 2)", "1994 - Битва на мотоциклах (CD 2)", "Битва на мотоциклах", "{C7BEC024-8979-4477-8247-419A476C1DFB}", 2),
+				new OutputDiscData(5, 1997, "Proud Like A God", "1997 - Proud Like A God", "Proud Like A God"),
+				new OutputDiscData(3, 2000, "Don't Give Me Names", "2000 - Don't Give Me Names", "Don't Give Me Names"),
+				new OutputDiscData(4, null, "Rarities", "Rarities", String.Empty),
 			};
 
 			var foldersQuery = CreateClient<IFoldersQuery>();
@@ -132,7 +132,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		{
 			// Arrange
 
-			var newDiscData = new InputDiscData(null, "Russian", String.Empty);
+			var newDiscData = new InputDiscData(null, "Best Russian", "Russian", String.Empty);
 
 			var client = CreateClient<IDiscsMutation>();
 
@@ -148,10 +148,10 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var expectedDiscs = new[]
 			{
-				new OutputDiscData(5, 1997, "Proud Like A God", "Proud Like A God"),
-				new OutputDiscData(3, 2000, "Don't Give Me Names", "Don't Give Me Names"),
-				new OutputDiscData(4, null, "Rarities", String.Empty),
-				new OutputDiscData(8, null, "Russian", String.Empty),
+				new OutputDiscData(5, 1997, "Proud Like A God", "1997 - Proud Like A God", "Proud Like A God"),
+				new OutputDiscData(3, 2000, "Don't Give Me Names", "2000 - Don't Give Me Names", "Don't Give Me Names"),
+				new OutputDiscData(4, null, "Rarities", "Rarities", String.Empty),
+				new OutputDiscData(8, null, "Best Russian", "Russian", String.Empty),
 			};
 
 			var foldersQuery = CreateClient<IFoldersQuery>();
@@ -165,7 +165,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		{
 			// Arrange
 
-			var newDiscData = new InputDiscData(2000, "Hybrid Theory", "Hybrid Theory");
+			var newDiscData = new InputDiscData(2000, "Hybrid Theory", "2000 - Hybrid Theory", "Hybrid Theory");
 
 			var client = CreateClient<IDiscsMutation>();
 
@@ -181,9 +181,9 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var expectedDiscs = new[]
 			{
-				new OutputDiscData(8, 2000, "Hybrid Theory", "Hybrid Theory"),
-				new OutputDiscData(2, 2001, "Platinum Hits (CD 1)", "Platinum Hits", "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", 1),
-				new OutputDiscData(1, 2001, "Platinum Hits (CD 2)", "Platinum Hits", "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", 2),
+				new OutputDiscData(8, 2000, "Hybrid Theory", "2000 - Hybrid Theory", "Hybrid Theory"),
+				new OutputDiscData(2, 2001, "Platinum Hits (CD 1)", "2001 - Platinum Hits (CD 1)", "Platinum Hits", "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", 1),
+				new OutputDiscData(1, 2001, "Platinum Hits (CD 2)", "2001 - Platinum Hits (CD 2)", "Platinum Hits", "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", 2),
 			};
 
 			var foldersQuery = CreateClient<IFoldersQuery>();
@@ -197,7 +197,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		{
 			// Arrange
 
-			var newDiscData = new InputDiscData(null, "Some New Disc", "Some New Disc");
+			var newDiscData = new InputDiscData(null, "Some New Disc (CD 1)", "1999 - Some New Disc (CD 1)", "Some New Disc");
 
 			var client = CreateClient<IDiscsMutation>();
 
@@ -214,11 +214,11 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var expectedDiscs = new[]
 			{
-				new OutputDiscData(1, null, null, null),
-				new OutputDiscData(2, null, null, null),
-				new OutputDiscData(3, null, null, null),
-				new OutputDiscData(4, null, null, null),
-				new OutputDiscData(5, null, null, null),
+				new OutputDiscData(1, null, null, null, null),
+				new OutputDiscData(2, null, null, null, null),
+				new OutputDiscData(3, null, null, null, null),
+				new OutputDiscData(4, null, null, null, null),
+				new OutputDiscData(5, null, null, null, null),
 			};
 
 			var discsQuery = CreateClient<IDiscsQuery>();

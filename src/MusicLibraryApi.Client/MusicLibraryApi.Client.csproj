@@ -15,7 +15,7 @@
     <PackageTags>Music Library MusicLibrary MusicLibraryApi API GraphQL client</PackageTags>
     <Company>CodeFuller</Company>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.9.0</Version>
+    <Version>0.10.0</Version>
   </PropertyGroup>
 
   <ItemGroup>

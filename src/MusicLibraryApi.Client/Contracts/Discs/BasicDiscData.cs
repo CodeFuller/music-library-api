@@ -12,6 +12,9 @@ namespace MusicLibraryApi.Client.Contracts.Discs
 		[DataMember(Name = "title")]
 		public string? Title { get; }
 
+		[DataMember(Name = "treeTitle")]
+		public string? TreeTitle { get; }
+
 		[DataMember(Name = "albumTitle")]
 		public string? AlbumTitle { get; }
 
@@ -27,10 +30,11 @@ namespace MusicLibraryApi.Client.Contracts.Discs
 		[DataMember(Name = "deleteComment")]
 		public string? DeleteComment { get; }
 
-		protected BasicDiscData(int? year, string? title, string? albumTitle, string? albumId, int? albumOrder, DateTimeOffset? deleteDate, string? deleteComment)
+		protected BasicDiscData(int? year, string? title, string? treeTitle, string? albumTitle, string? albumId, int? albumOrder, DateTimeOffset? deleteDate, string? deleteComment)
 		{
 			Year = year;
 			Title = title;
+			TreeTitle = treeTitle;
 			AlbumTitle = albumTitle;
 			AlbumId = albumId;
 			AlbumOrder = albumOrder;

@@ -10,6 +10,7 @@ namespace MusicLibraryApi.GraphQL.Types
 			Field(x => x.Id);
 			Field(x => x.Year, true);
 			Field(x => x.Title);
+			Field(x => x.TreeTitle);
 			Field(x => x.AlbumTitle);
 			Field(x => x.AlbumId, true);
 			Field(x => x.AlbumOrder, true);

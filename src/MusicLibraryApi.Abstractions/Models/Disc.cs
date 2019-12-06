@@ -11,6 +11,8 @@ namespace MusicLibraryApi.Abstractions.Models
 
 		public string Title { get; }
 
+		public string? TreeTitle { get; set; }
+
 		public string AlbumTitle { get; }
 
 		public string? AlbumId { get; }
@@ -27,10 +29,11 @@ namespace MusicLibraryApi.Abstractions.Models
 
 		public bool IsDeleted => DeleteDate != null;
 
-		public Disc(int? year, string title, string albumTitle, string? albumId, int? albumOrder, DateTimeOffset? deleteDate, string? deleteComment)
+		public Disc(int? year, string title, string? treeTitle, string albumTitle, string? albumId, int? albumOrder, DateTimeOffset? deleteDate, string? deleteComment)
 		{
 			Year = year;
 			Title = title;
+			TreeTitle = treeTitle;
 			AlbumTitle = albumTitle;
 			AlbumId = albumId;
 			AlbumOrder = albumOrder;
@@ -38,8 +41,8 @@ namespace MusicLibraryApi.Abstractions.Models
 			DeleteComment = deleteComment;
 		}
 
-		public Disc(int id, int? year, string title, string albumTitle, string? albumId, int? albumOrder, DateTimeOffset? deleteDate, string? deleteComment)
-			: this(year, title, albumTitle, albumId, albumOrder, deleteDate, deleteComment)
+		public Disc(int id, int? year, string title, string? treeTitle, string albumTitle, string? albumId, int? albumOrder, DateTimeOffset? deleteDate, string? deleteComment)
+			: this(year, title, treeTitle, albumTitle, albumId, albumOrder, deleteDate, deleteComment)
 		{
 			Id = id;
 		}

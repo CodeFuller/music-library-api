@@ -10,6 +10,8 @@ namespace MusicLibraryApi.Client.Fields
 
 		public static QueryField<DiscQuery> Title { get; } = new QueryField<DiscQuery>("title");
 
+		public static QueryField<DiscQuery> TreeTitle { get; } = new QueryField<DiscQuery>("treeTitle");
+
 		public static QueryField<DiscQuery> AlbumTitle { get; } = new QueryField<DiscQuery>("albumTitle");
 
 		public static QueryField<DiscQuery> AlbumId { get; } = new QueryField<DiscQuery>("albumId");
@@ -20,6 +22,6 @@ namespace MusicLibraryApi.Client.Fields
 
 		public static QueryField<DiscQuery> DeleteComment { get; } = new QueryField<DiscQuery>("deleteComment");
 
-		public static QueryFieldSet<DiscQuery> All { get; } = Id + Year + Title + AlbumTitle + AlbumId + AlbumOrder + DeleteDate + DeleteComment;
+		public static QueryFieldSet<DiscQuery> All { get; } = Id + Year + Title + TreeTitle + AlbumTitle + AlbumId + AlbumOrder + DeleteDate + DeleteComment;
 	}
 }
