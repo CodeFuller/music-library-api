@@ -99,13 +99,13 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		{
 			// Arrange
 
-			var newDiscData = new InputDiscData(1994, "Битва на мотоциклах (CD 2)", "1994 - Битва на мотоциклах (CD 2)", "Битва на мотоциклах", "{C7BEC024-8979-4477-8247-419A476C1DFB}", 2);
+			var newDiscData = new InputDiscData(4, 1994, "Битва на мотоциклах (CD 2)", "1994 - Битва на мотоциклах (CD 2)", "Битва на мотоциклах", "{C7BEC024-8979-4477-8247-419A476C1DFB}", 2);
 
 			var client = CreateClient<IDiscsMutation>();
 
 			// Act
 
-			var newDiscId = await client.CreateDisc(4, newDiscData, CancellationToken.None);
+			var newDiscId = await client.CreateDisc(newDiscData, CancellationToken.None);
 
 			// Assert
 
@@ -132,13 +132,13 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		{
 			// Arrange
 
-			var newDiscData = new InputDiscData(null, "Best Russian", "Russian", String.Empty);
+			var newDiscData = new InputDiscData(4, null, "Best Russian", "Russian", String.Empty);
 
 			var client = CreateClient<IDiscsMutation>();
 
 			// Act
 
-			var newDiscId = await client.CreateDisc(4, newDiscData, CancellationToken.None);
+			var newDiscId = await client.CreateDisc(newDiscData, CancellationToken.None);
 
 			// Assert
 
@@ -165,13 +165,13 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		{
 			// Arrange
 
-			var newDiscData = new InputDiscData(2000, "Hybrid Theory", "2000 - Hybrid Theory", "Hybrid Theory");
+			var newDiscData = new InputDiscData(null, 2000, "Hybrid Theory", "2000 - Hybrid Theory", "Hybrid Theory");
 
 			var client = CreateClient<IDiscsMutation>();
 
 			// Act
 
-			var newDiscId = await client.CreateDisc(null, newDiscData, CancellationToken.None);
+			var newDiscId = await client.CreateDisc(newDiscData, CancellationToken.None);
 
 			// Assert
 
@@ -197,13 +197,13 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		{
 			// Arrange
 
-			var newDiscData = new InputDiscData(null, "Some New Disc (CD 1)", "1999 - Some New Disc (CD 1)", "Some New Disc");
+			var newDiscData = new InputDiscData(12345, null, "Some New Disc (CD 1)", "1999 - Some New Disc (CD 1)", "Some New Disc");
 
 			var client = CreateClient<IDiscsMutation>();
 
 			// Act
 
-			var createDiscTask = client.CreateDisc(12345, newDiscData, CancellationToken.None);
+			var createDiscTask = client.CreateDisc(newDiscData, CancellationToken.None);
 
 			// Arrange
 

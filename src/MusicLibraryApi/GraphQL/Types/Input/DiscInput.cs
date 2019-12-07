@@ -5,6 +5,8 @@ namespace MusicLibraryApi.GraphQL.Types.Input
 {
 	public class DiscInput
 	{
+		public int? FolderId { get; set; }
+
 		public int? Year { get; set; }
 
 		public string? Title { get; set; }

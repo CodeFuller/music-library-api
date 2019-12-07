@@ -43,12 +43,12 @@ namespace MusicLibraryApi.Client.Operations
 			return await ExecuteRequest<OutputDiscData>("disc", request, cancellationToken);
 		}
 
-		public async Task<int> CreateDisc(int? folderId, InputDiscData discData, CancellationToken cancellationToken)
+		public async Task<int> CreateDisc(InputDiscData discData, CancellationToken cancellationToken)
 		{
 			Logger.LogInformation("Creating new disc {DiscTitle} ...", discData.Title);
 
-			var query = Invariant($@"mutation ($disc: DiscInput!, $folderId: ID) {{
-										createDisc(disc: $disc, folderId: $folderId) {{ newDiscId }}
+			var query = Invariant($@"mutation ($disc: DiscInput!) {{
+										createDisc(disc: $disc) {{ newDiscId }}
 									}}");
 
 			var request = new GraphQLRequest
@@ -57,7 +57,6 @@ namespace MusicLibraryApi.Client.Operations
 				Variables = new
 				{
 					disc = discData,
-					folderId = folderId,
 				},
 			};
 

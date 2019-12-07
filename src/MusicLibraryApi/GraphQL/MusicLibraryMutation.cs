@@ -49,15 +49,13 @@ namespace MusicLibraryApi.GraphQL
 			FieldAsync<CreateDiscResultType>(
 				"createDisc",
 				arguments: new QueryArguments(
-					new QueryArgument<NonNullGraphType<DiscInputType>> { Name = "disc" },
-					new QueryArgument<IdGraphType> { Name = "folderId" }),
+					new QueryArgument<NonNullGraphType<DiscInputType>> { Name = "disc" }),
 				resolve: async context =>
 				{
-					var folderId = context.GetArgument<int?>("folderId");
 					var discInput = context.GetArgument<DiscInput>("disc");
 					var disc = discInput.ToModel();
 
-					var newDiscId = await serviceAccessor.DiscsService.CreateDisc(folderId, disc, context.CancellationToken);
+					var newDiscId = await serviceAccessor.DiscsService.CreateDisc(discInput.FolderId, disc, context.CancellationToken);
 					return new CreateDiscResult(newDiscId);
 				});
 		}

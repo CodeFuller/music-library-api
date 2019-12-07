@@ -8,6 +8,7 @@ namespace MusicLibraryApi.GraphQL.Types.Input
 		{
 			Name = "DiscInput";
 
+			Field<IdGraphType>("folderId");
 			Field<IntGraphType>("year");
 			Field<NonNullGraphType<StringGraphType>>("title");
 			Field<NonNullGraphType<StringGraphType>>("treeTitle");

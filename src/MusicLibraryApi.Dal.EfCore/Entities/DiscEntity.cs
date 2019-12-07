@@ -27,7 +27,8 @@ namespace MusicLibraryApi.Dal.EfCore.Entities
 
 		public IReadOnlyCollection<SongEntity> Songs { get; } = new List<SongEntity>();
 
-		public DiscEntity(int id, int? year, string title, string treeTitle, string albumTitle, string? albumId = null, int? albumOrder = null, DateTimeOffset? deleteDate = null, string? deleteComment = null)
+		public DiscEntity(int id, int? year, string title, string treeTitle, string albumTitle, string? albumId = null,
+			int? albumOrder = null, DateTimeOffset? deleteDate = null, string? deleteComment = null)
 		{
 			Id = id;
 			Year = year;
