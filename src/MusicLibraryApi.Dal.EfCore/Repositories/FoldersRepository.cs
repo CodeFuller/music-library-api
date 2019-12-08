@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -17,20 +16,23 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 
 		private readonly IMapper mapper;
 
+		public static int RootFolderId => 1;
+
 		public FoldersRepository(MusicLibraryDbContext context, IMapper mapper)
 		{
 			this.context = context ?? throw new ArgumentNullException(nameof(context));
 			this.mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
 		}
 
-		public async Task<int> CreateFolder(int? parentFolderId, Folder folder, CancellationToken cancellationToken)
+		public Task<int> GetRooFolderId(CancellationToken cancellationToken)
+		{
+			return Task.FromResult(RootFolderId);
+		}
+
+		public async Task<int> CreateFolder(int parentFolderId, Folder folder, CancellationToken cancellationToken)
 		{
 			var folderEntity = mapper.Map<FolderEntity>(folder);
-
-			if (parentFolderId != null)
-			{
-				folderEntity.ParentFolder = await context.FindFolder(parentFolderId.Value, includeSubfolders: false, includeDiscs: false, cancellationToken);
-			}
+			folderEntity.ParentFolder = await context.FindFolder(parentFolderId, includeSubfolders: false, includeDiscs: false, cancellationToken);
 
 			context.Folders.Add(folderEntity);
 
@@ -46,24 +48,9 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 			return folderEntity.Id;
 		}
 
-		public async Task<Folder> GetFolder(int? folderId, bool loadSubfolders, bool loadDiscs, CancellationToken cancellationToken)
+		public async Task<Folder> GetFolder(int folderId, bool loadSubfolders, bool loadDiscs, CancellationToken cancellationToken)
 		{
-			if (folderId == null)
-			{
-				var subfolders = loadSubfolders ? await context.Folders
-					.Where(f => f.ParentFolder == null)
-					.Select(f => mapper.Map<Folder>(f))
-					.ToListAsync(cancellationToken) : null;
-
-				var discs = loadDiscs ? await context.Discs
-					.Where(d => d.Folder == null)
-					.Select(d => mapper.Map<Disc>(d))
-					.ToListAsync(cancellationToken) : null;
-
-				return new Folder("<ROOT>", subfolders, discs);
-			}
-
-			var folder = await context.FindFolder(folderId.Value, loadSubfolders, loadDiscs, cancellationToken);
+			var folder = await context.FindFolder(folderId, loadSubfolders, loadDiscs, cancellationToken);
 			return mapper.Map<Folder>(folder);
 		}
 	}

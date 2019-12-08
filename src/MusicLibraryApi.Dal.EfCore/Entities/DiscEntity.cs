@@ -19,7 +19,7 @@ namespace MusicLibraryApi.Dal.EfCore.Entities
 
 		public int? AlbumOrder { get; private set; }
 
-		public FolderEntity? Folder { get; set; }
+		public FolderEntity Folder { get; set; } = null!;
 
 		public DateTimeOffset? DeleteDate { get; private set; }
 

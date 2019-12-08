@@ -99,7 +99,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		{
 			// Arrange
 
-			var newDiscData = new InputDiscData(4, 1994, "Битва на мотоциклах (CD 2)", "1994 - Битва на мотоциклах (CD 2)", "Битва на мотоциклах", "{C7BEC024-8979-4477-8247-419A476C1DFB}", 2);
+			var newDiscData = new InputDiscData(5, 1994, "Битва на мотоциклах (CD 2)", "1994 - Битва на мотоциклах (CD 2)", "Битва на мотоциклах", "{C7BEC024-8979-4477-8247-419A476C1DFB}", 2);
 
 			var client = CreateClient<IDiscsMutation>();
 
@@ -122,7 +122,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			};
 
 			var foldersQuery = CreateClient<IFoldersQuery>();
-			var folderData = await foldersQuery.GetFolder(4, FolderFields.Discs(DiscFields.All), CancellationToken.None);
+			var folderData = await foldersQuery.GetFolder(5, FolderFields.Discs(DiscFields.All), CancellationToken.None);
 
 			CollectionAssert.AreEqual(expectedDiscs, folderData.Discs.ToList(), new DiscDataComparer());
 		}
@@ -132,7 +132,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		{
 			// Arrange
 
-			var newDiscData = new InputDiscData(4, null, "Best Russian", "Russian", String.Empty);
+			var newDiscData = new InputDiscData(5, null, "Best Russian", "Russian", String.Empty);
 
 			var client = CreateClient<IDiscsMutation>();
 
@@ -155,39 +155,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			};
 
 			var foldersQuery = CreateClient<IFoldersQuery>();
-			var folderData = await foldersQuery.GetFolder(4, FolderFields.Discs(DiscFields.All), CancellationToken.None);
-
-			CollectionAssert.AreEqual(expectedDiscs, folderData.Discs.ToList(), new DiscDataComparer());
-		}
-
-		[TestMethod]
-		public async Task CreateDiscMutation_ForRootFolder_CreatesDiscSuccessfully()
-		{
-			// Arrange
-
-			var newDiscData = new InputDiscData(null, 2000, "Hybrid Theory", "2000 - Hybrid Theory", "Hybrid Theory");
-
-			var client = CreateClient<IDiscsMutation>();
-
-			// Act
-
-			var newDiscId = await client.CreateDisc(newDiscData, CancellationToken.None);
-
-			// Assert
-
-			Assert.AreEqual(8, newDiscId);
-
-			// Checking new discs data
-
-			var expectedDiscs = new[]
-			{
-				new OutputDiscData(8, 2000, "Hybrid Theory", "2000 - Hybrid Theory", "Hybrid Theory"),
-				new OutputDiscData(2, 2001, "Platinum Hits (CD 1)", "2001 - Platinum Hits (CD 1)", "Platinum Hits", "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", 1),
-				new OutputDiscData(1, 2001, "Platinum Hits (CD 2)", "2001 - Platinum Hits (CD 2)", "Platinum Hits", "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", 2),
-			};
-
-			var foldersQuery = CreateClient<IFoldersQuery>();
-			var folderData = await foldersQuery.GetFolder(null, FolderFields.Discs(DiscFields.All), CancellationToken.None);
+			var folderData = await foldersQuery.GetFolder(5, FolderFields.Discs(DiscFields.All), CancellationToken.None);
 
 			CollectionAssert.AreEqual(expectedDiscs, folderData.Discs.ToList(), new DiscDataComparer());
 		}

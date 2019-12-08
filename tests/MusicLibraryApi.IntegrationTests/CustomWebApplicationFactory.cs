@@ -11,6 +11,7 @@ using MusicLibraryApi.Abstractions.Models;
 using MusicLibraryApi.Client;
 using MusicLibraryApi.Dal.EfCore;
 using MusicLibraryApi.Dal.EfCore.Entities;
+using MusicLibraryApi.Dal.EfCore.Repositories;
 using MusicLibraryApi.IntegrationTests.Utility;
 
 namespace MusicLibraryApi.IntegrationTests
@@ -62,7 +63,7 @@ namespace MusicLibraryApi.IntegrationTests
 			// This should be done before resetting current identity value.
 			context.Songs.RemoveRange(context.Songs);
 			context.Discs.RemoveRange(context.Discs);
-			context.Folders.RemoveRange(context.Folders);
+			context.Folders.RemoveRange(context.Folders.Where(f => f.Id != FoldersRepository.RootFolderId));
 			context.Artists.RemoveRange(context.Artists);
 			context.Genres.RemoveRange(context.Genres);
 			context.SaveChanges();
@@ -77,44 +78,49 @@ namespace MusicLibraryApi.IntegrationTests
 		/*
 		 * The structure of test data:
 		 *
-		 *	Folder <ROOT> (Folder id: null)
-		 *		Folder "Foreign" (Folder id: 2)
-		 *			Folder "Guano Apes" (Folder id: 4)
-		 *				Folder "Empty folder" (Folder id: 6)
-		 *				Folder "Some subfolder" (Folder id: 5)
+		 *	Folder <ROOT> (Folder id: 1)
+		 *		Folder "Foreign" (Folder id: 3)
+		 *			Folder "Guano Apes" (Folder id: 5)
+		 *				Folder "Empty folder" (Folder id: 7)
+		 *				Folder "Some subfolder" (Folder id: 6)
 		 *				Disc "1997 - Proud Like A God" (Disc id: 5)
 		 *				Disc "2000 - Don't Give Me Names" (Disc id: 3)
 		 *				Disc "Rarities" (Disc id: 4)
 		 *				Disc "2006 - Lost (T)apes" (Disc id: 7, deleted)
-		 *			Folder "Rammstein" (Folder id: 3)
-		 *		Folder "Russian" (Folder id: 1)
+		 *			Folder "Rammstein" (Folder id: 4)
+		 *		Folder "Russian" (Folder id: 2)
 		 *		Disc "2001 - Platinum Hits (CD 1)" (Disc id: 2)
 		 *		Disc "2001 - Platinum Hits (CD 2)" (Disc id: 1)
 		 *		Disc "Some deleted disc" (Disc id: 6, deleted)
 		 */
 		private static void SeedFoldersData(MusicLibraryDbContext context, IIdentityInsert identityInsert)
 		{
-			var folder1 = new FolderEntity(1, "Russian");
-			var folder2 = new FolderEntity(2, "Foreign");
+			var rootFolder = context.Folders.Single(f => f.Id == 1);
 
-			var folder3 = new FolderEntity(3, "Rammstein");
-			folder3.ParentFolder = folder2;
+			var folder2 = new FolderEntity(2, "Russian");
+			folder2.ParentFolder = rootFolder;
 
-			var folder4 = new FolderEntity(4, "Guano Apes");
-			folder4.ParentFolder = folder2;
+			var folder3 = new FolderEntity(3, "Foreign");
+			folder3.ParentFolder = rootFolder;
 
-			var folder5 = new FolderEntity(5, "Some subfolder");
-			folder5.ParentFolder = folder4;
+			var folder4 = new FolderEntity(4, "Rammstein");
+			folder4.ParentFolder = folder3;
 
-			var folder6 = new FolderEntity(6, "Empty folder");
-			folder6.ParentFolder = folder4;
+			var folder5 = new FolderEntity(5, "Guano Apes");
+			folder5.ParentFolder = folder3;
+
+			var folder6 = new FolderEntity(6, "Some subfolder");
+			folder6.ParentFolder = folder5;
+
+			var folder7 = new FolderEntity(7, "Empty folder");
+			folder7.ParentFolder = folder5;
 
 			identityInsert.InitializeIdentityInsert(context, "Folders");
 
-			context.Folders.AddRange(folder1, folder2, folder3, folder4, folder5, folder6);
+			context.Folders.AddRange(folder2, folder3, folder4, folder5, folder6, folder7);
 			context.SaveChanges();
 
-			identityInsert.FinalizeIdentityInsert(context, "Folders", 7);
+			identityInsert.FinalizeIdentityInsert(context, "Folders", 8);
 		}
 
 		private static void SeedGenresData(MusicLibraryDbContext context, IIdentityInsert identityInsert)
@@ -147,11 +153,13 @@ namespace MusicLibraryApi.IntegrationTests
 
 		private static void SeedDiscsData(MusicLibraryDbContext context, IIdentityInsert identityInsert)
 		{
+			var rootFolder = context.Folders.Single(f => f.Id == 1);
+
 			var disc1 = new DiscEntity(1, 2001, "Platinum Hits (CD 2)", "2001 - Platinum Hits (CD 2)", "Platinum Hits", "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", 2);
-			disc1.Folder = null;
+			disc1.Folder = rootFolder;
 
 			var disc2 = new DiscEntity(2, 2001, "Platinum Hits (CD 1)", "2001 - Platinum Hits (CD 1)", "Platinum Hits", "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", 1);
-			disc2.Folder = null;
+			disc2.Folder = rootFolder;
 
 			var disc3 = new DiscEntity(3, 2000, "Don't Give Me Names", "2000 - Don't Give Me Names", "Don't Give Me Names");
 			disc3.Folder = FindFolder(context, "Guano Apes");
@@ -163,7 +171,7 @@ namespace MusicLibraryApi.IntegrationTests
 			disc5.Folder = FindFolder(context, "Guano Apes");
 
 			var disc6 = new DiscEntity(6, null, "Some deleted disc", "2007 - Some deleted disc", "Some deleted disc", null, null, new DateTimeOffset(2019, 12, 03, 07, 56, 06, TimeSpan.FromHours(2)));
-			disc6.Folder = null;
+			disc6.Folder = rootFolder;
 
 			var disc7 = new DiscEntity(7, 2006, "Lost (T)apes", "2006 - Lost (T)apes", "Lost (T)apes", null, null, new DateTimeOffset(2019, 12, 03, 07, 57, 01, TimeSpan.FromHours(2)), "Deleted for a test");
 			disc7.Folder = FindFolder(context, "Guano Apes");

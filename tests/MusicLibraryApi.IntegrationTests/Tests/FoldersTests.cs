@@ -25,8 +25,8 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var subfolders = new[]
 			{
-				new OutputFolderData(2, "Foreign"),
-				new OutputFolderData(1, "Russian"),
+				new OutputFolderData(3, "Foreign"),
+				new OutputFolderData(2, "Russian"),
 			};
 
 			var discs = new[]
@@ -35,7 +35,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 				new OutputDiscData(1, 2001, "Platinum Hits (CD 2)", "2001 - Platinum Hits (CD 2)", "Platinum Hits", "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", 2),
 			};
 
-			var expectedFolder = new OutputFolderData(0, "<ROOT>", subfolders, discs);
+			var expectedFolder = new OutputFolderData(1, "<ROOT>", subfolders, discs);
 
 			var client = CreateClient<IFoldersQuery>();
 
@@ -56,8 +56,8 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var subfolders = new[]
 			{
-				new OutputFolderData(6, "Empty folder"),
-				new OutputFolderData(5, "Some subfolder"),
+				new OutputFolderData(7, "Empty folder"),
+				new OutputFolderData(6, "Some subfolder"),
 			};
 
 			var discs = new[]
@@ -67,13 +67,13 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 				new OutputDiscData(4, null, "Rarities", "Rarities", String.Empty),
 			};
 
-			var expectedFolder = new OutputFolderData(4, "Guano Apes", subfolders, discs);
+			var expectedFolder = new OutputFolderData(5, "Guano Apes", subfolders, discs);
 
 			var client = CreateClient<IFoldersQuery>();
 
 			// Act
 
-			var receivedFolder = await client.GetFolder(4, RequestedFields, CancellationToken.None);
+			var receivedFolder = await client.GetFolder(5, RequestedFields, CancellationToken.None);
 
 			// Assert
 
@@ -88,8 +88,8 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var subfolders = new[]
 			{
-				new OutputFolderData(6, "Empty folder"),
-				new OutputFolderData(5, "Some subfolder"),
+				new OutputFolderData(7, "Empty folder"),
+				new OutputFolderData(6, "Some subfolder"),
 			};
 
 			var discs = new[]
@@ -100,13 +100,13 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 				new OutputDiscData(4, null, "Rarities", "Rarities", String.Empty),
 			};
 
-			var expectedFolder = new OutputFolderData(4, "Guano Apes", subfolders, discs);
+			var expectedFolder = new OutputFolderData(5, "Guano Apes", subfolders, discs);
 
 			var client = CreateClient<IFoldersQuery>();
 
 			// Act
 
-			var receivedFolder = await client.GetFolder(4, RequestedFields, CancellationToken.None, true);
+			var receivedFolder = await client.GetFolder(5, RequestedFields, CancellationToken.None, true);
 
 			// Assert
 
@@ -132,11 +132,11 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		}
 
 		[TestMethod]
-		public async Task CreateFolder_ForRootParentFolder_CreatesFolderSuccessfully()
+		public async Task CreateFolder_ForCorrectInput_CreatesFolderSuccessfully()
 		{
 			// Arrange
 
-			var folderData = new InputFolderData("Belarussian", null);
+			var folderData = new InputFolderData("Korn", 3);
 
 			var client = CreateClient<IFoldersMutation>();
 
@@ -146,59 +146,22 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Assert
 
-			Assert.AreEqual(7, newFolderId);
+			Assert.AreEqual(8, newFolderId);
 
 			// Checking new folders data
 
 			var expectedFolders = new[]
 			{
-				new OutputFolderData(7, "Belarussian"),
-				new OutputFolderData(2, "Foreign"),
-				new OutputFolderData(1, "Russian"),
+				new OutputFolderData(5, "Guano Apes"),
+				new OutputFolderData(8, "Korn"),
+				new OutputFolderData(4, "Rammstein"),
 			};
 
 			var foldersClient = CreateClient<IFoldersQuery>();
 
 			// Act
 
-			var receivedFolderData = await foldersClient.GetFolder(null, FolderFields.Subfolders(FolderFields.Id + FolderFields.Name), CancellationToken.None);
-
-			// Assert
-
-			CollectionAssert.AreEqual(expectedFolders, receivedFolderData.Subfolders.ToList(), new FolderDataComparer());
-		}
-
-		[TestMethod]
-		public async Task CreateFolder_ForNonRootParentFolder_CreatesFolderSuccessfully()
-		{
-			// Arrange
-
-			var folderData = new InputFolderData("Korn", 2);
-
-			var client = CreateClient<IFoldersMutation>();
-
-			// Act
-
-			var newFolderId = await client.CreateFolder(folderData, CancellationToken.None);
-
-			// Assert
-
-			Assert.AreEqual(7, newFolderId);
-
-			// Checking new folders data
-
-			var expectedFolders = new[]
-			{
-				new OutputFolderData(4, "Guano Apes"),
-				new OutputFolderData(7, "Korn"),
-				new OutputFolderData(3, "Rammstein"),
-			};
-
-			var foldersClient = CreateClient<IFoldersQuery>();
-
-			// Act
-
-			var receivedFolderData = await foldersClient.GetFolder(2, FolderFields.Subfolders(FolderFields.Id + FolderFields.Name), CancellationToken.None);
+			var receivedFolderData = await foldersClient.GetFolder(3, FolderFields.Subfolders(FolderFields.Id + FolderFields.Name), CancellationToken.None);
 
 			// Assert
 
@@ -210,7 +173,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		{
 			// Arrange
 
-			var folderData = new InputFolderData("Guano Apes", 2);
+			var folderData = new InputFolderData("Guano Apes", 3);
 
 			var client = CreateClient<IFoldersMutation>();
 
@@ -227,12 +190,12 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var expectedFolders = new[]
 			{
-				new OutputFolderData(4, "Guano Apes"),
-				new OutputFolderData(3, "Rammstein"),
+				new OutputFolderData(5, "Guano Apes"),
+				new OutputFolderData(4, "Rammstein"),
 			};
 
 			var foldersClient = CreateClient<IFoldersQuery>();
-			var receivedFolderData = await foldersClient.GetFolder(2, FolderFields.Subfolders(FolderFields.Id + FolderFields.Name), CancellationToken.None);
+			var receivedFolderData = await foldersClient.GetFolder(3, FolderFields.Subfolders(FolderFields.Id + FolderFields.Name), CancellationToken.None);
 
 			CollectionAssert.AreEqual(expectedFolders, receivedFolderData.Subfolders.ToList(), new FolderDataComparer());
 		}
@@ -242,7 +205,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		{
 			// Arrange
 
-			var folderData = new InputFolderData("Guano Apes", 1);
+			var folderData = new InputFolderData("Guano Apes", 2);
 
 			var client = CreateClient<IFoldersMutation>();
 
@@ -252,20 +215,20 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Assert
 
-			Assert.AreEqual(7, newFolderId);
+			Assert.AreEqual(8, newFolderId);
 
 			// Checking new folders data
 
 			var expectedFolders = new[]
 			{
-				new OutputFolderData(7, "Guano Apes"),
+				new OutputFolderData(8, "Guano Apes"),
 			};
 
 			var foldersClient = CreateClient<IFoldersQuery>();
 
 			// Act
 
-			var receivedFolderData = await foldersClient.GetFolder(1, FolderFields.Subfolders(FolderFields.Id + FolderFields.Name), CancellationToken.None);
+			var receivedFolderData = await foldersClient.GetFolder(2, FolderFields.Subfolders(FolderFields.Id + FolderFields.Name), CancellationToken.None);
 
 			// Assert
 

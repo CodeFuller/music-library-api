@@ -6,7 +6,7 @@ namespace MusicLibraryApi.Logic.Extensions
 {
 	public static class NotFoundExceptionExtensions
 	{
-		public static ServiceOperationFailedException Handle(this FolderNotFoundException e, int? folderId, ILogger logger)
+		public static ServiceOperationFailedException Handle(this FolderNotFoundException e, int folderId, ILogger logger)
 		{
 			logger.LogError(e, "The folder with id of {FolderId} does not exist", folderId);
 			return new ServiceOperationFailedException(Invariant($"The folder with id of '{folderId}' does not exist"), e);

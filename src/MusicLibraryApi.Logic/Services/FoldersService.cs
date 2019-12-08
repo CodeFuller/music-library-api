@@ -23,7 +23,7 @@ namespace MusicLibraryApi.Logic.Services
 			this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
 		}
 
-		public async Task<int> CreateFolder(int? parentFolderId, string folderName, CancellationToken cancellationToken)
+		public async Task<int> CreateFolder(int parentFolderId, string folderName, CancellationToken cancellationToken)
 		{
 			try
 			{
@@ -39,15 +39,17 @@ namespace MusicLibraryApi.Logic.Services
 
 		public async Task<Folder> GetFolder(int? folderId, bool loadSubfolders, bool loadDiscs, bool includeDeletedDiscs, CancellationToken cancellationToken)
 		{
+			var folderIdValue = folderId ?? await repository.GetRooFolderId(cancellationToken);
+
 			Folder folder;
 
 			try
 			{
-				folder = await repository.GetFolder(folderId, loadSubfolders, loadDiscs, cancellationToken);
+				folder = await repository.GetFolder(folderIdValue, loadSubfolders, loadDiscs, cancellationToken);
 			}
 			catch (FolderNotFoundException e)
 			{
-				throw e.Handle(folderId, logger);
+				throw e.Handle(folderIdValue, logger);
 			}
 
 			var sortedSubfolders = folder.Subfolders?.OrderBy(f => f.Name).ToList();

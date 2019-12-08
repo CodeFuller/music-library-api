@@ -43,7 +43,13 @@ namespace MusicLibraryApi.GraphQL
 				resolve: async context =>
 				{
 					var folderInput = context.GetArgument<FolderInput>("folder");
-					var newFolderId = await serviceAccessor.FoldersService.CreateFolder(folderInput.ParentFolderId, folderInput.GetFolderName(), context.CancellationToken);
+
+					if (folderInput.ParentFolderId == null)
+					{
+						throw new InvalidOperationException("Parent folder id is not set");
+					}
+
+					var newFolderId = await serviceAccessor.FoldersService.CreateFolder(folderInput.ParentFolderId.Value, folderInput.GetFolderName(), context.CancellationToken);
 					return new CreateFolderResult(newFolderId);
 				});
 

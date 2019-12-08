@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MusicLibraryApi.Dal.EfCore.Entities;
+using MusicLibraryApi.Dal.EfCore.Repositories;
 
 namespace MusicLibraryApi.Dal.EfCore
 {
@@ -23,6 +24,19 @@ namespace MusicLibraryApi.Dal.EfCore
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			base.OnModelCreating(modelBuilder);
+
+			modelBuilder.Entity<FolderEntity>(b =>
+			{
+				b.ToTable("Folders");
+
+				// https://stackoverflow.com/a/47930643/5740031
+				b.HasIndex("ParentFolderId", nameof(FolderEntity.Name)).IsUnique();
+				b.HasOne(f => f.ParentFolder)
+					.WithMany(f => f!.Subfolders)
+					.OnDelete(DeleteBehavior.Restrict);
+
+				b.HasData(new FolderEntity(FoldersRepository.RootFolderId, "<ROOT>"));
+			});
 
 			modelBuilder.Entity<DiscEntity>(b =>
 			{
@@ -49,17 +63,6 @@ namespace MusicLibraryApi.Dal.EfCore
 			{
 				b.ToTable("Artists");
 				b.HasIndex(e => e.Name).IsUnique();
-			});
-
-			modelBuilder.Entity<FolderEntity>(b =>
-			{
-				b.ToTable("Folders");
-
-				// https://stackoverflow.com/a/47930643/5740031
-				b.HasIndex("ParentFolderId", nameof(FolderEntity.Name)).IsUnique();
-				b.HasOne(f => f.ParentFolder)
-					.WithMany(f => f!.Subfolders)
-					.OnDelete(DeleteBehavior.Restrict);
 			});
 
 			modelBuilder.Entity<GenreEntity>(b =>

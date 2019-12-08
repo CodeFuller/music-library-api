@@ -6,9 +6,9 @@ namespace MusicLibraryApi.Client.Contracts.Folders
 	public class InputFolderData : BasicFolderData
 	{
 		[DataMember(Name = "parentFolderId")]
-		public int? ParentFolderId { get; }
+		public int ParentFolderId { get; }
 
-		public InputFolderData(string name, int? parentFolderId)
+		public InputFolderData(string name, int parentFolderId)
 			: base(name)
 		{
 			ParentFolderId = parentFolderId;
