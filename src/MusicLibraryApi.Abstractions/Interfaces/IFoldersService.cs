@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using MusicLibraryApi.Abstractions.Models;
 
@@ -8,6 +9,8 @@ namespace MusicLibraryApi.Abstractions.Interfaces
 	{
 		Task<int> CreateFolder(int parentFolderId, string folderName, CancellationToken cancellationToken);
 
-		Task<Folder> GetFolder(int? folderId, bool loadSubfolders, bool loadDiscs, bool includeDeletedDiscs, CancellationToken cancellationToken);
+		Task<Folder> GetFolder(int? folderId, CancellationToken cancellationToken);
+
+		Task<IReadOnlyCollection<Folder>> GetFolderSubfolders(int folderId, CancellationToken cancellationToken);
 	}
 }

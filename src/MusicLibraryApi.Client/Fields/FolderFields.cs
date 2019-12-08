@@ -15,7 +15,7 @@ namespace MusicLibraryApi.Client.Fields
 
 		public static ComplexQueryField<FolderQuery, DiscQuery> Discs(QueryFieldSet<DiscQuery> discFields)
 		{
-			return new ComplexQueryField<FolderQuery, DiscQuery>("discs", discFields);
+			return new ComplexQueryField<FolderQuery, DiscQuery>("discs", discFields, new QueryVariable("Boolean", "includeDeletedDiscs"));
 		}
 
 		public static QueryFieldSet<FolderQuery> All { get; } = Id + Name;

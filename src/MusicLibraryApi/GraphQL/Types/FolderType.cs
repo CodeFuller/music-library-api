@@ -1,16 +1,27 @@
 ﻿using GraphQL.Types;
 using MusicLibraryApi.Abstractions.Models;
+using MusicLibraryApi.Interfaces;
 
 namespace MusicLibraryApi.GraphQL.Types
 {
 	public class FolderType : ObjectGraphType<Folder>
 	{
-		public FolderType()
+		public FolderType(IContextServiceAccessor serviceAccessor)
 		{
 			Field(x => x.Id);
 			Field(x => x.Name);
-			Field(name: "subfolders", type: typeof(ListGraphType<NonNullGraphType<FolderType>>), resolve: context => context.Source.Subfolders);
-			Field(name: "discs", type: typeof(ListGraphType<NonNullGraphType<DiscType>>), resolve: context => context.Source.Discs);
+			FieldAsync<NonNullGraphType<ListGraphType<NonNullGraphType<FolderType>>>>(
+				"subfolders",
+				resolve: async context => await serviceAccessor.FoldersService.GetFolderSubfolders(context.Source.Id, context.CancellationToken));
+			FieldAsync<NonNullGraphType<ListGraphType<NonNullGraphType<DiscType>>>>(
+				"discs",
+				arguments: new QueryArguments(
+					new QueryArgument<BooleanGraphType> { Name = "includeDeletedDiscs" }),
+				resolve: async context =>
+				{
+					var includeDeletedDiscs = context.GetArgument<bool?>("includeDeletedDiscs") ?? false;
+					return await serviceAccessor.DiscsService.GetFolderDiscs(context.Source.Id, includeDeletedDiscs, context.CancellationToken);
+				});
 		}
 	}
 }

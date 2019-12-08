@@ -1,11 +1,12 @@
 ﻿using GraphQL.Types;
 using MusicLibraryApi.Abstractions.Models;
+using MusicLibraryApi.Interfaces;
 
 namespace MusicLibraryApi.GraphQL.Types
 {
 	public class DiscType : ObjectGraphType<Disc>
 	{
-		public DiscType()
+		public DiscType(IContextServiceAccessor serviceAccessor)
 		{
 			Field(x => x.Id);
 			Field(x => x.Year, true);
@@ -16,7 +17,9 @@ namespace MusicLibraryApi.GraphQL.Types
 			Field(x => x.AlbumOrder, true);
 			Field(x => x.DeleteDate, true);
 			Field(x => x.DeleteComment, true);
-			Field(name: "songs", type: typeof(ListGraphType<NonNullGraphType<SongType>>), resolve: context => context.Source.Songs);
+			FieldAsync<NonNullGraphType<ListGraphType<NonNullGraphType<SongType>>>>(
+				"songs",
+				resolve: async context => await serviceAccessor.SongsService.GetDiscSongs(context.Source.Id, context.CancellationToken));
 		}
 	}
 }

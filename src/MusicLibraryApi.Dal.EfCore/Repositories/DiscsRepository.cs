@@ -28,7 +28,7 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 		public async Task<int> CreateDisc(int folderId, Disc disc, CancellationToken cancellationToken)
 		{
 			var discEntity = mapper.Map<DiscEntity>(disc);
-			discEntity.Folder = await context.FindFolder(folderId, false, false, cancellationToken);
+			discEntity.Folder = await context.FindFolder(folderId, cancellationToken);
 
 			context.Discs.Add(discEntity);
 			await context.SaveChangesAsync(cancellationToken);
@@ -46,8 +46,6 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 		public async Task<Disc> GetDisc(int discId, CancellationToken cancellationToken)
 		{
 			var discEntity = await context.Discs
-				.Include(d => d.Songs).ThenInclude(s => s.Genre)
-				.Include(d => d.Songs).ThenInclude(s => s.Artist)
 				.Where(x => x.Id == discId)
 				.SingleOrDefaultAsync(cancellationToken);
 
@@ -57,6 +55,13 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 			}
 
 			return mapper.Map<Disc>(discEntity);
+		}
+
+		public async Task<IReadOnlyCollection<Disc>> GetFolderDiscs(int folderId, CancellationToken cancellationToken)
+		{
+			return await context.Discs.Where(d => d.Folder.Id == folderId)
+				.Select(d => mapper.Map<Disc>(d))
+				.ToListAsync(cancellationToken);
 		}
 	}
 }

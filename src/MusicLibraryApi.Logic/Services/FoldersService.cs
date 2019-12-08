@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -37,31 +38,33 @@ namespace MusicLibraryApi.Logic.Services
 			}
 		}
 
-		public async Task<Folder> GetFolder(int? folderId, bool loadSubfolders, bool loadDiscs, bool includeDeletedDiscs, CancellationToken cancellationToken)
+		public async Task<Folder> GetFolder(int? folderId, CancellationToken cancellationToken)
 		{
 			var folderIdValue = folderId ?? await repository.GetRooFolderId(cancellationToken);
 
-			Folder folder;
-
 			try
 			{
-				folder = await repository.GetFolder(folderIdValue, loadSubfolders, loadDiscs, cancellationToken);
+				return await repository.GetFolder(folderIdValue, cancellationToken);
 			}
 			catch (FolderNotFoundException e)
 			{
 				throw e.Handle(folderIdValue, logger);
 			}
+		}
 
-			var sortedSubfolders = folder.Subfolders?.OrderBy(f => f.Name).ToList();
-			var sortedDiscs = folder.Discs?
-				.Where(d => includeDeletedDiscs || !d.IsDeleted)
-				.OrderBy(f => f.Year == null)
-				.ThenBy(d => d.Year)
-				.ThenBy(d => d.AlbumTitle)
-				.ThenBy(d => d.AlbumOrder)
-				.ToList();
-
-			return new Folder(folder.Id, folder.Name, sortedSubfolders, sortedDiscs);
+		public async Task<IReadOnlyCollection<Folder>> GetFolderSubfolders(int folderId, CancellationToken cancellationToken)
+		{
+			try
+			{
+				var subfolders = await repository.GetFolderSubfolders(folderId, cancellationToken);
+				return subfolders
+					.OrderBy(f => f.Name)
+					.ToList();
+			}
+			catch (FolderNotFoundException e)
+			{
+				throw e.Handle(folderId, logger);
+			}
 		}
 	}
 }

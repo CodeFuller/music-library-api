@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -32,7 +34,7 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 		public async Task<int> CreateFolder(int parentFolderId, Folder folder, CancellationToken cancellationToken)
 		{
 			var folderEntity = mapper.Map<FolderEntity>(folder);
-			folderEntity.ParentFolder = await context.FindFolder(parentFolderId, includeSubfolders: false, includeDiscs: false, cancellationToken);
+			folderEntity.ParentFolder = await context.FindFolder(parentFolderId, cancellationToken);
 
 			context.Folders.Add(folderEntity);
 
@@ -48,10 +50,19 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 			return folderEntity.Id;
 		}
 
-		public async Task<Folder> GetFolder(int folderId, bool loadSubfolders, bool loadDiscs, CancellationToken cancellationToken)
+		public async Task<Folder> GetFolder(int folderId, CancellationToken cancellationToken)
 		{
-			var folder = await context.FindFolder(folderId, loadSubfolders, loadDiscs, cancellationToken);
+			var folder = await context.FindFolder(folderId, cancellationToken);
 			return mapper.Map<Folder>(folder);
+		}
+
+		public async Task<IReadOnlyCollection<Folder>> GetFolderSubfolders(int folderId, CancellationToken cancellationToken)
+		{
+			var subFolders = await context.Folders.Where(f => f.ParentFolder != null && f.ParentFolder.Id == folderId)
+				.Select(f => mapper.Map<Folder>(f))
+				.ToListAsync(cancellationToken);
+
+			return subFolders;
 		}
 	}
 }

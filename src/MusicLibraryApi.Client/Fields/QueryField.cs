@@ -8,6 +8,8 @@ namespace MusicLibraryApi.Client.Fields
 
 		public virtual string QuerySelection => Name;
 
+		public virtual string VariablesDefinition => String.Empty;
+
 		public QueryField(string name)
 		{
 			if (String.IsNullOrWhiteSpace(name))

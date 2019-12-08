@@ -21,8 +21,8 @@ namespace MusicLibraryApi.Client.Operations
 
 		public async Task<OutputFolderData> GetFolder(int? folderId, QueryFieldSet<FolderQuery> fields, CancellationToken cancellationToken, bool includeDeletedDiscs = false)
 		{
-			var query = Invariant($@"query GetFolder($folderId: ID, $includeDeletedDiscs: Boolean) {{
-										folder(folderId: $folderId, includeDeletedDiscs: $includeDeletedDiscs) {{ {fields.QuerySelection} }}
+			var query = Invariant($@"query GetFolder($folderId: ID, {fields.VariablesDefinition}) {{
+										folder(folderId: $folderId) {{ {fields.QuerySelection} }}
 									}}");
 
 			var request = new GraphQLRequest

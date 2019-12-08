@@ -13,6 +13,8 @@ namespace MusicLibraryApi.Client.Fields
 
 		public string QuerySelection => String.Join(" ", fields.Select(f => f.QuerySelection));
 
+		public string VariablesDefinition => String.Join(", ", fields.Select(f => f.VariablesDefinition).Where(d => !String.IsNullOrEmpty(d)));
+
 		public QueryFieldSet(QueryField<TQuery> field)
 		{
 			fields = new List<QueryField<TQuery>> { field };

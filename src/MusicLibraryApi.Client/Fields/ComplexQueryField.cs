@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using static System.FormattableString;
 
@@ -8,9 +9,13 @@ namespace MusicLibraryApi.Client.Fields
 	{
 		private readonly QueryFieldSet<TNestedQuery> nestedFields;
 
-		public override string QuerySelection => Invariant($"{Name} {{ {nestedFields.QuerySelection} }}");
+		private readonly IReadOnlyCollection<QueryVariable> variables;
 
-		public ComplexQueryField(string name, QueryFieldSet<TNestedQuery> nestedFields)
+		public override string QuerySelection => Invariant($"{Name}{BuildVariableArguments()} {{ {nestedFields.QuerySelection} }}");
+
+		public override string VariablesDefinition => BuildVariablesDefinition();
+
+		public ComplexQueryField(string name, QueryFieldSet<TNestedQuery> nestedFields, params QueryVariable[] variables)
 			: base(name)
 		{
 			if (!nestedFields.Any())
@@ -19,6 +24,28 @@ namespace MusicLibraryApi.Client.Fields
 			}
 
 			this.nestedFields = nestedFields;
+
+			this.variables = variables ?? Array.Empty<QueryVariable>();
+		}
+
+		private string BuildVariableArguments()
+		{
+			if (!variables.Any())
+			{
+				return String.Empty;
+			}
+
+			return Invariant($"({String.Join(", ", variables.Select(v => v.ArgumentDeclaration))})");
+		}
+
+		private string BuildVariablesDefinition()
+		{
+			if (!variables.Any())
+			{
+				return String.Empty;
+			}
+
+			return String.Join(", ", variables.Select(v => v.VariableDefinition));
 		}
 	}
 }

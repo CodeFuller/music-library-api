@@ -10,22 +10,10 @@ namespace MusicLibraryApi.Dal.EfCore
 {
 	public static class MusicLibraryDbContextExtensions
 	{
-		public static async Task<FolderEntity> FindFolder(this MusicLibraryDbContext context, int folderId, bool includeSubfolders, bool includeDiscs, CancellationToken cancellationToken)
+		public static async Task<FolderEntity> FindFolder(this MusicLibraryDbContext context, int folderId, CancellationToken cancellationToken)
 		{
-			IQueryable<FolderEntity> query = context.Folders
-				.Include(f => f.ParentFolder);
-
-			if (includeSubfolders)
-			{
-				query = query.Include(f => f.Subfolders);
-			}
-
-			if (includeDiscs)
-			{
-				query = query.Include(f => f.Discs);
-			}
-
-			var folderEntity = await query
+			var folderEntity = await context.Folders
+				.Include(f => f.ParentFolder)
 				.Where(x => x.Id == folderId)
 				.SingleOrDefaultAsync(cancellationToken);
 

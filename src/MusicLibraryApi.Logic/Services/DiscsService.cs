@@ -56,5 +56,24 @@ namespace MusicLibraryApi.Logic.Services
 				.Where(d => !d.IsDeleted)
 				.OrderBy(d => d.Id).ToList();
 		}
+
+		public async Task<IReadOnlyCollection<Disc>> GetFolderDiscs(int folderId, bool includeDeletedDiscs, CancellationToken cancellationToken)
+		{
+			try
+			{
+				var discs = await repository.GetFolderDiscs(folderId, cancellationToken);
+				return discs
+					.Where(d => includeDeletedDiscs || !d.IsDeleted)
+					.OrderBy(f => f.Year == null)
+					.ThenBy(d => d.Year)
+					.ThenBy(d => d.AlbumTitle)
+					.ThenBy(d => d.AlbumOrder)
+					.ToList();
+			}
+			catch (FolderNotFoundException e)
+			{
+				throw e.Handle(folderId, logger);
+			}
+		}
 	}
 }

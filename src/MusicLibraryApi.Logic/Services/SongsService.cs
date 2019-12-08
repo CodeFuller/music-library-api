@@ -52,5 +52,23 @@ namespace MusicLibraryApi.Logic.Services
 				.Where(d => !d.IsDeleted)
 				.OrderBy(d => d.Id).ToList();
 		}
+
+		public async Task<IReadOnlyCollection<Song>> GetDiscSongs(int discId, CancellationToken cancellationToken)
+		{
+			try
+			{
+				var discs = await repository.GetDiscSongs(discId, cancellationToken);
+				return discs
+					.Where(s => !s.IsDeleted)
+					.OrderBy(f => f.TrackNumber == null)
+					.ThenBy(d => d.TrackNumber)
+					.ThenBy(d => d.Title)
+					.ToList();
+			}
+			catch (DiscNotFoundException e)
+			{
+				throw e.Handle(discId, logger);
+			}
+		}
 	}
 }
