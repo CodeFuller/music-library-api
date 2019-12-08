@@ -1,4 +1,6 @@
-﻿using System.Runtime.Serialization;
+﻿using System.Collections.Generic;
+using System.Runtime.Serialization;
+using MusicLibraryApi.Client.Contracts.Songs;
 
 namespace MusicLibraryApi.Client.Contracts.Artists
 {
@@ -8,10 +10,14 @@ namespace MusicLibraryApi.Client.Contracts.Artists
 		[DataMember(Name = "id")]
 		public int? Id { get; }
 
-		public OutputArtistData(int? id, string? name)
+		[DataMember(Name = "songs")]
+		public IReadOnlyCollection<OutputSongData>? Songs { get; }
+
+		public OutputArtistData(int? id = null, string? name = null, IReadOnlyCollection<OutputSongData>? songs = null)
 			: base(name)
 		{
 			Id = id;
+			Songs = songs;
 		}
 	}
 }

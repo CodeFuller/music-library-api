@@ -192,16 +192,19 @@ namespace MusicLibraryApi.IntegrationTests
 				Rating.R4, 320000, new DateTimeOffset(2018, 11, 25, 08, 25, 17, TimeSpan.FromHours(2)), 4);
 			song1.Disc = disc;
 			song1.Genre = context.Genres.Single(g => g.Id == 2);
+			song1.Artist = null;
 
 			var song2 = new SongEntity(2, "Highway To Hell", "01 - Highway To Hell.mp3", 1, new TimeSpan(0, 3, 28),
 				Rating.R6, 320000, new DateTimeOffset(2018, 11, 25, 08, 20, 00, TimeSpan.FromHours(2)), 4);
 			song2.Disc = disc;
 			song2.Genre = context.Genres.Single(g => g.Id == 1);
+			song2.Artist = context.Artists.Single(a => a.Id == 2);
 
 			var song3 = new SongEntity(3, "Are You Ready?", "03 - Are You Ready?.mp3", null, new TimeSpan(0, 4, 09),
 				null, null, null, 0);
 			song3.Disc = disc;
 			song3.Genre = null;
+			song3.Artist = context.Artists.Single(a => a.Id == 1);
 
 			identityInsert.InitializeIdentityInsert(context, "Songs");
 

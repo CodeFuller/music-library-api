@@ -10,5 +10,7 @@ namespace MusicLibraryApi.Abstractions.Interfaces
 		Task<int> CreateArtist(Artist artist, CancellationToken cancellationToken);
 
 		Task<IReadOnlyCollection<Artist>> GetAllArtists(CancellationToken cancellationToken);
+
+		Task<Artist> GetArtist(int artistId, CancellationToken cancellationToken);
 	}
 }

@@ -25,6 +25,24 @@ namespace MusicLibraryApi.Client.Operations
 			return await ExecuteQuery<ArtistQuery, OutputArtistData[]>("artists", fields, cancellationToken);
 		}
 
+		public async Task<OutputArtistData> GetArtist(int artistId, QueryFieldSet<ArtistQuery> fields, CancellationToken cancellationToken)
+		{
+			var query = Invariant($@"query GetArtistById($id: ID!) {{
+										artist(id: $id) {{ {fields.QuerySelection} }}
+									}}");
+
+			var request = new GraphQLRequest
+			{
+				Query = query,
+				Variables = new
+				{
+					id = artistId,
+				},
+			};
+
+			return await ExecuteRequest<OutputArtistData>("artist", request, cancellationToken);
+		}
+
 		public async Task<int> CreateArtist(InputArtistData artistData, CancellationToken cancellationToken)
 		{
 			Logger.LogInformation("Creating new artist {ArtistName} ...", artistData.Name);

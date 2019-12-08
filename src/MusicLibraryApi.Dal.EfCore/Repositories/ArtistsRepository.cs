@@ -9,6 +9,7 @@ using MusicLibraryApi.Abstractions.Exceptions;
 using MusicLibraryApi.Abstractions.Interfaces;
 using MusicLibraryApi.Abstractions.Models;
 using MusicLibraryApi.Dal.EfCore.Entities;
+using static System.FormattableString;
 
 namespace MusicLibraryApi.Dal.EfCore.Repositories
 {
@@ -47,6 +48,20 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 			return await context.Artists
 				.Select(a => mapper.Map<Artist>(a))
 				.ToListAsync(cancellationToken);
+		}
+
+		public async Task<Artist> GetArtist(int artistId, CancellationToken cancellationToken)
+		{
+			var artistEntity = await context.Artists
+				.Where(x => x.Id == artistId)
+				.SingleOrDefaultAsync(cancellationToken);
+
+			if (artistEntity == null)
+			{
+				throw new ArtistNotFoundException(Invariant($"The artist with id of {artistId} does not exist"));
+			}
+
+			return mapper.Map<Artist>(artistEntity);
 		}
 	}
 }

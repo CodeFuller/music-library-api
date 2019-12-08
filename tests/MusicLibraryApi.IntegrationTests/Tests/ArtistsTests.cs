@@ -1,8 +1,10 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MusicLibraryApi.Client.Contracts.Artists;
+using MusicLibraryApi.Client.Contracts.Songs;
 using MusicLibraryApi.Client.Exceptions;
 using MusicLibraryApi.Client.Fields;
 using MusicLibraryApi.Client.Interfaces;
@@ -20,20 +22,56 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var expectedArtists = new[]
 			{
-				new OutputArtistData(2, "AC/DC"),
-				new OutputArtistData(1, "Nautilus Pompilius"),
-				new OutputArtistData(3, "Кино"),
+				new OutputArtistData(2, "AC/DC", new[] { new OutputSongData(id: 2), }),
+				new OutputArtistData(1, "Nautilus Pompilius", Array.Empty<OutputSongData>()),
+				new OutputArtistData(3, "Кино", new[] { new OutputSongData(id: 1), }),
 			};
 
 			var client = CreateClient<IArtistsQuery>();
 
 			// Act
 
-			var receivedArtists = await client.GetArtists(ArtistFields.All, CancellationToken.None);
+			var receivedArtists = await client.GetArtists(ArtistFields.All + ArtistFields.Songs(SongFields.Id), CancellationToken.None);
 
 			// Assert
 
 			CollectionAssert.AreEqual(expectedArtists, receivedArtists.ToList(), new ArtistDataComparer());
+		}
+
+		[TestMethod]
+		public async Task ArtistQuery_ForExistingArtist_ReturnsCorrectData()
+		{
+			// Arrange
+
+			var expectedArtist = new OutputArtistData(2, "AC/DC", new[] { new OutputSongData(id: 2), });
+
+			var client = CreateClient<IArtistsQuery>();
+
+			// Act
+
+			var receivedArtist = await client.GetArtist(2, ArtistFields.All + ArtistFields.Songs(SongFields.Id), CancellationToken.None);
+
+			// Assert
+
+			var cmp = new ArtistDataComparer().Compare(expectedArtist, receivedArtist);
+			Assert.AreEqual(0, cmp, "Artists data does not match");
+		}
+
+		[TestMethod]
+		public async Task ArtistQuery_IfArtistDoesNotExist_ReturnsError()
+		{
+			// Arrange
+
+			var client = CreateClient<IArtistsQuery>();
+
+			// Act
+
+			var getDiscTask = client.GetArtist(12345, ArtistFields.All + ArtistFields.Songs(SongFields.Id), CancellationToken.None);
+
+			// Assert
+
+			var exception = await Assert.ThrowsExceptionAsync<GraphQLRequestFailedException>(() => getDiscTask);
+			Assert.AreEqual("The artist with id of '12345' does not exist", exception.Message);
 		}
 
 		[TestMethod]

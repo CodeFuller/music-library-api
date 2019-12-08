@@ -8,6 +8,11 @@ namespace MusicLibraryApi.Client.Fields
 
 		public static QueryField<ArtistQuery> Name { get; } = new QueryField<ArtistQuery>("name");
 
+		public static ComplexQueryField<ArtistQuery, SongQuery> Songs(QueryFieldSet<SongQuery> songFields)
+		{
+			return new ComplexQueryField<ArtistQuery, SongQuery>("songs", songFields);
+		}
+
 		public static QueryFieldSet<ArtistQuery> All { get; } = Id + Name;
 	}
 }

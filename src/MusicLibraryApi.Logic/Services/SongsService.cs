@@ -77,6 +77,12 @@ namespace MusicLibraryApi.Logic.Services
 			return FilterAndOrderMixedSongs(songs);
 		}
 
+		public async Task<IReadOnlyCollection<Song>> GetArtistSongs(int artistId, CancellationToken cancellationToken)
+		{
+			var songs = await repository.GetArtistSongs(artistId, cancellationToken);
+			return FilterAndOrderMixedSongs(songs);
+		}
+
 		private IReadOnlyCollection<Song> FilterAndOrderMixedSongs(IReadOnlyCollection<Song> songs)
 		{
 			return songs

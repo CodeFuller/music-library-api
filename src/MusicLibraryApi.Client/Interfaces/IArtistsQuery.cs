@@ -10,5 +10,7 @@ namespace MusicLibraryApi.Client.Interfaces
 	public interface IArtistsQuery
 	{
 		Task<IReadOnlyCollection<OutputArtistData>> GetArtists(QueryFieldSet<ArtistQuery> fields, CancellationToken cancellationToken);
+
+		Task<OutputArtistData> GetArtist(int artistId, QueryFieldSet<ArtistQuery> fields, CancellationToken cancellationToken);
 	}
 }

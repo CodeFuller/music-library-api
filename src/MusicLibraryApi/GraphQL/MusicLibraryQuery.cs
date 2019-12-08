@@ -26,6 +26,15 @@ namespace MusicLibraryApi.GraphQL
 				"artists",
 				resolve: async context => await serviceAccessor.ArtistsService.GetAllArtists(context.CancellationToken));
 
+			FieldAsync<ArtistType>(
+				"artist",
+				arguments: new QueryArguments(new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "id" }),
+				resolve: async context =>
+				{
+					var artistId = context.GetArgument<int>("id");
+					return await serviceAccessor.ArtistsService.GetArtist(artistId, context.CancellationToken);
+				});
+
 			FieldAsync<FolderType>(
 				"folder",
 				arguments: new QueryArguments(new QueryArgument<IdGraphType> { Name = "folderId" }),

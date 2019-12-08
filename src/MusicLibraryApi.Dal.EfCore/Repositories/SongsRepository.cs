@@ -59,6 +59,13 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 				.ToListAsync(cancellationToken);
 		}
 
+		public async Task<IReadOnlyCollection<Song>> GetArtistSongs(int artistId, CancellationToken cancellationToken)
+		{
+			return await context.Songs.Where(s => s.Artist != null && s.Artist.Id == artistId)
+				.Select(s => mapper.Map<Song>(s))
+				.ToListAsync(cancellationToken);
+		}
+
 		public async Task<DiscEntity> FindDisc(int discId, CancellationToken cancellationToken)
 		{
 			var discEntity = await context.Discs.SingleOrDefaultAsync(d => d.Id == discId, cancellationToken);
