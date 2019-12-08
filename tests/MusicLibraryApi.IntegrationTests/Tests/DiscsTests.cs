@@ -5,8 +5,10 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MusicLibraryApi.Client.Contracts.Discs;
 using MusicLibraryApi.Client.Contracts.Folders;
+using MusicLibraryApi.Client.Contracts.Songs;
 using MusicLibraryApi.Client.Exceptions;
 using MusicLibraryApi.Client.Fields;
+using MusicLibraryApi.Client.Fields.QueryTypes;
 using MusicLibraryApi.Client.Interfaces;
 
 namespace MusicLibraryApi.IntegrationTests.Tests
@@ -14,6 +16,8 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 	[TestClass]
 	public class DiscsTests : GraphQLTests
 	{
+		private static QueryFieldSet<DiscQuery> RequestedFields => DiscFields.All + DiscFields.Folder(FolderFields.Id) + DiscFields.Songs(SongFields.Id);
+
 		[TestMethod]
 		public async Task DiscsQuery_ReturnsCorrectData()
 		{
@@ -22,24 +26,28 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			var expectedDiscs = new[]
 			{
 				new OutputDiscData(id: 1, year: 2001, title: "Platinum Hits (CD 2)", treeTitle: "2001 - Platinum Hits (CD 2)",
-					albumTitle: "Platinum Hits", albumId: "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", albumOrder: 2, folder: new OutputFolderData(id: 1)),
+					albumTitle: "Platinum Hits", albumId: "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", albumOrder: 2, folder: new OutputFolderData(id: 1),
+					songs: new[] { new OutputSongData(id: 2), new OutputSongData(id: 1), new OutputSongData(id: 3), }),
 
 				new OutputDiscData(id: 2, year: 2001, title: "Platinum Hits (CD 1)", treeTitle: "2001 - Platinum Hits (CD 1)",
-					albumTitle: "Platinum Hits", albumId: "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", albumOrder: 1, folder: new OutputFolderData(id: 1)),
+					albumTitle: "Platinum Hits", albumId: "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", albumOrder: 1, folder: new OutputFolderData(id: 1),
+					songs: Array.Empty<OutputSongData>()),
 
 				new OutputDiscData(id: 3, year: 2000, title: "Don't Give Me Names", treeTitle: "2000 - Don't Give Me Names",
-					albumTitle: "Don't Give Me Names", folder: new OutputFolderData(id: 5)),
+					albumTitle: "Don't Give Me Names", folder: new OutputFolderData(id: 5),
+					songs: Array.Empty<OutputSongData>()),
 
-				new OutputDiscData(id: 4, title: "Rarities", treeTitle: "Rarities", albumTitle: String.Empty, folder: new OutputFolderData(id: 5)),
+				new OutputDiscData(id: 4, title: "Rarities", treeTitle: "Rarities", albumTitle: String.Empty, folder: new OutputFolderData(id: 5), songs: Array.Empty<OutputSongData>()),
 
-				new OutputDiscData(id: 5, year: 1997, "Proud Like A God", treeTitle: "1997 - Proud Like A God", albumTitle: "Proud Like A God", folder: new OutputFolderData(id: 5)),
+				new OutputDiscData(id: 5, year: 1997, "Proud Like A God", treeTitle: "1997 - Proud Like A God", albumTitle: "Proud Like A God",
+					folder: new OutputFolderData(id: 5), songs: Array.Empty<OutputSongData>()),
 			};
 
 			var client = CreateClient<IDiscsQuery>();
 
 			// Act
 
-			var receivedDiscs = await client.GetDiscs(DiscFields.All + DiscFields.Folder(FolderFields.Id), CancellationToken.None);
+			var receivedDiscs = await client.GetDiscs(RequestedFields, CancellationToken.None);
 
 			// Assert
 
@@ -51,14 +59,15 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		{
 			// Arrange
 
-			var expectedData = new OutputDiscData(id: 2, year: 2001, title: "Platinum Hits (CD 1)", treeTitle: "2001 - Platinum Hits (CD 1)",
-				albumTitle: "Platinum Hits", albumId: "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", albumOrder: 1, folder: new OutputFolderData(id: 1));
+			var expectedData = new OutputDiscData(id: 1, year: 2001, title: "Platinum Hits (CD 2)", treeTitle: "2001 - Platinum Hits (CD 2)",
+				albumTitle: "Platinum Hits", albumId: "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", albumOrder: 2, folder: new OutputFolderData(id: 1),
+				songs: new[] { new OutputSongData(id: 2), new OutputSongData(id: 1), new OutputSongData(id: 3), });
 
 			var client = CreateClient<IDiscsQuery>();
 
 			// Act
 
-			var receivedData = await client.GetDisc(2, DiscFields.All + DiscFields.Folder(FolderFields.Id), CancellationToken.None);
+			var receivedData = await client.GetDisc(1, RequestedFields, CancellationToken.None);
 
 			// Assert
 
