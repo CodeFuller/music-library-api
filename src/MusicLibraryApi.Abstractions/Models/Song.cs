@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace MusicLibraryApi.Abstractions.Models
 {
@@ -29,8 +28,6 @@ namespace MusicLibraryApi.Abstractions.Models
 
 		public int PlaybacksCount { get; }
 
-		public IReadOnlyCollection<Playback>? Playbacks { get; }
-
 		public DateTimeOffset? DeleteDate { get; }
 
 		public string? DeleteComment { get; }
@@ -38,7 +35,7 @@ namespace MusicLibraryApi.Abstractions.Models
 		public bool IsDeleted => DeleteDate != null;
 
 		public Song(string title, string treeTitle, short? trackNumber, TimeSpan duration, Rating? rating, int? bitRate,
-			DateTimeOffset? lastPlaybackTime, int playbacksCount, IReadOnlyCollection<Playback>? playbacks, DateTimeOffset? deleteDate, string? deleteComment)
+			DateTimeOffset? lastPlaybackTime, int playbacksCount, DateTimeOffset? deleteDate, string? deleteComment)
 		{
 			Title = title;
 			TreeTitle = treeTitle;
@@ -48,14 +45,13 @@ namespace MusicLibraryApi.Abstractions.Models
 			BitRate = bitRate;
 			LastPlaybackTime = lastPlaybackTime;
 			PlaybacksCount = playbacksCount;
-			Playbacks = playbacks;
 			DeleteDate = deleteDate;
 			DeleteComment = deleteComment;
 		}
 
 		public Song(int id, string title, string treeTitle, short? trackNumber, TimeSpan duration, Rating? rating, int? bitRate,
-			DateTimeOffset? lastPlaybackTime, int playbacksCount, IReadOnlyCollection<Playback>? playbacks, DateTimeOffset? deleteDate, string? deleteComment)
-			: this(title, treeTitle, trackNumber, duration, rating, bitRate, lastPlaybackTime, playbacksCount, playbacks, deleteDate, deleteComment)
+			DateTimeOffset? lastPlaybackTime, int playbacksCount, DateTimeOffset? deleteDate, string? deleteComment)
+			: this(title, treeTitle, trackNumber, duration, rating, bitRate, lastPlaybackTime, playbacksCount, deleteDate, deleteComment)
 		{
 			Id = id;
 		}

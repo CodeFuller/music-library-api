@@ -28,7 +28,7 @@ namespace MusicLibraryApi.Logic.Services
 		{
 			try
 			{
-				var folder = new Folder(folderName, null, null);
+				var folder = new Folder(folderName);
 				return await repository.CreateFolder(parentFolderId, folder, cancellationToken);
 			}
 			catch (DuplicateKeyException e)

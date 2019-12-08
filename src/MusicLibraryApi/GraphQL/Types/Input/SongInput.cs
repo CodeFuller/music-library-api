@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using MusicLibraryApi.Abstractions.Models;
 
 namespace MusicLibraryApi.GraphQL.Types.Input
@@ -28,8 +27,6 @@ namespace MusicLibraryApi.GraphQL.Types.Input
 
 		public int? PlaybacksCount { get; set; }
 
-		public IReadOnlyCollection<Playback>? Playbacks { get; set; }
-
 		public DateTimeOffset? DeleteDate { get; set; }
 
 		public string? DeleteComment { get; set; }
@@ -51,9 +48,7 @@ namespace MusicLibraryApi.GraphQL.Types.Input
 				throw new InvalidOperationException("Song duration is not set");
 			}
 
-			var playbacks = Playbacks ?? Array.Empty<Playback>();
-
-			return new Song(Title, TreeTitle, TrackNumber, Duration.Value, Rating, BitRate, LastPlaybackTime, PlaybacksCount ?? 0, playbacks, DeleteDate, DeleteComment);
+			return new Song(Title, TreeTitle, TrackNumber, Duration.Value, Rating, BitRate, LastPlaybackTime, PlaybacksCount ?? 0, DeleteDate, DeleteComment);
 		}
 	}
 }
