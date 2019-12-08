@@ -22,6 +22,21 @@ namespace MusicLibraryApi.Client.Fields
 
 		public static QueryField<SongQuery> PlaybacksCount { get; } = new QueryField<SongQuery>("playbacksCount");
 
+		public static ComplexQueryField<SongQuery, DiscQuery> Disc(QueryFieldSet<DiscQuery> discFields)
+		{
+			return new ComplexQueryField<SongQuery, DiscQuery>("disc", discFields);
+		}
+
+		public static ComplexQueryField<SongQuery, ArtistQuery> Artist(QueryFieldSet<ArtistQuery> artistFields)
+		{
+			return new ComplexQueryField<SongQuery, ArtistQuery>("artist", artistFields);
+		}
+
+		public static ComplexQueryField<SongQuery, GenreQuery> Genre(QueryFieldSet<GenreQuery> genreFields)
+		{
+			return new ComplexQueryField<SongQuery, GenreQuery>("genre", genreFields);
+		}
+
 		public static QueryField<SongQuery> DeleteDate { get; } = new QueryField<SongQuery>("deleteDate");
 
 		public static QueryField<SongQuery> DeleteComment { get; } = new QueryField<SongQuery>("deleteComment");

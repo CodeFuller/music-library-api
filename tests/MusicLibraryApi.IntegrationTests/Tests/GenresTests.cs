@@ -8,7 +8,6 @@ using MusicLibraryApi.Client.Contracts.Songs;
 using MusicLibraryApi.Client.Exceptions;
 using MusicLibraryApi.Client.Fields;
 using MusicLibraryApi.Client.Interfaces;
-using MusicLibraryApi.IntegrationTests.Comparers;
 
 namespace MusicLibraryApi.IntegrationTests.Tests
 {
@@ -35,7 +34,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Assert
 
-			CollectionAssert.AreEqual(expectedGenres, receivedGenres.ToList(), new GenreDataComparer());
+			CollectionAssert.AreEqual(expectedGenres, receivedGenres.ToList(), GenresComparer);
 		}
 
 		[TestMethod]
@@ -53,7 +52,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Assert
 
-			var cmp = new GenreDataComparer().Compare(expectedGenre, receivedGenre);
+			var cmp = GenresComparer.Compare(expectedGenre, receivedGenre);
 			Assert.AreEqual(0, cmp, "Genres data does not match");
 		}
 
@@ -102,7 +101,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			var genresQuery = CreateClient<IGenresQuery>();
 			var receivedGenres = await genresQuery.GetGenres(GenreFields.All, CancellationToken.None);
 
-			CollectionAssert.AreEqual(expectedGenres, receivedGenres.ToList(), new GenreDataComparer());
+			CollectionAssert.AreEqual(expectedGenres, receivedGenres.ToList(), GenresComparer);
 		}
 
 		[TestMethod]
@@ -133,7 +132,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			var genresQuery = CreateClient<IGenresQuery>();
 			var receivedGenres = await genresQuery.GetGenres(GenreFields.All, CancellationToken.None);
 
-			CollectionAssert.AreEqual(expectedGenres, receivedGenres.ToList(), new GenreDataComparer());
+			CollectionAssert.AreEqual(expectedGenres, receivedGenres.ToList(), GenresComparer);
 		}
 	}
 }

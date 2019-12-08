@@ -35,6 +35,16 @@ namespace MusicLibraryApi.Logic.Services
 			}
 		}
 
+		public async Task<IReadOnlyCollection<Disc>> GetAllDiscs(CancellationToken cancellationToken)
+		{
+			var discs = await repository.GetAllDiscs(cancellationToken);
+
+			// There is no meaningful sorting for all discs. We sort them by id here mostly for steady IT baselines.
+			return discs
+				.Where(d => !d.IsDeleted)
+				.OrderBy(d => d.Id).ToList();
+		}
+
 		public async Task<Disc> GetDisc(int discId, CancellationToken cancellationToken)
 		{
 			try
@@ -45,16 +55,6 @@ namespace MusicLibraryApi.Logic.Services
 			{
 				throw e.Handle(discId, logger);
 			}
-		}
-
-		public async Task<IReadOnlyCollection<Disc>> GetAllDiscs(CancellationToken cancellationToken)
-		{
-			var discs = await repository.GetAllDiscs(cancellationToken);
-
-			// There is no meaningful sorting for all discs. We sort them by id here mostly for steady IT baselines.
-			return discs
-				.Where(d => !d.IsDeleted)
-				.OrderBy(d => d.Id).ToList();
 		}
 
 		public async Task<IReadOnlyCollection<Disc>> GetFolderDiscs(int folderId, bool includeDeletedDiscs, CancellationToken cancellationToken)

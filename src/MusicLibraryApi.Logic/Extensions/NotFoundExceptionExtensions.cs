@@ -18,6 +18,12 @@ namespace MusicLibraryApi.Logic.Extensions
 			throw new ServiceOperationFailedException(Invariant($"The disc with id of '{discId}' does not exist"), e);
 		}
 
+		public static ServiceOperationFailedException Handle(this SongNotFoundException e, int songId, ILogger logger)
+		{
+			logger.LogError(e, "The song with id of {SongId} does not exist", songId);
+			throw new ServiceOperationFailedException(Invariant($"The song with id of '{songId}' does not exist"), e);
+		}
+
 		public static ServiceOperationFailedException Handle(this ArtistNotFoundException e, int? artistId, ILogger logger)
 		{
 			logger.LogError(e, "The artist with id of {ArtistId} does not exist", artistId);

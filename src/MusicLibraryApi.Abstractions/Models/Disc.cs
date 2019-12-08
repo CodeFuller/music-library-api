@@ -10,7 +10,7 @@ namespace MusicLibraryApi.Abstractions.Models
 
 		public string Title { get; }
 
-		public string? TreeTitle { get; set; }
+		public string? TreeTitle { get; }
 
 		public string AlbumTitle { get; }
 

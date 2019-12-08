@@ -8,7 +8,6 @@ using MusicLibraryApi.Client.Contracts.Songs;
 using MusicLibraryApi.Client.Exceptions;
 using MusicLibraryApi.Client.Fields;
 using MusicLibraryApi.Client.Interfaces;
-using MusicLibraryApi.IntegrationTests.Comparers;
 
 namespace MusicLibraryApi.IntegrationTests.Tests
 {
@@ -23,8 +22,8 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			var expectedArtists = new[]
 			{
 				new OutputArtistData(2, "AC/DC", new[] { new OutputSongData(id: 2), }),
-				new OutputArtistData(1, "Nautilus Pompilius", Array.Empty<OutputSongData>()),
-				new OutputArtistData(3, "Кино", new[] { new OutputSongData(id: 1), }),
+				new OutputArtistData(1, "Nautilus Pompilius", new[] { new OutputSongData(id: 3), }),
+				new OutputArtistData(3, "Кино", Array.Empty<OutputSongData>()),
 			};
 
 			var client = CreateClient<IArtistsQuery>();
@@ -35,7 +34,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Assert
 
-			CollectionAssert.AreEqual(expectedArtists, receivedArtists.ToList(), new ArtistDataComparer());
+			CollectionAssert.AreEqual(expectedArtists, receivedArtists.ToList(), ArtistsComparer);
 		}
 
 		[TestMethod]
@@ -53,7 +52,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Assert
 
-			var cmp = new ArtistDataComparer().Compare(expectedArtist, receivedArtist);
+			var cmp = ArtistsComparer.Compare(expectedArtist, receivedArtist);
 			Assert.AreEqual(0, cmp, "Artists data does not match");
 		}
 
@@ -102,7 +101,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			var artistsQuery = CreateClient<IArtistsQuery>();
 			var receivedArtists = await artistsQuery.GetArtists(ArtistFields.All, CancellationToken.None);
 
-			CollectionAssert.AreEqual(expectedArtists, receivedArtists.ToList(), new ArtistDataComparer());
+			CollectionAssert.AreEqual(expectedArtists, receivedArtists.ToList(), ArtistsComparer);
 		}
 
 		[TestMethod]
@@ -133,7 +132,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			var artistsQuery = CreateClient<IArtistsQuery>();
 			var receivedArtists = await artistsQuery.GetArtists(ArtistFields.All, CancellationToken.None);
 
-			CollectionAssert.AreEqual(expectedArtists, receivedArtists.ToList(), new ArtistDataComparer());
+			CollectionAssert.AreEqual(expectedArtists, receivedArtists.ToList(), ArtistsComparer);
 		}
 	}
 }

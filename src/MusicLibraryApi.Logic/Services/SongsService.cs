@@ -53,6 +53,18 @@ namespace MusicLibraryApi.Logic.Services
 				.OrderBy(d => d.Id).ToList();
 		}
 
+		public async Task<Song> GetSong(int songId, CancellationToken cancellationToken)
+		{
+			try
+			{
+				return await repository.GetSong(songId, cancellationToken);
+			}
+			catch (SongNotFoundException e)
+			{
+				throw e.Handle(songId, logger);
+			}
+		}
+
 		public async Task<IReadOnlyCollection<Song>> GetDiscSongs(int discId, CancellationToken cancellationToken)
 		{
 			try

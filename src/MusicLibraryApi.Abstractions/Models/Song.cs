@@ -14,7 +14,7 @@ namespace MusicLibraryApi.Abstractions.Models
 
 		public TimeSpan Duration { get; }
 
-		public Disc? Disc { get; private set; } = null!;
+		public Disc Disc { get; private set; } = null!;
 
 		public Artist? Artist { get; private set; }
 

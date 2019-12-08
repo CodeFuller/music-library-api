@@ -9,9 +9,9 @@ namespace MusicLibraryApi.Abstractions.Interfaces
 	{
 		Task<int> CreateDisc(int folderId, Disc disc, CancellationToken cancellationToken);
 
-		Task<Disc> GetDisc(int discId, CancellationToken cancellationToken);
-
 		Task<IReadOnlyCollection<Disc>> GetAllDiscs(CancellationToken cancellationToken);
+
+		Task<Disc> GetDisc(int discId, CancellationToken cancellationToken);
 
 		Task<IReadOnlyCollection<Disc>> GetFolderDiscs(int folderId, bool includeDeletedDiscs, CancellationToken cancellationToken);
 	}

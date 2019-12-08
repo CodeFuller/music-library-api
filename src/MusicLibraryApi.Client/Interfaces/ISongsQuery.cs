@@ -10,5 +10,7 @@ namespace MusicLibraryApi.Client.Interfaces
 	public interface ISongsQuery
 	{
 		Task<IReadOnlyCollection<OutputSongData>> GetSongs(QueryFieldSet<SongQuery> fields, CancellationToken cancellationToken);
+
+		Task<OutputSongData> GetSong(int songId, QueryFieldSet<SongQuery> fields, CancellationToken cancellationToken);
 	}
 }

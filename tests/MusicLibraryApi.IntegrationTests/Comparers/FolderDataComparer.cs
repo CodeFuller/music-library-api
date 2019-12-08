@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using MusicLibraryApi.Client.Contracts.Discs;
 using MusicLibraryApi.Client.Contracts.Folders;
+using MusicLibraryApi.IntegrationTests.Comparers.Interfaces;
 
 namespace MusicLibraryApi.IntegrationTests.Comparers
 {
-	public class FolderDataComparer : BasicDataComparer<OutputFolderData>
+	public class FolderDataComparer : BasicDataComparer<OutputFolderData>, IFolderDataComparer
 	{
 		private readonly IComparer<IReadOnlyCollection<OutputFolderData>?> folderCollectionsComparer;
 
@@ -22,10 +23,10 @@ namespace MusicLibraryApi.IntegrationTests.Comparers
 			}
 		}
 
-		public FolderDataComparer()
+		public FolderDataComparer(IDiscDataComparer discsComparer)
 		{
-			folderCollectionsComparer = new CollectionsComparer<OutputFolderData>(this);
-			discCollectionsComparer = new CollectionsComparer<OutputDiscData>(new DiscDataComparer(this));
+			this.folderCollectionsComparer = new CollectionsComparer<OutputFolderData>(this);
+			this.discCollectionsComparer = new CollectionsComparer<OutputDiscData>(discsComparer);
 		}
 	}
 }

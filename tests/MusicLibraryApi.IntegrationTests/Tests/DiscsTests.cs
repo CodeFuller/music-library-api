@@ -8,7 +8,6 @@ using MusicLibraryApi.Client.Contracts.Folders;
 using MusicLibraryApi.Client.Exceptions;
 using MusicLibraryApi.Client.Fields;
 using MusicLibraryApi.Client.Interfaces;
-using MusicLibraryApi.IntegrationTests.Comparers;
 
 namespace MusicLibraryApi.IntegrationTests.Tests
 {
@@ -44,11 +43,11 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Assert
 
-			CollectionAssert.AreEqual(expectedDiscs, receivedDiscs.ToList(), new DiscDataComparer());
+			CollectionAssert.AreEqual(expectedDiscs, receivedDiscs.ToList(), DiscsComparer);
 		}
 
 		[TestMethod]
-		public async Task DiscQuery_ForDiscWithOptionalDataFilled_ReturnsCorrectData()
+		public async Task DiscQuery_ForExistingDisc_ReturnsCorrectData()
 		{
 			// Arrange
 
@@ -63,26 +62,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Assert
 
-			var cmp = new DiscDataComparer().Compare(expectedData, receivedData);
-			Assert.AreEqual(0, cmp, "Discs data does not match");
-		}
-
-		[TestMethod]
-		public async Task DiscQuery_ForDiscWithOptionalDataMissing_ReturnsCorrectData()
-		{
-			// Arrange
-
-			var expectedData = new OutputDiscData(id: 4, title: "Rarities", treeTitle: "Rarities", albumTitle: String.Empty, folder: new OutputFolderData(id: 5));
-
-			var client = CreateClient<IDiscsQuery>();
-
-			// Act
-
-			var receivedData = await client.GetDisc(4, DiscFields.All + DiscFields.Folder(FolderFields.Id), CancellationToken.None);
-
-			// Assert
-
-			var cmp = new DiscDataComparer().Compare(expectedData, receivedData);
+			var cmp = DiscsComparer.Compare(expectedData, receivedData);
 			Assert.AreEqual(0, cmp, "Discs data does not match");
 		}
 
@@ -128,7 +108,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			var discsQuery = CreateClient<IDiscsQuery>();
 			var receivedData = await discsQuery.GetDisc(8, DiscFields.All + DiscFields.Folder(FolderFields.Id), CancellationToken.None);
 
-			var cmp = new DiscDataComparer().Compare(expectedData, receivedData);
+			var cmp = DiscsComparer.Compare(expectedData, receivedData);
 			Assert.AreEqual(0, cmp, "Discs data does not match");
 		}
 
@@ -156,7 +136,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			var discsQuery = CreateClient<IDiscsQuery>();
 			var receivedData = await discsQuery.GetDisc(8, DiscFields.All + DiscFields.Folder(FolderFields.Id), CancellationToken.None);
 
-			var cmp = new DiscDataComparer().Compare(expectedData, receivedData);
+			var cmp = DiscsComparer.Compare(expectedData, receivedData);
 			Assert.AreEqual(0, cmp, "Discs data does not match");
 		}
 
@@ -192,7 +172,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			var discsQuery = CreateClient<IDiscsQuery>();
 			var receivedDiscs = await discsQuery.GetDiscs(DiscFields.Id, CancellationToken.None);
 
-			CollectionAssert.AreEqual(expectedDiscs, receivedDiscs.ToList(), new DiscDataComparer());
+			CollectionAssert.AreEqual(expectedDiscs, receivedDiscs.ToList(), DiscsComparer);
 		}
 	}
 }

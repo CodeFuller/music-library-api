@@ -9,7 +9,6 @@ using MusicLibraryApi.Client.Exceptions;
 using MusicLibraryApi.Client.Fields;
 using MusicLibraryApi.Client.Fields.QueryTypes;
 using MusicLibraryApi.Client.Interfaces;
-using MusicLibraryApi.IntegrationTests.Comparers;
 
 namespace MusicLibraryApi.IntegrationTests.Tests
 {
@@ -45,7 +44,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Assert
 
-			var cmp = new FolderDataComparer().Compare(expectedFolder, receivedFolder);
+			var cmp = FoldersComparer.Compare(expectedFolder, receivedFolder);
 			Assert.AreEqual(0, cmp, "Folders data does not match");
 		}
 
@@ -77,7 +76,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Assert
 
-			var cmp = new FolderDataComparer().Compare(expectedFolder, receivedFolder);
+			var cmp = FoldersComparer.Compare(expectedFolder, receivedFolder);
 			Assert.AreEqual(0, cmp, "Folders data does not match");
 		}
 
@@ -110,7 +109,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Assert
 
-			var cmp = new FolderDataComparer().Compare(expectedFolder, receivedFolder);
+			var cmp = FoldersComparer.Compare(expectedFolder, receivedFolder);
 			Assert.AreEqual(0, cmp, "Folders data does not match");
 		}
 
@@ -165,7 +164,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Assert
 
-			CollectionAssert.AreEqual(expectedFolders, receivedFolderData.Subfolders.ToList(), new FolderDataComparer());
+			CollectionAssert.AreEqual(expectedFolders, receivedFolderData.Subfolders.ToList(), FoldersComparer);
 		}
 
 		[TestMethod]
@@ -197,7 +196,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			var foldersClient = CreateClient<IFoldersQuery>();
 			var receivedFolderData = await foldersClient.GetFolder(3, FolderFields.Subfolders(FolderFields.Id + FolderFields.Name), CancellationToken.None);
 
-			CollectionAssert.AreEqual(expectedFolders, receivedFolderData.Subfolders.ToList(), new FolderDataComparer());
+			CollectionAssert.AreEqual(expectedFolders, receivedFolderData.Subfolders.ToList(), FoldersComparer);
 		}
 
 		[TestMethod]
@@ -232,7 +231,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Assert
 
-			CollectionAssert.AreEqual(expectedFolders, receivedFolderData.Subfolders.ToList(), new FolderDataComparer());
+			CollectionAssert.AreEqual(expectedFolders, receivedFolderData.Subfolders.ToList(), FoldersComparer);
 		}
 	}
 }

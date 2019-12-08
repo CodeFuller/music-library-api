@@ -13,7 +13,7 @@ namespace MusicLibraryApi.Client.Contracts.Genres
 		[DataMember(Name = "songs")]
 		public IReadOnlyCollection<OutputSongData>? Songs { get; }
 
-		public OutputGenreData(int? id, string? name, IReadOnlyCollection<OutputSongData>? songs = null)
+		public OutputGenreData(int? id = null, string? name = null, IReadOnlyCollection<OutputSongData>? songs = null)
 			: base(name)
 		{
 			Id = id;

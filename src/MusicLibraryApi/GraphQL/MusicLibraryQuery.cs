@@ -44,6 +44,10 @@ namespace MusicLibraryApi.GraphQL
 					return await serviceAccessor.FoldersService.GetFolder(folderId, context.CancellationToken);
 				});
 
+			FieldAsync<ListGraphType<NonNullGraphType<DiscType>>>(
+				"discs",
+				resolve: async context => await serviceAccessor.DiscsService.GetAllDiscs(context.CancellationToken));
+
 			FieldAsync<DiscType>(
 				"disc",
 				arguments: new QueryArguments(new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "id" }),
@@ -53,13 +57,18 @@ namespace MusicLibraryApi.GraphQL
 					return await serviceAccessor.DiscsService.GetDisc(discId, context.CancellationToken);
 				});
 
-			FieldAsync<ListGraphType<NonNullGraphType<DiscType>>>(
-				"discs",
-				resolve: async context => await serviceAccessor.DiscsService.GetAllDiscs(context.CancellationToken));
-
 			FieldAsync<ListGraphType<NonNullGraphType<SongType>>>(
 				"songs",
 				resolve: async context => await serviceAccessor.SongsService.GetAllSongs(context.CancellationToken));
+
+			FieldAsync<SongType>(
+				"song",
+				arguments: new QueryArguments(new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "id" }),
+				resolve: async context =>
+				{
+					var songId = context.GetArgument<int>("id");
+					return await serviceAccessor.SongsService.GetSong(songId, context.CancellationToken);
+				});
 
 			// This 'error' field was added for IT purpose.
 			// It is required for testing of error handling middleware that hides internal sensitive exceptions.
