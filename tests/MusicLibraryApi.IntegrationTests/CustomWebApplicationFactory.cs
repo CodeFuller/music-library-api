@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MusicLibraryApi.Abstractions.Models;
 using MusicLibraryApi.Client;
 using MusicLibraryApi.Dal.EfCore;
 using MusicLibraryApi.Dal.EfCore.Entities;
@@ -177,9 +178,26 @@ namespace MusicLibraryApi.IntegrationTests
 
 		private static void SeedSongsData(MusicLibraryDbContext context, IIdentityInsert identityInsert)
 		{
+			var disc = context.Discs.Single(f => f.Id == 1);
+
+			var song1 = new SongEntity(1, "Hell's Bells", "02 - Hell's Bells.mp3", 2, new TimeSpan(0, 5, 12),
+				Rating.R4, 320000, new DateTimeOffset(2018, 11, 25, 08, 25, 17, TimeSpan.FromHours(2)), 4);
+			song1.Disc = disc;
+
+			var song2 = new SongEntity(2, "Highway To Hell", "01 - Highway To Hell.mp3", 1, new TimeSpan(0, 3, 28),
+				Rating.R6, 320000, new DateTimeOffset(2018, 11, 25, 08, 20, 00, TimeSpan.FromHours(2)), 4);
+			song2.Disc = disc;
+
+			var song3 = new SongEntity(3, "Are You Ready?", "03 - Are You Ready?.mp3", null, new TimeSpan(0, 4, 09),
+				null, null, null, 0);
+			song3.Disc = disc;
+
 			identityInsert.InitializeIdentityInsert(context, "Songs");
 
+			context.Songs.AddRange(song1, song2, song3);
 			context.SaveChanges();
+
+			identityInsert.FinalizeIdentityInsert(context, "Songs", 4);
 		}
 
 		private static FolderEntity FindFolder(MusicLibraryDbContext context, string folderName)

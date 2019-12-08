@@ -31,7 +31,7 @@ namespace MusicLibraryApi.Dal.EfCore
 
 			if (folderEntity == null)
 			{
-				throw new NotFoundException(Invariant($"The folder with id of {folderId} does not exist"));
+				throw new FolderNotFoundException(Invariant($"The folder with id of {folderId} does not exist"));
 			}
 
 			return folderEntity;

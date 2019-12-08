@@ -16,6 +16,7 @@ namespace MusicLibraryApi.GraphQL.Types
 			Field(x => x.AlbumOrder, true);
 			Field(x => x.DeleteDate, true);
 			Field(x => x.DeleteComment, true);
+			Field(name: "songs", type: typeof(ListGraphType<NonNullGraphType<SongType>>), resolve: context => context.Source.Songs);
 		}
 	}
 }

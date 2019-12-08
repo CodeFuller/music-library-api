@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using MusicLibraryApi.Abstractions.Exceptions;
 using MusicLibraryApi.Abstractions.Interfaces;
 using MusicLibraryApi.Abstractions.Models;
+using MusicLibraryApi.Logic.Extensions;
 using static System.FormattableString;
 
 namespace MusicLibraryApi.Logic.Services
@@ -44,10 +45,9 @@ namespace MusicLibraryApi.Logic.Services
 			{
 				folder = await repository.GetFolder(folderId, loadSubfolders, loadDiscs, cancellationToken);
 			}
-			catch (NotFoundException e)
+			catch (FolderNotFoundException e)
 			{
-				logger.LogError(e, "The folder with id of {FolderId} does not exist", folderId);
-				throw new ServiceOperationFailedException(Invariant($"The folder with id of '{folderId}' does not exist"), e);
+				throw e.Handle(folderId, logger);
 			}
 
 			var sortedSubfolders = folder.Subfolders?.OrderBy(f => f.Name).ToList();

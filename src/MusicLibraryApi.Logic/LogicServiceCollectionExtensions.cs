@@ -12,6 +12,7 @@ namespace MusicLibraryApi.Logic
 			services.AddTransient<IArtistsService, ArtistsService>();
 			services.AddTransient<IFoldersService, FoldersService>();
 			services.AddTransient<IDiscsService, DiscsService>();
+			services.AddTransient<ISongsService, SongsService>();
 
 			return services;
 		}

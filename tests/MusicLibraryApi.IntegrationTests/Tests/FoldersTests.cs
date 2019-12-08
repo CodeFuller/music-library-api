@@ -7,6 +7,7 @@ using MusicLibraryApi.Client.Contracts.Discs;
 using MusicLibraryApi.Client.Contracts.Folders;
 using MusicLibraryApi.Client.Exceptions;
 using MusicLibraryApi.Client.Fields;
+using MusicLibraryApi.Client.Fields.QueryTypes;
 using MusicLibraryApi.Client.Interfaces;
 using MusicLibraryApi.IntegrationTests.Comparers;
 
@@ -15,6 +16,8 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 	[TestClass]
 	public class FoldersTests : GraphQLTests
 	{
+		private static QueryFieldSet<FolderQuery> RequestedFields => FolderFields.All + FolderFields.Subfolders(FolderFields.All) + FolderFields.Discs(DiscFields.All);
+
 		[TestMethod]
 		public async Task FolderQuery_ForRootFolder_ReturnsCorrectData()
 		{
@@ -38,7 +41,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Act
 
-			var receivedFolder = await client.GetFolder(null, FolderFields.All, CancellationToken.None);
+			var receivedFolder = await client.GetFolder(null, RequestedFields, CancellationToken.None);
 
 			// Assert
 
@@ -70,7 +73,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Act
 
-			var receivedFolder = await client.GetFolder(4, FolderFields.All, CancellationToken.None);
+			var receivedFolder = await client.GetFolder(4, RequestedFields, CancellationToken.None);
 
 			// Assert
 
@@ -93,7 +96,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			{
 				new OutputDiscData(5, 1997, "Proud Like A God", "1997 - Proud Like A God", "Proud Like A God"),
 				new OutputDiscData(3, 2000, "Don't Give Me Names", "2000 - Don't Give Me Names", "Don't Give Me Names"),
-				new OutputDiscData(7, 2006, "Lost (T)apes", "2006 - Lost (T)apes", "Lost (T)apes", null, null, new DateTimeOffset(2019, 12, 03, 07, 57, 01, TimeSpan.FromHours(2)), "Deleted for a test"),
+				new OutputDiscData(7, 2006, "Lost (T)apes", "2006 - Lost (T)apes", "Lost (T)apes", null, null, null, new DateTimeOffset(2019, 12, 03, 07, 57, 01, TimeSpan.FromHours(2)), "Deleted for a test"),
 				new OutputDiscData(4, null, "Rarities", "Rarities", String.Empty),
 			};
 
@@ -103,7 +106,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Act
 
-			var receivedFolder = await client.GetFolder(4, FolderFields.All, CancellationToken.None, true);
+			var receivedFolder = await client.GetFolder(4, RequestedFields, CancellationToken.None, true);
 
 			// Assert
 
@@ -120,7 +123,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Act
 
-			var getSubfoldersTask = client.GetFolder(12345, FolderFields.All, CancellationToken.None);
+			var getSubfoldersTask = client.GetFolder(12345, RequestedFields, CancellationToken.None);
 
 			// Assert
 

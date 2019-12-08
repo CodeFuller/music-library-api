@@ -1,4 +1,5 @@
-﻿using GraphQL.Types;
+﻿using System;
+using GraphQL.Types;
 using MusicLibraryApi.GraphQL.Types.Input;
 using MusicLibraryApi.GraphQL.Types.Output;
 using MusicLibraryApi.Interfaces;
@@ -57,6 +58,24 @@ namespace MusicLibraryApi.GraphQL
 
 					var newDiscId = await serviceAccessor.DiscsService.CreateDisc(discInput.FolderId, disc, context.CancellationToken);
 					return new CreateDiscResult(newDiscId);
+				});
+
+			FieldAsync<CreateSongResultType>(
+				"createSong",
+				arguments: new QueryArguments(
+					new QueryArgument<NonNullGraphType<SongInputType>> { Name = "song" }),
+				resolve: async context =>
+				{
+					var songInput = context.GetArgument<SongInput>("song");
+					var song = songInput.ToModel();
+
+					if (songInput.DiscId == null)
+					{
+						throw new InvalidOperationException("Disc for the song is not set");
+					}
+
+					var newSongId = await serviceAccessor.SongsService.CreateSong(songInput.DiscId.Value, songInput.ArtistId, songInput.GenreId, song, context.CancellationToken);
+					return new CreateSongResult(newSongId);
 				});
 		}
 	}

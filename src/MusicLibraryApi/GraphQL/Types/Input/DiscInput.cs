@@ -40,7 +40,7 @@ namespace MusicLibraryApi.GraphQL.Types.Input
 				throw new InvalidOperationException("Disc album title is not set");
 			}
 
-			return new Disc(Year, Title, TreeTitle, AlbumTitle, AlbumId, AlbumOrder, DeleteDate, DeleteComment);
+			return new Disc(Year, Title, TreeTitle, AlbumTitle, AlbumId, AlbumOrder, null, DeleteDate, DeleteComment);
 		}
 	}
 }

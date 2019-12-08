@@ -9,16 +9,17 @@ namespace MusicLibraryApi.GraphQL.Types
 		{
 			Field(x => x.Id);
 			Field(x => x.Title);
+			Field(x => x.TreeTitle);
 			Field<IntGraphType>("trackNumber", resolve: context => context.Source.TrackNumber);
-			Field(x => x.Duration, true);
+			Field<NonNullGraphType<TimeSpanSecondsGraphType>>("duration");
 			Field("genre", x => x.Genre != null ? x.Genre.Name : null);
 			Field<RatingEnumType>("rating");
 			Field(x => x.BitRate, true);
-			Field(x => x.FileSize);
-			Field(x => x.Checksum);
 			Field("artist", x => x.Artist != null ? x.Artist.Name : null);
 			Field(x => x.LastPlaybackTime, true);
 			Field(x => x.PlaybacksCount);
+			Field(x => x.DeleteDate, true);
+			Field(x => x.DeleteComment, true);
 		}
 	}
 }

@@ -53,7 +53,7 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 
 			if (discEntity == null)
 			{
-				throw new NotFoundException(Invariant($"The disc with id of {discId} does not exist"));
+				throw new DiscNotFoundException(Invariant($"The disc with id of {discId} does not exist"));
 			}
 
 			return mapper.Map<Disc>(discEntity);

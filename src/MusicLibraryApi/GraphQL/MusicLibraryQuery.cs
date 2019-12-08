@@ -40,9 +40,13 @@ namespace MusicLibraryApi.GraphQL
 					return await serviceAccessor.DiscsService.GetDisc(discId, context.CancellationToken);
 				});
 
-			FieldAsync<ListGraphType<DiscType>>(
+			FieldAsync<ListGraphType<NonNullGraphType<DiscType>>>(
 				"discs",
 				resolve: async context => await serviceAccessor.DiscsService.GetAllDiscs(context.CancellationToken));
+
+			FieldAsync<ListGraphType<NonNullGraphType<SongType>>>(
+				"songs",
+				resolve: async context => await serviceAccessor.SongsService.GetAllSongs(context.CancellationToken));
 
 			// This 'error' field was added for IT purpose.
 			// It is required for testing of error handling middleware that hides internal sensitive exceptions.

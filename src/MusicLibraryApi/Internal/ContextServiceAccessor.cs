@@ -19,6 +19,8 @@ namespace MusicLibraryApi.Internal
 
 		public IDiscsService DiscsService => GetService<IDiscsService>();
 
+		public ISongsService SongsService => GetService<ISongsService>();
+
 		public ContextServiceAccessor(IHttpContextAccessor httpContextAccessor)
 		{
 			this.httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));

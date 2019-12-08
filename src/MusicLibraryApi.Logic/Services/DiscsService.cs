@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 using MusicLibraryApi.Abstractions.Exceptions;
 using MusicLibraryApi.Abstractions.Interfaces;
 using MusicLibraryApi.Abstractions.Models;
-using static System.FormattableString;
+using MusicLibraryApi.Logic.Extensions;
 
 namespace MusicLibraryApi.Logic.Services
 {
@@ -29,10 +29,9 @@ namespace MusicLibraryApi.Logic.Services
 			{
 				return await repository.CreateDisc(folderId, disc, cancellationToken);
 			}
-			catch (NotFoundException e)
+			catch (FolderNotFoundException e)
 			{
-				logger.LogError(e, "The folder with id of {FolderId} does not exist", folderId);
-				throw new ServiceOperationFailedException(Invariant($"The folder with id of '{folderId}' does not exist"), e);
+				throw e.Handle(folderId, logger);
 			}
 		}
 
@@ -42,10 +41,9 @@ namespace MusicLibraryApi.Logic.Services
 			{
 				return await repository.GetDisc(discId, cancellationToken);
 			}
-			catch (NotFoundException e)
+			catch (DiscNotFoundException e)
 			{
-				logger.LogError(e, "The disc with id of {DiscId} does not exist", discId);
-				throw new ServiceOperationFailedException(Invariant($"The disc with id of '{discId}' does not exist"), e);
+				throw e.Handle(discId, logger);
 			}
 		}
 
@@ -53,7 +51,7 @@ namespace MusicLibraryApi.Logic.Services
 		{
 			var discs = await repository.GetAllDiscs(cancellationToken);
 
-			// There is no meaningful sorting for all discs. We sort discs by id here mostly for steady IT baselines.
+			// There is no meaningful sorting for all discs. We sort them by id here mostly for steady IT baselines.
 			return discs
 				.Where(d => !d.IsDeleted)
 				.OrderBy(d => d.Id).ToList();

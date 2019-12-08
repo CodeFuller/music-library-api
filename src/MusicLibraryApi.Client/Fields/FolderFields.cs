@@ -18,6 +18,6 @@ namespace MusicLibraryApi.Client.Fields
 			return new ComplexQueryField<FolderQuery, DiscQuery>("discs", discFields);
 		}
 
-		public static QueryFieldSet<FolderQuery> All { get; } = Id + Name + Subfolders(FolderFields.Id + FolderFields.Name) + Discs(DiscFields.All);
+		public static QueryFieldSet<FolderQuery> All { get; } = Id + Name;
 	}
 }

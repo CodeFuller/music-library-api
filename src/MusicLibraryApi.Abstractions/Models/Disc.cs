@@ -19,9 +19,9 @@ namespace MusicLibraryApi.Abstractions.Models
 
 		public int? AlbumOrder { get; }
 
-		public IReadOnlyCollection<Song> Songs { get; } = new List<Song>();
-
 		public Folder Folder { get; private set; } = null!;
+
+		public IReadOnlyCollection<Song>? Songs { get; }
 
 		public DateTimeOffset? DeleteDate { get; }
 
@@ -29,7 +29,8 @@ namespace MusicLibraryApi.Abstractions.Models
 
 		public bool IsDeleted => DeleteDate != null;
 
-		public Disc(int? year, string title, string? treeTitle, string albumTitle, string? albumId, int? albumOrder, DateTimeOffset? deleteDate, string? deleteComment)
+		public Disc(int? year, string title, string? treeTitle, string albumTitle, string? albumId,
+			int? albumOrder, IReadOnlyCollection<Song>? songs, DateTimeOffset? deleteDate, string? deleteComment)
 		{
 			Year = year;
 			Title = title;
@@ -37,12 +38,14 @@ namespace MusicLibraryApi.Abstractions.Models
 			AlbumTitle = albumTitle;
 			AlbumId = albumId;
 			AlbumOrder = albumOrder;
+			Songs = songs;
 			DeleteDate = deleteDate;
 			DeleteComment = deleteComment;
 		}
 
-		public Disc(int id, int? year, string title, string? treeTitle, string albumTitle, string? albumId, int? albumOrder, DateTimeOffset? deleteDate, string? deleteComment)
-			: this(year, title, treeTitle, albumTitle, albumId, albumOrder, deleteDate, deleteComment)
+		public Disc(int id, int? year, string title, string? treeTitle, string albumTitle, string? albumId,
+			int? albumOrder, IReadOnlyCollection<Song>? songs, DateTimeOffset? deleteDate, string? deleteComment)
+			: this(year, title, treeTitle, albumTitle, albumId, albumOrder, songs, deleteDate, deleteComment)
 		{
 			Id = id;
 		}

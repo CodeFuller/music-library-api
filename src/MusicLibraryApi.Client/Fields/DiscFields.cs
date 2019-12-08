@@ -18,6 +18,11 @@ namespace MusicLibraryApi.Client.Fields
 
 		public static QueryField<DiscQuery> AlbumOrder { get; } = new QueryField<DiscQuery>("albumOrder");
 
+		public static ComplexQueryField<DiscQuery, SongQuery> Songs(QueryFieldSet<SongQuery> songFields)
+		{
+			return new ComplexQueryField<DiscQuery, SongQuery>("songs", songFields);
+		}
+
 		public static QueryField<DiscQuery> DeleteDate { get; } = new QueryField<DiscQuery>("deleteDate");
 
 		public static QueryField<DiscQuery> DeleteComment { get; } = new QueryField<DiscQuery>("deleteComment");

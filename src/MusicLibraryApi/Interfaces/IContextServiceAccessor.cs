@@ -11,5 +11,7 @@ namespace MusicLibraryApi.Interfaces
 		IFoldersService FoldersService { get; }
 
 		IDiscsService DiscsService { get; }
+
+		ISongsService SongsService { get; }
 	}
 }

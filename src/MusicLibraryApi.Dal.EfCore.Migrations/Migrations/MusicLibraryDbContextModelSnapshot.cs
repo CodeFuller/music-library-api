@@ -154,17 +154,17 @@ namespace MusicLibraryApi.Dal.EfCore.Migrations.Migrations
                     b.Property<int?>("BitRate")
                         .HasColumnType("integer");
 
-                    b.Property<int>("Checksum")
-                        .HasColumnType("integer");
+                    b.Property<string>("DeleteComment")
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset?>("DeleteDate")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("DiscId")
                         .HasColumnType("integer");
 
-                    b.Property<TimeSpan?>("Duration")
+                    b.Property<TimeSpan>("Duration")
                         .HasColumnType("interval");
-
-                    b.Property<int>("FileSize")
-                        .HasColumnType("integer");
 
                     b.Property<int?>("GenreId")
                         .HasColumnType("integer");
@@ -184,6 +184,10 @@ namespace MusicLibraryApi.Dal.EfCore.Migrations.Migrations
 
                     b.Property<short?>("TrackNumber")
                         .HasColumnType("smallint");
+
+                    b.Property<string>("TreeTitle")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 

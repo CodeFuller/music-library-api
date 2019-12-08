@@ -1,81 +1,31 @@
 ﻿using System;
-using System.Collections;
+using System.Collections.Generic;
 using MusicLibraryApi.Client.Contracts.Discs;
+using MusicLibraryApi.Client.Contracts.Songs;
 
 namespace MusicLibraryApi.IntegrationTests.Comparers
 {
-	public class DiscDataComparer : IComparer
+	public class DiscDataComparer : BasicDataComparer<OutputDiscData>
 	{
-		public int Compare(object? x, object? y)
+		private readonly IComparer<IReadOnlyCollection<OutputSongData>?> songCollectionsComparer = new CollectionsComparer<OutputSongData>(new SongDataComparer());
+
+		protected override IEnumerable<Func<OutputDiscData, OutputDiscData, int>> PropertyComparers
 		{
-			// Using unsafe type cast to catch objects of incorrect type. Otherwise Compare() will return 0 and asserts will always pass.
-			var d1 = (OutputDiscData?)x;
-			var d2 = (OutputDiscData?)y;
-
-			if (Object.ReferenceEquals(d1, null) && Object.ReferenceEquals(d2, null))
+			get
 			{
-				return 0;
+				yield return FieldComparer(x => x.Id);
+				yield return FieldComparer(x => x.Year);
+				yield return FieldComparer(x => x.Title);
+				yield return FieldComparer(x => x.TreeTitle);
+				yield return FieldComparer(x => x.AlbumTitle);
+				yield return FieldComparer(x => x.AlbumId);
+				yield return FieldComparer(x => x.AlbumOrder);
+				yield return FieldComparer(x => x.DeleteDate);
+				yield return FieldComparer(x => x.DeleteComment);
+				yield return FieldComparer(x => x.Songs, songCollectionsComparer);
+				yield return FieldComparer(x => x.Year);
+				yield return FieldComparer(x => x.Year);
 			}
-
-			if (Object.ReferenceEquals(d1, null))
-			{
-				return -1;
-			}
-
-			if (Object.ReferenceEquals(d2, null))
-			{
-				return 1;
-			}
-
-			var cmp = Nullable.Compare(d1.Id, d2.Id);
-			if (cmp != 0)
-			{
-				return cmp;
-			}
-
-			cmp = Nullable.Compare(d1.Year, d2.Year);
-			if (cmp != 0)
-			{
-				return cmp;
-			}
-
-			cmp = String.Compare(d1.Title, d2.Title, StringComparison.Ordinal);
-			if (cmp != 0)
-			{
-				return cmp;
-			}
-
-			cmp = String.Compare(d1.TreeTitle, d2.TreeTitle, StringComparison.Ordinal);
-			if (cmp != 0)
-			{
-				return cmp;
-			}
-
-			cmp = String.Compare(d1.AlbumTitle, d2.AlbumTitle, StringComparison.Ordinal);
-			if (cmp != 0)
-			{
-				return cmp;
-			}
-
-			cmp = String.Compare(d1.AlbumId, d2.AlbumId, StringComparison.Ordinal);
-			if (cmp != 0)
-			{
-				return cmp;
-			}
-
-			cmp = Nullable.Compare(d1.AlbumOrder, d2.AlbumOrder);
-			if (cmp != 0)
-			{
-				return cmp;
-			}
-
-			cmp = Nullable.Compare(d1.DeleteDate, d2.DeleteDate);
-			if (cmp != 0)
-			{
-				return cmp;
-			}
-
-			return String.Compare(d1.DeleteComment, d2.DeleteComment, StringComparison.Ordinal);
 		}
 	}
 }

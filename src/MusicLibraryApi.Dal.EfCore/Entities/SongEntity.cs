@@ -10,23 +10,21 @@ namespace MusicLibraryApi.Dal.EfCore.Entities
 
 		public string Title { get; private set; }
 
+		public string TreeTitle { get; private set; }
+
 		public short? TrackNumber { get; private set; }
 
-		public TimeSpan? Duration { get; private set; }
+		public TimeSpan Duration { get; private set; }
 
-		public ArtistEntity? Artist { get; private set; }
+		public DiscEntity Disc { get; set; } = null!;
 
-		public DiscEntity Disc { get; private set; } = null!;
+		public ArtistEntity? Artist { get; set; }
 
-		public GenreEntity? Genre { get; private set; }
+		public GenreEntity? Genre { get; set; }
 
 		public Rating? Rating { get; private set; }
 
 		public int? BitRate { get; private set; }
-
-		public int FileSize { get; private set; }
-
-		public int Checksum { get; private set; }
 
 		public DateTimeOffset? LastPlaybackTime { get; private set; }
 
@@ -34,19 +32,24 @@ namespace MusicLibraryApi.Dal.EfCore.Entities
 
 		public IReadOnlyCollection<PlaybackEntity> Playbacks { get; } = new List<PlaybackEntity>();
 
-		public SongEntity(int id, string title, short? trackNumber, TimeSpan? duration, Rating? rating, int? bitRate,
-			int fileSize, int checksum, DateTimeOffset? lastPlaybackTime, int playbacksCount)
+		public DateTimeOffset? DeleteDate { get; private set; }
+
+		public string? DeleteComment { get; private set; }
+
+		public SongEntity(int id, string title, string treeTitle, short? trackNumber, TimeSpan duration, Rating? rating, int? bitRate,
+			DateTimeOffset? lastPlaybackTime, int playbacksCount, DateTimeOffset? deleteDate = null, string? deleteComment = null)
 		{
 			Id = id;
 			Title = title;
+			TreeTitle = treeTitle;
 			TrackNumber = trackNumber;
 			Duration = duration;
 			Rating = rating;
 			BitRate = bitRate;
-			FileSize = fileSize;
-			Checksum = checksum;
 			LastPlaybackTime = lastPlaybackTime;
 			PlaybacksCount = playbacksCount;
+			DeleteDate = deleteDate;
+			DeleteComment = deleteComment;
 		}
 	}
 }

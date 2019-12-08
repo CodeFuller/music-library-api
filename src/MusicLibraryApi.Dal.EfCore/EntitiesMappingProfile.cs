@@ -12,8 +12,8 @@ namespace MusicLibraryApi.Dal.EfCore
 			CreateBidirectionalMap<Disc, DiscEntity>();
 			CreateBidirectionalMap<Folder, FolderEntity>();
 			CreateBidirectionalMap<Genre, GenreEntity>();
-			CreateBidirectionalMap<Playback, PlaybackEntity>();
 			CreateBidirectionalMap<Song, SongEntity>();
+			CreateBidirectionalMap<Playback, PlaybackEntity>();
 		}
 
 		private void CreateBidirectionalMap<T1, T2>()
