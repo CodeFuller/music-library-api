@@ -9,6 +9,7 @@ using MusicLibraryApi.Abstractions.Exceptions;
 using MusicLibraryApi.Abstractions.Interfaces;
 using MusicLibraryApi.Abstractions.Models;
 using MusicLibraryApi.Dal.EfCore.Entities;
+using static System.FormattableString;
 
 namespace MusicLibraryApi.Dal.EfCore.Repositories
 {
@@ -47,6 +48,20 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 			return await context.Genres
 				.Select(g => mapper.Map<Genre>(g))
 				.ToListAsync(cancellationToken);
+		}
+
+		public async Task<Genre> GetGenre(int genreId, CancellationToken cancellationToken)
+		{
+			var genreEntity = await context.Genres
+				.Where(x => x.Id == genreId)
+				.SingleOrDefaultAsync(cancellationToken);
+
+			if (genreEntity == null)
+			{
+				throw new GenreNotFoundException(Invariant($"The genre with id of {genreId} does not exist"));
+			}
+
+			return mapper.Map<Genre>(genreEntity);
 		}
 	}
 }

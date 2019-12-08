@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using MusicLibraryApi.Abstractions.Exceptions;
 using MusicLibraryApi.Abstractions.Interfaces;
 using MusicLibraryApi.Abstractions.Models;
+using MusicLibraryApi.Logic.Extensions;
 using static System.FormattableString;
 
 namespace MusicLibraryApi.Logic.Services
@@ -40,6 +41,18 @@ namespace MusicLibraryApi.Logic.Services
 		{
 			var genres = await repository.GetAllGenres(cancellationToken);
 			return genres.OrderBy(g => g.Name).ToList();
+		}
+
+		public async Task<Genre> GetGenre(int genreId, CancellationToken cancellationToken)
+		{
+			try
+			{
+				return await repository.GetGenre(genreId, cancellationToken);
+			}
+			catch (GenreNotFoundException e)
+			{
+				throw e.Handle(genreId, logger);
+			}
 		}
 	}
 }

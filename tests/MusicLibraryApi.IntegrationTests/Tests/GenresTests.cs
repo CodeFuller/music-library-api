@@ -1,8 +1,10 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MusicLibraryApi.Client.Contracts.Genres;
+using MusicLibraryApi.Client.Contracts.Songs;
 using MusicLibraryApi.Client.Exceptions;
 using MusicLibraryApi.Client.Fields;
 using MusicLibraryApi.Client.Interfaces;
@@ -20,20 +22,56 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var expectedGenres = new[]
 			{
-				new OutputGenreData(3, "Alternative Rock"),
-				new OutputGenreData(2, "Nu Metal"),
-				new OutputGenreData(1, "Russian Rock"),
+				new OutputGenreData(3, "Alternative Rock", Array.Empty<OutputSongData>()),
+				new OutputGenreData(2, "Nu Metal", new[] { new OutputSongData(id: 1), }),
+				new OutputGenreData(1, "Russian Rock", new[] { new OutputSongData(id: 2), }),
 			};
 
 			var client = CreateClient<IGenresQuery>();
 
 			// Act
 
-			var receivedGenres = await client.GetGenres(GenreFields.All, CancellationToken.None);
+			var receivedGenres = await client.GetGenres(GenreFields.All + GenreFields.Songs(SongFields.Id), CancellationToken.None);
 
 			// Assert
 
 			CollectionAssert.AreEqual(expectedGenres, receivedGenres.ToList(), new GenreDataComparer());
+		}
+
+		[TestMethod]
+		public async Task GenreQuery_ForExistingGenre_ReturnsCorrectData()
+		{
+			// Arrange
+
+			var expectedGenre = new OutputGenreData(2, "Nu Metal", new[] { new OutputSongData(id: 1), });
+
+			var client = CreateClient<IGenresQuery>();
+
+			// Act
+
+			var receivedGenre = await client.GetGenre(2, GenreFields.All + GenreFields.Songs(SongFields.Id), CancellationToken.None);
+
+			// Assert
+
+			var cmp = new GenreDataComparer().Compare(expectedGenre, receivedGenre);
+			Assert.AreEqual(0, cmp, "Genres data does not match");
+		}
+
+		[TestMethod]
+		public async Task GenreQuery_IfGenreDoesNotExist_ReturnsError()
+		{
+			// Arrange
+
+			var client = CreateClient<IGenresQuery>();
+
+			// Act
+
+			var getDiscTask = client.GetGenre(12345, GenreFields.All + GenreFields.Songs(SongFields.Id), CancellationToken.None);
+
+			// Assert
+
+			var exception = await Assert.ThrowsExceptionAsync<GraphQLRequestFailedException>(() => getDiscTask);
+			Assert.AreEqual("The genre with id of '12345' does not exist", exception.Message);
 		}
 
 		[TestMethod]

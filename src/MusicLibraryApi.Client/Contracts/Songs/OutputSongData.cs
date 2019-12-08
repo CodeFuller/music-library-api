@@ -7,10 +7,10 @@ namespace MusicLibraryApi.Client.Contracts.Songs
 	public class OutputSongData : BasicSongData
 	{
 		[DataMember(Name = "id")]
-		public int? Id { get; set; }
+		public int? Id { get; }
 
-		public OutputSongData(int? id, string? title, string? treeTitle, short? trackNumber, TimeSpan? duration, Rating? rating,
-			int? bitRate, DateTimeOffset? lastPlaybackTime, int? playbacksCount, DateTimeOffset? deleteDate = null, string? deleteComment = null)
+		public OutputSongData(int? id = null, string? title = null, string? treeTitle = null, short? trackNumber = null, TimeSpan? duration = null, Rating? rating = null,
+			int? bitRate = null, DateTimeOffset? lastPlaybackTime = null, int? playbacksCount = null, DateTimeOffset? deleteDate = null, string? deleteComment = null)
 			: base(title, treeTitle, trackNumber, duration, rating, bitRate, lastPlaybackTime, playbacksCount, deleteDate, deleteComment)
 		{
 			Id = id;

@@ -7,7 +7,7 @@ namespace MusicLibraryApi.Client.Contracts.Discs
 	public class InputDiscData : BasicDiscData
 	{
 		[DataMember(Name = "folderId")]
-		public int FolderId { get; set; }
+		public int FolderId { get; }
 
 		public InputDiscData(int folderId, int? year, string title, string? treeTitle, string albumTitle,
 			string? albumId = null, int? albumOrder = null, DateTimeOffset? deleteDate = null, string? deleteComment = null)

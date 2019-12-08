@@ -10,5 +10,7 @@ namespace MusicLibraryApi.Client.Interfaces
 	public interface IGenresQuery
 	{
 		Task<IReadOnlyCollection<OutputGenreData>> GetGenres(QueryFieldSet<GenreQuery> fields, CancellationToken cancellationToken);
+
+		Task<OutputGenreData> GetGenre(int genreId, QueryFieldSet<GenreQuery> fields, CancellationToken cancellationToken);
 	}
 }

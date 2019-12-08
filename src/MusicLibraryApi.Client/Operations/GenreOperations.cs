@@ -25,6 +25,24 @@ namespace MusicLibraryApi.Client.Operations
 			return await ExecuteQuery<GenreQuery, OutputGenreData[]>("genres", fields, cancellationToken);
 		}
 
+		public async Task<OutputGenreData> GetGenre(int genreId, QueryFieldSet<GenreQuery> fields, CancellationToken cancellationToken)
+		{
+			var query = Invariant($@"query GetGenreById($id: ID!) {{
+										genre(id: $id) {{ {fields.QuerySelection} }}
+									}}");
+
+			var request = new GraphQLRequest
+			{
+				Query = query,
+				Variables = new
+				{
+					id = genreId,
+				},
+			};
+
+			return await ExecuteRequest<OutputGenreData>("genre", request, cancellationToken);
+		}
+
 		public async Task<int> CreateGenre(InputGenreData genreData, CancellationToken cancellationToken)
 		{
 			Logger.LogInformation("Creating new genre {GenreName} ...", genreData.Name);

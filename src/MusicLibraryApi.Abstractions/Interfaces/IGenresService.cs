@@ -10,5 +10,7 @@ namespace MusicLibraryApi.Abstractions.Interfaces
 		Task<int> CreateGenre(Genre genre, CancellationToken cancellationToken);
 
 		Task<IReadOnlyCollection<Genre>> GetAllGenres(CancellationToken cancellationToken);
+
+		Task<Genre> GetGenre(int genreId, CancellationToken cancellationToken);
 	}
 }

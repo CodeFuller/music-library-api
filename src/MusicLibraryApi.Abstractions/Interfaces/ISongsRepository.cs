@@ -12,5 +12,9 @@ namespace MusicLibraryApi.Abstractions.Interfaces
 		Task<IReadOnlyCollection<Song>> GetAllSongs(CancellationToken cancellationToken);
 
 		Task<IReadOnlyCollection<Song>> GetDiscSongs(int discId, CancellationToken cancellationToken);
+
+		Task<IReadOnlyCollection<Song>> GetGenreSongs(int genreId, CancellationToken cancellationToken);
+
+		Task<IReadOnlyCollection<Song>> GetArtistSongs(int artistId, CancellationToken cancellationToken);
 	}
 }

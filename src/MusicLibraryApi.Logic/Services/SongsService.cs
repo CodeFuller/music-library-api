@@ -57,18 +57,32 @@ namespace MusicLibraryApi.Logic.Services
 		{
 			try
 			{
-				var discs = await repository.GetDiscSongs(discId, cancellationToken);
-				return discs
+				var songs = await repository.GetDiscSongs(discId, cancellationToken);
+				return songs
 					.Where(s => !s.IsDeleted)
-					.OrderBy(f => f.TrackNumber == null)
-					.ThenBy(d => d.TrackNumber)
-					.ThenBy(d => d.Title)
+					.OrderBy(s => s.TrackNumber == null)
+					.ThenBy(s => s.TrackNumber)
+					.ThenBy(s => s.Title)
 					.ToList();
 			}
 			catch (DiscNotFoundException e)
 			{
 				throw e.Handle(discId, logger);
 			}
+		}
+
+		public async Task<IReadOnlyCollection<Song>> GetGenreSongs(int genreId, CancellationToken cancellationToken)
+		{
+			var songs = await repository.GetGenreSongs(genreId, cancellationToken);
+			return FilterAndOrderMixedSongs(songs);
+		}
+
+		private IReadOnlyCollection<Song> FilterAndOrderMixedSongs(IReadOnlyCollection<Song> songs)
+		{
+			return songs
+				.Where(s => !s.IsDeleted)
+				.OrderBy(s => s.Id)
+				.ToList();
 		}
 	}
 }
