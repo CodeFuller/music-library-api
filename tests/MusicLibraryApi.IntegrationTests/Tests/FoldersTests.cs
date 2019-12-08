@@ -31,8 +31,8 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var discs = new[]
 			{
-				new OutputDiscData(2, 2001, "Platinum Hits (CD 1)", "2001 - Platinum Hits (CD 1)", "Platinum Hits", "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", 1),
-				new OutputDiscData(1, 2001, "Platinum Hits (CD 2)", "2001 - Platinum Hits (CD 2)", "Platinum Hits", "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", 2),
+				new OutputDiscData(id: 2, year: 2001, title: "Platinum Hits (CD 1)", treeTitle: "2001 - Platinum Hits (CD 1)", albumTitle: "Platinum Hits", albumId: "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", albumOrder: 1),
+				new OutputDiscData(id: 1, year: 2001, title: "Platinum Hits (CD 2)", treeTitle: "2001 - Platinum Hits (CD 2)", albumTitle: "Platinum Hits", albumId: "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", albumOrder: 2),
 			};
 
 			var expectedFolder = new OutputFolderData(1, "<ROOT>", subfolders, discs);
@@ -62,9 +62,9 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var discs = new[]
 			{
-				new OutputDiscData(5, 1997, "Proud Like A God", "1997 - Proud Like A God", "Proud Like A God"),
-				new OutputDiscData(3, 2000, "Don't Give Me Names", "2000 - Don't Give Me Names", "Don't Give Me Names"),
-				new OutputDiscData(4, null, "Rarities", "Rarities", String.Empty),
+				new OutputDiscData(id: 5, year: 1997, title: "Proud Like A God", treeTitle: "1997 - Proud Like A God", albumTitle: "Proud Like A God"),
+				new OutputDiscData(id: 3, year: 2000, title: "Don't Give Me Names", treeTitle: "2000 - Don't Give Me Names", albumTitle: "Don't Give Me Names"),
+				new OutputDiscData(id: 4, title: "Rarities", treeTitle: "Rarities", albumTitle: String.Empty),
 			};
 
 			var expectedFolder = new OutputFolderData(5, "Guano Apes", subfolders, discs);
@@ -94,10 +94,10 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var discs = new[]
 			{
-				new OutputDiscData(5, 1997, "Proud Like A God", "1997 - Proud Like A God", "Proud Like A God"),
-				new OutputDiscData(3, 2000, "Don't Give Me Names", "2000 - Don't Give Me Names", "Don't Give Me Names"),
-				new OutputDiscData(7, 2006, "Lost (T)apes", "2006 - Lost (T)apes", "Lost (T)apes", null, null, null, new DateTimeOffset(2019, 12, 03, 07, 57, 01, TimeSpan.FromHours(2)), "Deleted for a test"),
-				new OutputDiscData(4, null, "Rarities", "Rarities", String.Empty),
+				new OutputDiscData(id: 5, year: 1997, title: "Proud Like A God", treeTitle: "1997 - Proud Like A God", albumTitle: "Proud Like A God"),
+				new OutputDiscData(id: 3, year: 2000, title: "Don't Give Me Names", treeTitle: "2000 - Don't Give Me Names", albumTitle: "Don't Give Me Names"),
+				new OutputDiscData(id: 7, year: 2006, title: "Lost (T)apes", treeTitle: "2006 - Lost (T)apes", albumTitle: "Lost (T)apes", deleteDate: new DateTimeOffset(2019, 12, 03, 07, 57, 01, TimeSpan.FromHours(2)), deleteComment: "Deleted for a test"),
+				new OutputDiscData(id: 4, title: "Rarities", treeTitle: "Rarities", albumTitle: String.Empty),
 			};
 
 			var expectedFolder = new OutputFolderData(5, "Guano Apes", subfolders, discs);

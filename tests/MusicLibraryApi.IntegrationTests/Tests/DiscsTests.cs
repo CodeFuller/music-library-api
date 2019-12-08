@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MusicLibraryApi.Client.Contracts.Discs;
+using MusicLibraryApi.Client.Contracts.Folders;
 using MusicLibraryApi.Client.Exceptions;
 using MusicLibraryApi.Client.Fields;
 using MusicLibraryApi.Client.Interfaces;
@@ -21,18 +22,25 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var expectedDiscs = new[]
 			{
-				new OutputDiscData(1, 2001, "Platinum Hits (CD 2)", "2001 - Platinum Hits (CD 2)", "Platinum Hits", "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", 2),
-				new OutputDiscData(2, 2001, "Platinum Hits (CD 1)", "2001 - Platinum Hits (CD 1)", "Platinum Hits", "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", 1),
-				new OutputDiscData(3, 2000, "Don't Give Me Names", "2000 - Don't Give Me Names", "Don't Give Me Names"),
-				new OutputDiscData(4, null, "Rarities", "Rarities", String.Empty),
-				new OutputDiscData(5, 1997, "Proud Like A God", "1997 - Proud Like A God", "Proud Like A God"),
+				new OutputDiscData(id: 1, year: 2001, title: "Platinum Hits (CD 2)", treeTitle: "2001 - Platinum Hits (CD 2)",
+					albumTitle: "Platinum Hits", albumId: "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", albumOrder: 2, folder: new OutputFolderData(id: 1)),
+
+				new OutputDiscData(id: 2, year: 2001, title: "Platinum Hits (CD 1)", treeTitle: "2001 - Platinum Hits (CD 1)",
+					albumTitle: "Platinum Hits", albumId: "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", albumOrder: 1, folder: new OutputFolderData(id: 1)),
+
+				new OutputDiscData(id: 3, year: 2000, title: "Don't Give Me Names", treeTitle: "2000 - Don't Give Me Names",
+					albumTitle: "Don't Give Me Names", folder: new OutputFolderData(id: 5)),
+
+				new OutputDiscData(id: 4, title: "Rarities", treeTitle: "Rarities", albumTitle: String.Empty, folder: new OutputFolderData(id: 5)),
+
+				new OutputDiscData(id: 5, year: 1997, "Proud Like A God", treeTitle: "1997 - Proud Like A God", albumTitle: "Proud Like A God", folder: new OutputFolderData(id: 5)),
 			};
 
 			var client = CreateClient<IDiscsQuery>();
 
 			// Act
 
-			var receivedDiscs = await client.GetDiscs(DiscFields.All, CancellationToken.None);
+			var receivedDiscs = await client.GetDiscs(DiscFields.All + DiscFields.Folder(FolderFields.Id), CancellationToken.None);
 
 			// Assert
 
@@ -44,13 +52,14 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		{
 			// Arrange
 
-			var expectedData = new OutputDiscData(2, 2001, "Platinum Hits (CD 1)", "2001 - Platinum Hits (CD 1)", "Platinum Hits", "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", 1);
+			var expectedData = new OutputDiscData(id: 2, year: 2001, title: "Platinum Hits (CD 1)", treeTitle: "2001 - Platinum Hits (CD 1)",
+				albumTitle: "Platinum Hits", albumId: "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", albumOrder: 1, folder: new OutputFolderData(id: 1));
 
 			var client = CreateClient<IDiscsQuery>();
 
 			// Act
 
-			var receivedData = await client.GetDisc(2, DiscFields.All, CancellationToken.None);
+			var receivedData = await client.GetDisc(2, DiscFields.All + DiscFields.Folder(FolderFields.Id), CancellationToken.None);
 
 			// Assert
 
@@ -63,13 +72,13 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		{
 			// Arrange
 
-			var expectedData = new OutputDiscData(4, null, "Rarities", "Rarities", String.Empty);
+			var expectedData = new OutputDiscData(id: 4, title: "Rarities", treeTitle: "Rarities", albumTitle: String.Empty, folder: new OutputFolderData(id: 5));
 
 			var client = CreateClient<IDiscsQuery>();
 
 			// Act
 
-			var receivedData = await client.GetDisc(4, DiscFields.All, CancellationToken.None);
+			var receivedData = await client.GetDisc(4, DiscFields.All + DiscFields.Folder(FolderFields.Id), CancellationToken.None);
 
 			// Assert
 
@@ -111,20 +120,16 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			Assert.AreEqual(8, newDiscId);
 
-			// Checking new discs data
+			// Checking created disc data
 
-			var expectedDiscs = new[]
-			{
-				new OutputDiscData(8, 1994, "Битва на мотоциклах (CD 2)", "1994 - Битва на мотоциклах (CD 2)", "Битва на мотоциклах", "{C7BEC024-8979-4477-8247-419A476C1DFB}", 2),
-				new OutputDiscData(5, 1997, "Proud Like A God", "1997 - Proud Like A God", "Proud Like A God"),
-				new OutputDiscData(3, 2000, "Don't Give Me Names", "2000 - Don't Give Me Names", "Don't Give Me Names"),
-				new OutputDiscData(4, null, "Rarities", "Rarities", String.Empty),
-			};
+			var expectedData = new OutputDiscData(id: 8, year: 1994, title: "Битва на мотоциклах (CD 2)", treeTitle: "1994 - Битва на мотоциклах (CD 2)",
+				albumTitle: "Битва на мотоциклах", albumId: "{C7BEC024-8979-4477-8247-419A476C1DFB}", albumOrder: 2, folder: new OutputFolderData(id: 5));
 
-			var foldersQuery = CreateClient<IFoldersQuery>();
-			var folderData = await foldersQuery.GetFolder(5, FolderFields.Discs(DiscFields.All), CancellationToken.None);
+			var discsQuery = CreateClient<IDiscsQuery>();
+			var receivedData = await discsQuery.GetDisc(8, DiscFields.All + DiscFields.Folder(FolderFields.Id), CancellationToken.None);
 
-			CollectionAssert.AreEqual(expectedDiscs, folderData.Discs.ToList(), new DiscDataComparer());
+			var cmp = new DiscDataComparer().Compare(expectedData, receivedData);
+			Assert.AreEqual(0, cmp, "Discs data does not match");
 		}
 
 		[TestMethod]
@@ -144,20 +149,15 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			Assert.AreEqual(8, newDiscId);
 
-			// Checking new discs data
+			// Checking created disc data
 
-			var expectedDiscs = new[]
-			{
-				new OutputDiscData(5, 1997, "Proud Like A God", "1997 - Proud Like A God", "Proud Like A God"),
-				new OutputDiscData(3, 2000, "Don't Give Me Names", "2000 - Don't Give Me Names", "Don't Give Me Names"),
-				new OutputDiscData(4, null, "Rarities", "Rarities", String.Empty),
-				new OutputDiscData(8, null, "Best Russian", "Russian", String.Empty),
-			};
+			var expectedData = new OutputDiscData(id: 8, title: "Best Russian", treeTitle: "Russian", albumTitle: String.Empty, folder: new OutputFolderData(id: 5));
 
-			var foldersQuery = CreateClient<IFoldersQuery>();
-			var folderData = await foldersQuery.GetFolder(5, FolderFields.Discs(DiscFields.All), CancellationToken.None);
+			var discsQuery = CreateClient<IDiscsQuery>();
+			var receivedData = await discsQuery.GetDisc(8, DiscFields.All + DiscFields.Folder(FolderFields.Id), CancellationToken.None);
 
-			CollectionAssert.AreEqual(expectedDiscs, folderData.Discs.ToList(), new DiscDataComparer());
+			var cmp = new DiscDataComparer().Compare(expectedData, receivedData);
+			Assert.AreEqual(0, cmp, "Discs data does not match");
 		}
 
 		[TestMethod]
@@ -182,11 +182,11 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var expectedDiscs = new[]
 			{
-				new OutputDiscData(1, null, null, null, null),
-				new OutputDiscData(2, null, null, null, null),
-				new OutputDiscData(3, null, null, null, null),
-				new OutputDiscData(4, null, null, null, null),
-				new OutputDiscData(5, null, null, null, null),
+				new OutputDiscData(id: 1),
+				new OutputDiscData(id: 2),
+				new OutputDiscData(id: 3),
+				new OutputDiscData(id: 4),
+				new OutputDiscData(id: 5),
 			};
 
 			var discsQuery = CreateClient<IDiscsQuery>();

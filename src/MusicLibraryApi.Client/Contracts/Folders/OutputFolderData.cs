@@ -16,7 +16,7 @@ namespace MusicLibraryApi.Client.Contracts.Folders
 		[DataMember(Name = "discs")]
 		public IReadOnlyCollection<OutputDiscData>? Discs { get; }
 
-		public OutputFolderData(int? id, string name, IReadOnlyCollection<OutputFolderData>? subfolders = null, IReadOnlyCollection<OutputDiscData>? discs = null)
+		public OutputFolderData(int? id = null, string? name = null, IReadOnlyCollection<OutputFolderData>? subfolders = null, IReadOnlyCollection<OutputDiscData>? discs = null)
 			: base(name)
 		{
 			Id = id;

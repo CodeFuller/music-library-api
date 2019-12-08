@@ -19,6 +19,8 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 
 		private readonly IMapper mapper;
 
+		private IQueryable<DiscEntity> Discs => context.Discs.Include(d => d.Folder);
+
 		public DiscsRepository(MusicLibraryDbContext context, IMapper mapper)
 		{
 			this.context = context ?? throw new ArgumentNullException(nameof(context));
@@ -38,15 +40,15 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 
 		public async Task<IReadOnlyCollection<Disc>> GetAllDiscs(CancellationToken cancellationToken)
 		{
-			return await context.Discs
+			return await Discs
 				.Select(d => mapper.Map<Disc>(d))
 				.ToListAsync(cancellationToken);
 		}
 
 		public async Task<Disc> GetDisc(int discId, CancellationToken cancellationToken)
 		{
-			var discEntity = await context.Discs
-				.Where(x => x.Id == discId)
+			var discEntity = await Discs
+				.Where(d => d.Id == discId)
 				.SingleOrDefaultAsync(cancellationToken);
 
 			if (discEntity == null)
@@ -59,7 +61,7 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 
 		public async Task<IReadOnlyCollection<Disc>> GetFolderDiscs(int folderId, CancellationToken cancellationToken)
 		{
-			return await context.Discs.Where(d => d.Folder.Id == folderId)
+			return await Discs.Where(d => d.Folder.Id == folderId)
 				.Select(d => mapper.Map<Disc>(d))
 				.ToListAsync(cancellationToken);
 		}

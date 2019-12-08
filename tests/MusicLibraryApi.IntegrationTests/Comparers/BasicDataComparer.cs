@@ -50,6 +50,13 @@ namespace MusicLibraryApi.IntegrationTests.Comparers
 			return (x, y) => Compare(f(x), f(y));
 		}
 
+		protected Func<TData, TData, int> FieldComparer<T>(Expression<Func<TData, T?>> expression, IComparer comparer)
+			where T : class
+		{
+			var f = expression.Compile();
+			return (x, y) => comparer.Compare(f(x), f(y));
+		}
+
 		protected Func<TData, TData, int> FieldComparer(Expression<Func<TData, string?>> expression)
 		{
 			var f = expression.Compile();

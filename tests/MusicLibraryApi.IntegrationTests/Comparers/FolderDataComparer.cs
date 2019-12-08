@@ -25,7 +25,7 @@ namespace MusicLibraryApi.IntegrationTests.Comparers
 		public FolderDataComparer()
 		{
 			folderCollectionsComparer = new CollectionsComparer<OutputFolderData>(this);
-			discCollectionsComparer = new CollectionsComparer<OutputDiscData>(new DiscDataComparer());
+			discCollectionsComparer = new CollectionsComparer<OutputDiscData>(new DiscDataComparer(this));
 		}
 	}
 }

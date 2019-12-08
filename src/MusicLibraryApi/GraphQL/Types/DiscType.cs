@@ -15,6 +15,7 @@ namespace MusicLibraryApi.GraphQL.Types
 			Field(x => x.AlbumTitle);
 			Field(x => x.AlbumId, true);
 			Field(x => x.AlbumOrder, true);
+			Field<NonNullGraphType<FolderType>>("folder", resolve: context => context.Source.Folder);
 			Field(x => x.DeleteDate, true);
 			Field(x => x.DeleteComment, true);
 			FieldAsync<NonNullGraphType<ListGraphType<NonNullGraphType<SongType>>>>(
