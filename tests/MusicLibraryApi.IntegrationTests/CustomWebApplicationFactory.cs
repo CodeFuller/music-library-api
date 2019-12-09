@@ -80,17 +80,20 @@ namespace MusicLibraryApi.IntegrationTests
 		 *
 		 *	Folder <ROOT> (Folder id: 1)
 		 *		Folder "Foreign" (Folder id: 3)
-		 *			Folder "Guano Apes" (Folder id: 5)
-		 *				Folder "Empty folder" (Folder id: 7)
-		 *				Folder "Some subfolder" (Folder id: 6)
-		 *				Disc "1997 - Proud Like A God" (Disc id: 5)
-		 *				Disc "2000 - Don't Give Me Names" (Disc id: 3)
-		 *				Disc "Rarities" (Disc id: 4)
-		 *				Disc "2006 - Lost (T)apes" (Disc id: 7, deleted)
 		 *			Folder "Rammstein" (Folder id: 4)
+		 *		Folder "Guano Apes" (Folder id: 5)
+		 *			Folder "Empty folder" (Folder id: 7)
+		 *			Folder "Some subfolder" (Folder id: 6)
+		 *			Disc "1997 - Proud Like A God" (Disc id: 5)
+		 *			Disc "2000 - Don't Give Me Names" (Disc id: 3)
+		 *			Disc "Rarities" (Disc id: 4)
+		 *			Disc "2006 - Lost (T)apes" (Disc id: 7, deleted)
 		 *		Folder "Russian" (Folder id: 2)
 		 *		Disc "2001 - Platinum Hits (CD 1)" (Disc id: 2)
 		 *		Disc "2001 - Platinum Hits (CD 2)" (Disc id: 1)
+		 *			Song "01 - Highway To Hell.mp3" (Song id: 2)
+		 *			Song "02 - Hell's Bells.mp33" (Song id: 1)
+		 *			Song "03 - Are You Ready?.mp3" (Song id: 3)
 		 *		Disc "Some deleted disc" (Disc id: 6, deleted)
 		 */
 		private static void SeedFoldersData(MusicLibraryDbContext context, IIdentityInsert identityInsert)
@@ -107,7 +110,7 @@ namespace MusicLibraryApi.IntegrationTests
 			folder4.ParentFolder = folder3;
 
 			var folder5 = new FolderEntity(5, "Guano Apes");
-			folder5.ParentFolder = folder3;
+			folder5.ParentFolder = rootFolder;
 
 			var folder6 = new FolderEntity(6, "Some subfolder");
 			folder6.ParentFolder = folder5;

@@ -43,7 +43,8 @@ namespace MusicLibraryApi.IntegrationTests.DataCheckers
 				return;
 			}
 
-			Assert.AreEqual(expected.Count, actual.Count, $"Size of collections at {dataPath} differ");
+			var pathPart = String.IsNullOrEmpty(dataPath) ? String.Empty : $"at {dataPath} ";
+			Assert.AreEqual(expected.Count, actual.Count, $"Size of collections {pathPart}differ");
 
 			foreach (var (pair, i) in expected.Zip(actual).Select((p, i) => (p, i)))
 			{

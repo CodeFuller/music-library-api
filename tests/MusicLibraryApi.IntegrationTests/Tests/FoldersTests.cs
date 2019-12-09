@@ -23,6 +23,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			var subfolders = new[]
 			{
 				new OutputFolderData(3, "Foreign"),
+				new OutputFolderData(5, "Guano Apes"),
 				new OutputFolderData(2, "Russian"),
 			};
 
@@ -146,7 +147,6 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var expectedFolders = new[]
 			{
-				new OutputFolderData(5, "Guano Apes"),
 				new OutputFolderData(8, "Korn"),
 				new OutputFolderData(4, "Rammstein"),
 			};
@@ -167,7 +167,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		{
 			// Arrange
 
-			var folderData = new InputFolderData("Guano Apes", 3);
+			var folderData = new InputFolderData("Rammstein", 3);
 
 			var client = CreateClient<IFoldersMutation>();
 
@@ -178,13 +178,12 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			// Assert
 
 			var exception = await Assert.ThrowsExceptionAsync<GraphQLRequestFailedException>(() => createFolderTask);
-			Assert.AreEqual("Folder 'Guano Apes' already exists", exception.Message);
+			Assert.AreEqual("Folder 'Rammstein' already exists", exception.Message);
 
 			// Checking that no changes to the folders were made
 
 			var expectedFolders = new[]
 			{
-				new OutputFolderData(5, "Guano Apes"),
 				new OutputFolderData(4, "Rammstein"),
 			};
 
