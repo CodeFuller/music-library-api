@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -34,7 +33,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Assert
 
-			CollectionAssert.AreEqual(expectedArtists, receivedArtists.ToList(), ArtistsComparer);
+			AssertData(expectedArtists, receivedArtists);
 		}
 
 		[TestMethod]
@@ -52,8 +51,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Assert
 
-			var cmp = ArtistsComparer.Compare(expectedArtist, receivedArtist);
-			Assert.AreEqual(0, cmp, "Artists data does not match");
+			AssertData(expectedArtist, receivedArtist);
 		}
 
 		[TestMethod]
@@ -101,7 +99,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			var artistsQuery = CreateClient<IArtistsQuery>();
 			var receivedArtists = await artistsQuery.GetArtists(ArtistFields.All, CancellationToken.None);
 
-			CollectionAssert.AreEqual(expectedArtists, receivedArtists.ToList(), ArtistsComparer);
+			AssertData(expectedArtists, receivedArtists);
 		}
 
 		[TestMethod]
@@ -132,7 +130,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			var artistsQuery = CreateClient<IArtistsQuery>();
 			var receivedArtists = await artistsQuery.GetArtists(ArtistFields.All, CancellationToken.None);
 
-			CollectionAssert.AreEqual(expectedArtists, receivedArtists.ToList(), ArtistsComparer);
+			AssertData(expectedArtists, receivedArtists);
 		}
 	}
 }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -43,8 +42,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Assert
 
-			var cmp = FoldersComparer.Compare(expectedFolder, receivedFolder);
-			Assert.AreEqual(0, cmp, "Folders data does not match");
+			AssertData(expectedFolder, receivedFolder);
 		}
 
 		[TestMethod]
@@ -75,8 +73,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Assert
 
-			var cmp = FoldersComparer.Compare(expectedFolder, receivedFolder);
-			Assert.AreEqual(0, cmp, "Folders data does not match");
+			AssertData(expectedFolder, receivedFolder);
 		}
 
 		[TestMethod]
@@ -108,8 +105,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Assert
 
-			var cmp = FoldersComparer.Compare(expectedFolder, receivedFolder);
-			Assert.AreEqual(0, cmp, "Folders data does not match");
+			AssertData(expectedFolder, receivedFolder);
 		}
 
 		[TestMethod]
@@ -159,11 +155,11 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Act
 
-			var receivedFolderData = await foldersClient.GetFolder(3, FolderFields.Subfolders(FolderFields.Id + FolderFields.Name), CancellationToken.None);
+			var receivedFolder = await foldersClient.GetFolder(3, FolderFields.Subfolders(FolderFields.Id + FolderFields.Name), CancellationToken.None);
 
 			// Assert
 
-			CollectionAssert.AreEqual(expectedFolders, receivedFolderData.Subfolders.ToList(), FoldersComparer);
+			AssertData(expectedFolders, receivedFolder.Subfolders);
 		}
 
 		[TestMethod]
@@ -193,9 +189,9 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			};
 
 			var foldersClient = CreateClient<IFoldersQuery>();
-			var receivedFolderData = await foldersClient.GetFolder(3, FolderFields.Subfolders(FolderFields.Id + FolderFields.Name), CancellationToken.None);
+			var receivedFolder = await foldersClient.GetFolder(3, FolderFields.Subfolders(FolderFields.Id + FolderFields.Name), CancellationToken.None);
 
-			CollectionAssert.AreEqual(expectedFolders, receivedFolderData.Subfolders.ToList(), FoldersComparer);
+			AssertData(expectedFolders, receivedFolder.Subfolders);
 		}
 
 		[TestMethod]
@@ -226,11 +222,11 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Act
 
-			var receivedFolderData = await foldersClient.GetFolder(2, FolderFields.Subfolders(FolderFields.Id + FolderFields.Name), CancellationToken.None);
+			var receivedFolder = await foldersClient.GetFolder(2, FolderFields.Subfolders(FolderFields.Id + FolderFields.Name), CancellationToken.None);
 
 			// Assert
 
-			CollectionAssert.AreEqual(expectedFolders, receivedFolderData.Subfolders.ToList(), FoldersComparer);
+			AssertData(expectedFolders, receivedFolder.Subfolders);
 		}
 	}
 }

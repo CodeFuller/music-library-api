@@ -1,8 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MusicLibraryApi.IntegrationTests.Comparers;
-using MusicLibraryApi.IntegrationTests.Comparers.Interfaces;
+using MusicLibraryApi.Client.Contracts.Artists;
+using MusicLibraryApi.Client.Contracts.Discs;
+using MusicLibraryApi.Client.Contracts.Folders;
+using MusicLibraryApi.Client.Contracts.Genres;
+using MusicLibraryApi.Client.Contracts.Songs;
+using MusicLibraryApi.IntegrationTests.DataCheckers;
 
 namespace MusicLibraryApi.IntegrationTests
 {
@@ -10,31 +16,28 @@ namespace MusicLibraryApi.IntegrationTests
 	{
 		protected CustomWebApplicationFactory WebApplicationFactory { get; } = new CustomWebApplicationFactory();
 
-		protected IFolderDataComparer FoldersComparer { get; }
+		private readonly FolderDataChecker foldersChecker;
 
-		protected IDiscDataComparer DiscsComparer { get; }
+		private readonly DiscDataChecker discsChecker;
 
-		protected IArtistDataComparer ArtistsComparer { get; }
+		private readonly ArtistDataChecker artistsChecker;
 
-		protected IGenreDataComparer GenresComparer { get; }
+		private readonly GenreDataChecker genresChecker;
 
-		protected ISongDataComparer SongsComparer { get; }
+		private readonly SongDataChecker songsChecker;
 
 		protected GraphQLTests()
 		{
-			var songsComparer = new SongDataComparer();
-			ArtistsComparer = new ArtistDataComparer(songsComparer);
-			GenresComparer = new GenreDataComparer(songsComparer);
-			var discsComparer = new DiscDataComparer(songsComparer);
-			FoldersComparer = new FolderDataComparer(discsComparer);
+			songsChecker = new SongDataChecker();
+			artistsChecker = new ArtistDataChecker(songsChecker);
+			genresChecker = new GenreDataChecker(songsChecker);
+			discsChecker = new DiscDataChecker(songsChecker);
+			foldersChecker = new FolderDataChecker(discsChecker);
 
-			songsComparer.DiscsComparer = discsComparer;
-			songsComparer.ArtistsComparer = ArtistsComparer;
-			songsComparer.GenresComparer = GenresComparer;
-			discsComparer.FoldersComparer = FoldersComparer;
-
-			SongsComparer = songsComparer;
-			DiscsComparer = discsComparer;
+			songsChecker.DiscsChecker = discsChecker;
+			songsChecker.ArtistsChecker = artistsChecker;
+			songsChecker.GenresChecker = genresChecker;
+			discsChecker.FoldersChecker = foldersChecker;
 		}
 
 		[TestInitialize]
@@ -46,6 +49,56 @@ namespace MusicLibraryApi.IntegrationTests
 		protected TClient CreateClient<TClient>()
 		{
 			return WebApplicationFactory.Services.GetRequiredService<TClient>();
+		}
+
+		protected void AssertData(OutputFolderData? expected, OutputFolderData? actual)
+		{
+			foldersChecker.CheckData(expected, actual, String.Empty);
+		}
+
+		protected void AssertData(IEnumerable<OutputFolderData>? expected, IEnumerable<OutputFolderData>? actual)
+		{
+			foldersChecker.CheckData(expected?.ToList(), actual?.ToList(), String.Empty);
+		}
+
+		protected void AssertData(OutputDiscData? expected, OutputDiscData? actual)
+		{
+			discsChecker.CheckData(expected, actual, String.Empty);
+		}
+
+		protected void AssertData(IEnumerable<OutputDiscData>? expected, IEnumerable<OutputDiscData>? actual)
+		{
+			discsChecker.CheckData(expected?.ToList(), actual?.ToList(), String.Empty);
+		}
+
+		protected void AssertData(OutputArtistData? expected, OutputArtistData? actual)
+		{
+			artistsChecker.CheckData(expected, actual, String.Empty);
+		}
+
+		protected void AssertData(IEnumerable<OutputArtistData>? expected, IEnumerable<OutputArtistData>? actual)
+		{
+			artistsChecker.CheckData(expected?.ToList(), actual?.ToList(), String.Empty);
+		}
+
+		protected void AssertData(OutputGenreData? expected, OutputGenreData? actual)
+		{
+			genresChecker.CheckData(expected, actual, String.Empty);
+		}
+
+		protected void AssertData(IEnumerable<OutputGenreData>? expected, IEnumerable<OutputGenreData>? actual)
+		{
+			genresChecker.CheckData(expected?.ToList(), actual?.ToList(), String.Empty);
+		}
+
+		protected void AssertData(OutputSongData? expected, OutputSongData? actual)
+		{
+			songsChecker.CheckData(expected, actual, String.Empty);
+		}
+
+		protected void AssertData(IEnumerable<OutputSongData>? expected, IEnumerable<OutputSongData>? actual)
+		{
+			songsChecker.CheckData(expected?.ToList(), actual?.ToList(), String.Empty);
 		}
 
 		protected virtual void Dispose(bool disposing)

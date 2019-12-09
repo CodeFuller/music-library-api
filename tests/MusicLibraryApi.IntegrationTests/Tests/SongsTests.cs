@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -45,7 +44,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Assert
 
-			CollectionAssert.AreEqual(expectedSongs, receivedSongs.ToList(), SongsComparer);
+			AssertData(expectedSongs, receivedSongs);
 		}
 
 		[TestMethod]
@@ -53,7 +52,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		{
 			// Arrange
 
-			var expectedData = new OutputSongData(id: 2, title: "Highway To Hell", treeTitle: "01 - Highway To Hell.mp3", trackNumber: 1, duration: new TimeSpan(0, 3, 28),
+			var expectedSong = new OutputSongData(id: 2, title: "Highway To Hell", treeTitle: "01 - Highway To Hell.mp3", trackNumber: 1, duration: new TimeSpan(0, 3, 28),
 				disc: new OutputDiscData(id: 1), artist: new OutputArtistData(id: 2), genre: new OutputGenreData(id: 1), rating: Rating.R6, bitRate: 320000,
 				lastPlaybackTime: new DateTimeOffset(2018, 11, 25, 08, 20, 00, TimeSpan.FromHours(2)), playbacksCount: 4);
 
@@ -61,12 +60,11 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Act
 
-			var receivedData = await client.GetSong(2, RequestedFields, CancellationToken.None);
+			var receivedSong = await client.GetSong(2, RequestedFields, CancellationToken.None);
 
 			// Assert
 
-			var cmp = SongsComparer.Compare(expectedData, receivedData);
-			Assert.AreEqual(0, cmp, "Songs data does not match");
+			AssertData(expectedSong, receivedSong);
 		}
 
 		[TestMethod]
@@ -106,15 +104,14 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Checking created song data
 
-			var expectedData = new OutputSongData(id: 4, title: "Hail Caesar", treeTitle: "04 - Hail Caesar.mp3", trackNumber: 4, duration: new TimeSpan(0, 5, 13),
+			var expectedSong = new OutputSongData(id: 4, title: "Hail Caesar", treeTitle: "04 - Hail Caesar.mp3", trackNumber: 4, duration: new TimeSpan(0, 5, 13),
 				disc: new OutputDiscData(id: 1), artist: new OutputArtistData(id: 2), genre: new OutputGenreData(id: 3), rating: Rating.R4, bitRate: 320000,
 				lastPlaybackTime: new DateTimeOffset(2018, 11, 25, 08, 35, 28, TimeSpan.FromHours(2)), playbacksCount: 4);
 
 			var songsQuery = CreateClient<ISongsQuery>();
-			var receivedData = await songsQuery.GetSong(4, RequestedFields, CancellationToken.None);
+			var receivedSong = await songsQuery.GetSong(4, RequestedFields, CancellationToken.None);
 
-			var cmp = SongsComparer.Compare(expectedData, receivedData);
-			Assert.AreEqual(0, cmp, "Songs data does not match");
+			AssertData(expectedSong, receivedSong);
 		}
 
 		[TestMethod]
@@ -136,15 +133,14 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Checking created song data
 
-			var expectedData = new OutputSongData(id: 4, title: "Hail Caesar", treeTitle: "04 - Hail Caesar.mp3", trackNumber: null, duration: new TimeSpan(0, 5, 13),
+			var expectedSong = new OutputSongData(id: 4, title: "Hail Caesar", treeTitle: "04 - Hail Caesar.mp3", trackNumber: null, duration: new TimeSpan(0, 5, 13),
 				disc: new OutputDiscData(id: 1), artist: null, genre: null, rating: null, bitRate: null,
 				lastPlaybackTime: null, playbacksCount: 0);
 
 			var songsQuery = CreateClient<ISongsQuery>();
-			var receivedData = await songsQuery.GetSong(4, RequestedFields, CancellationToken.None);
+			var receivedSong = await songsQuery.GetSong(4, RequestedFields, CancellationToken.None);
 
-			var cmp = SongsComparer.Compare(expectedData, receivedData);
-			Assert.AreEqual(0, cmp, "Songs data does not match");
+			AssertData(expectedSong, receivedSong);
 		}
 
 		[TestMethod]
@@ -177,7 +173,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			var songsQuery = CreateClient<ISongsQuery>();
 			var receivedSongs = await songsQuery.GetSongs(SongFields.Id, CancellationToken.None);
 
-			CollectionAssert.AreEqual(expectedSongs, receivedSongs.ToList(), SongsComparer);
+			AssertData(expectedSongs, receivedSongs);
 		}
 
 		[TestMethod]
@@ -210,7 +206,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			var songsQuery = CreateClient<ISongsQuery>();
 			var receivedSongs = await songsQuery.GetSongs(SongFields.Id, CancellationToken.None);
 
-			CollectionAssert.AreEqual(expectedSongs, receivedSongs.ToList(), SongsComparer);
+			AssertData(expectedSongs, receivedSongs);
 		}
 
 		[TestMethod]
@@ -243,7 +239,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			var songsQuery = CreateClient<ISongsQuery>();
 			var receivedSongs = await songsQuery.GetSongs(SongFields.Id, CancellationToken.None);
 
-			CollectionAssert.AreEqual(expectedSongs, receivedSongs.ToList(), SongsComparer);
+			AssertData(expectedSongs, receivedSongs);
 		}
 	}
 }

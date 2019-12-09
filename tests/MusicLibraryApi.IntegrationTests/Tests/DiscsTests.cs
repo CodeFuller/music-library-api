@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -50,7 +49,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Assert
 
-			CollectionAssert.AreEqual(expectedDiscs, receivedDiscs.ToList(), DiscsComparer);
+			AssertData(expectedDiscs, receivedDiscs);
 		}
 
 		[TestMethod]
@@ -58,7 +57,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		{
 			// Arrange
 
-			var expectedData = new OutputDiscData(id: 1, year: 2001, title: "Platinum Hits (CD 2)", treeTitle: "2001 - Platinum Hits (CD 2)",
+			var expectedDisc = new OutputDiscData(id: 1, year: 2001, title: "Platinum Hits (CD 2)", treeTitle: "2001 - Platinum Hits (CD 2)",
 				albumTitle: "Platinum Hits", albumId: "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", albumOrder: 2, folder: new OutputFolderData(id: 1),
 				songs: new[] { new OutputSongData(id: 2), new OutputSongData(id: 1), new OutputSongData(id: 3), });
 
@@ -66,12 +65,11 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Act
 
-			var receivedData = await client.GetDisc(1, RequestedFields, CancellationToken.None);
+			var receivedDisc = await client.GetDisc(1, RequestedFields, CancellationToken.None);
 
 			// Assert
 
-			var cmp = DiscsComparer.Compare(expectedData, receivedData);
-			Assert.AreEqual(0, cmp, "Discs data does not match");
+			AssertData(expectedDisc, receivedDisc);
 		}
 
 		[TestMethod]
@@ -110,14 +108,13 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Checking created disc data
 
-			var expectedData = new OutputDiscData(id: 8, year: 1994, title: "Битва на мотоциклах (CD 2)", treeTitle: "1994 - Битва на мотоциклах (CD 2)",
+			var expectedDisc = new OutputDiscData(id: 8, year: 1994, title: "Битва на мотоциклах (CD 2)", treeTitle: "1994 - Битва на мотоциклах (CD 2)",
 				albumTitle: "Битва на мотоциклах", albumId: "{C7BEC024-8979-4477-8247-419A476C1DFB}", albumOrder: 2, folder: new OutputFolderData(id: 5));
 
 			var discsQuery = CreateClient<IDiscsQuery>();
-			var receivedData = await discsQuery.GetDisc(8, DiscFields.All + DiscFields.Folder(FolderFields.Id), CancellationToken.None);
+			var receivedDisc = await discsQuery.GetDisc(8, DiscFields.All + DiscFields.Folder(FolderFields.Id), CancellationToken.None);
 
-			var cmp = DiscsComparer.Compare(expectedData, receivedData);
-			Assert.AreEqual(0, cmp, "Discs data does not match");
+			AssertData(expectedDisc, receivedDisc);
 		}
 
 		[TestMethod]
@@ -139,13 +136,12 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Checking created disc data
 
-			var expectedData = new OutputDiscData(id: 8, title: "Best Russian", treeTitle: "Russian", albumTitle: String.Empty, folder: new OutputFolderData(id: 5));
+			var expectedDisc = new OutputDiscData(id: 8, title: "Best Russian", treeTitle: "Russian", albumTitle: String.Empty, folder: new OutputFolderData(id: 5));
 
 			var discsQuery = CreateClient<IDiscsQuery>();
-			var receivedData = await discsQuery.GetDisc(8, DiscFields.All + DiscFields.Folder(FolderFields.Id), CancellationToken.None);
+			var receivedDisc = await discsQuery.GetDisc(8, DiscFields.All + DiscFields.Folder(FolderFields.Id), CancellationToken.None);
 
-			var cmp = DiscsComparer.Compare(expectedData, receivedData);
-			Assert.AreEqual(0, cmp, "Discs data does not match");
+			AssertData(expectedDisc, receivedDisc);
 		}
 
 		[TestMethod]
@@ -180,7 +176,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			var discsQuery = CreateClient<IDiscsQuery>();
 			var receivedDiscs = await discsQuery.GetDiscs(DiscFields.Id, CancellationToken.None);
 
-			CollectionAssert.AreEqual(expectedDiscs, receivedDiscs.ToList(), DiscsComparer);
+			AssertData(expectedDiscs, receivedDiscs);
 		}
 	}
 }

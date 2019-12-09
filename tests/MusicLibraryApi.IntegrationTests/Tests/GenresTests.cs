@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -34,7 +33,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Assert
 
-			CollectionAssert.AreEqual(expectedGenres, receivedGenres.ToList(), GenresComparer);
+			AssertData(expectedGenres, receivedGenres);
 		}
 
 		[TestMethod]
@@ -52,8 +51,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Assert
 
-			var cmp = GenresComparer.Compare(expectedGenre, receivedGenre);
-			Assert.AreEqual(0, cmp, "Genres data does not match");
+			AssertData(expectedGenre, receivedGenre);
 		}
 
 		[TestMethod]
@@ -101,7 +99,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			var genresQuery = CreateClient<IGenresQuery>();
 			var receivedGenres = await genresQuery.GetGenres(GenreFields.All, CancellationToken.None);
 
-			CollectionAssert.AreEqual(expectedGenres, receivedGenres.ToList(), GenresComparer);
+			AssertData(expectedGenres, receivedGenres);
 		}
 
 		[TestMethod]
@@ -132,7 +130,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			var genresQuery = CreateClient<IGenresQuery>();
 			var receivedGenres = await genresQuery.GetGenres(GenreFields.All, CancellationToken.None);
 
-			CollectionAssert.AreEqual(expectedGenres, receivedGenres.ToList(), GenresComparer);
+			AssertData(expectedGenres, receivedGenres);
 		}
 	}
 }
