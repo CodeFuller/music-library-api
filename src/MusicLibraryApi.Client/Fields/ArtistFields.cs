@@ -1,18 +1,19 @@
-﻿using MusicLibraryApi.Client.Fields.QueryTypes;
+﻿using MusicLibraryApi.Client.Contracts.Artists;
+using MusicLibraryApi.Client.Contracts.Songs;
 
 namespace MusicLibraryApi.Client.Fields
 {
 	public static class ArtistFields
 	{
-		public static QueryField<ArtistQuery> Id { get; } = new QueryField<ArtistQuery>("id");
+		public static QueryField<OutputArtistData> Id { get; } = new QueryField<OutputArtistData>("id");
 
-		public static QueryField<ArtistQuery> Name { get; } = new QueryField<ArtistQuery>("name");
+		public static QueryField<OutputArtistData> Name { get; } = new QueryField<OutputArtistData>("name");
 
-		public static ComplexQueryField<ArtistQuery, SongQuery> Songs(QueryFieldSet<SongQuery> songFields)
+		public static ComplexQueryField<OutputArtistData, OutputSongData> Songs(QueryFieldSet<OutputSongData> songFields)
 		{
-			return new ComplexQueryField<ArtistQuery, SongQuery>("songs", songFields);
+			return new ComplexQueryField<OutputArtistData, OutputSongData>("songs", songFields);
 		}
 
-		public static QueryFieldSet<ArtistQuery> All { get; } = Id + Name;
+		public static QueryFieldSet<OutputArtistData> All { get; } = Id + Name;
 	}
 }

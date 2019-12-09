@@ -1,37 +1,39 @@
-﻿using MusicLibraryApi.Client.Fields.QueryTypes;
+﻿using MusicLibraryApi.Client.Contracts.Discs;
+using MusicLibraryApi.Client.Contracts.Folders;
+using MusicLibraryApi.Client.Contracts.Songs;
 
 namespace MusicLibraryApi.Client.Fields
 {
 	public static class DiscFields
 	{
-		public static QueryField<DiscQuery> Id { get; } = new QueryField<DiscQuery>("id");
+		public static QueryField<OutputDiscData> Id { get; } = new QueryField<OutputDiscData>("id");
 
-		public static QueryField<DiscQuery> Year { get; } = new QueryField<DiscQuery>("year");
+		public static QueryField<OutputDiscData> Year { get; } = new QueryField<OutputDiscData>("year");
 
-		public static QueryField<DiscQuery> Title { get; } = new QueryField<DiscQuery>("title");
+		public static QueryField<OutputDiscData> Title { get; } = new QueryField<OutputDiscData>("title");
 
-		public static QueryField<DiscQuery> TreeTitle { get; } = new QueryField<DiscQuery>("treeTitle");
+		public static QueryField<OutputDiscData> TreeTitle { get; } = new QueryField<OutputDiscData>("treeTitle");
 
-		public static QueryField<DiscQuery> AlbumTitle { get; } = new QueryField<DiscQuery>("albumTitle");
+		public static QueryField<OutputDiscData> AlbumTitle { get; } = new QueryField<OutputDiscData>("albumTitle");
 
-		public static QueryField<DiscQuery> AlbumId { get; } = new QueryField<DiscQuery>("albumId");
+		public static QueryField<OutputDiscData> AlbumId { get; } = new QueryField<OutputDiscData>("albumId");
 
-		public static QueryField<DiscQuery> AlbumOrder { get; } = new QueryField<DiscQuery>("albumOrder");
+		public static QueryField<OutputDiscData> AlbumOrder { get; } = new QueryField<OutputDiscData>("albumOrder");
 
-		public static ComplexQueryField<DiscQuery, SongQuery> Songs(QueryFieldSet<SongQuery> songFields)
+		public static ComplexQueryField<OutputDiscData, OutputSongData> Songs(QueryFieldSet<OutputSongData> songFields)
 		{
-			return new ComplexQueryField<DiscQuery, SongQuery>("songs", songFields);
+			return new ComplexQueryField<OutputDiscData, OutputSongData>("songs", songFields);
 		}
 
-		public static ComplexQueryField<DiscQuery, FolderQuery> Folder(QueryFieldSet<FolderQuery> folderFields)
+		public static ComplexQueryField<OutputDiscData, OutputFolderData> Folder(QueryFieldSet<OutputFolderData> folderFields)
 		{
-			return new ComplexQueryField<DiscQuery, FolderQuery>("folder", folderFields);
+			return new ComplexQueryField<OutputDiscData, OutputFolderData>("folder", folderFields);
 		}
 
-		public static QueryField<DiscQuery> DeleteDate { get; } = new QueryField<DiscQuery>("deleteDate");
+		public static QueryField<OutputDiscData> DeleteDate { get; } = new QueryField<OutputDiscData>("deleteDate");
 
-		public static QueryField<DiscQuery> DeleteComment { get; } = new QueryField<DiscQuery>("deleteComment");
+		public static QueryField<OutputDiscData> DeleteComment { get; } = new QueryField<OutputDiscData>("deleteComment");
 
-		public static QueryFieldSet<DiscQuery> All { get; } = Id + Year + Title + TreeTitle + AlbumTitle + AlbumId + AlbumOrder + DeleteDate + DeleteComment;
+		public static QueryFieldSet<OutputDiscData> All { get; } = Id + Year + Title + TreeTitle + AlbumTitle + AlbumId + AlbumOrder + DeleteDate + DeleteComment;
 	}
 }

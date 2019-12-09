@@ -9,7 +9,6 @@ using MusicLibraryApi.Client.Contracts.Genres;
 using MusicLibraryApi.Client.Contracts.Songs;
 using MusicLibraryApi.Client.Exceptions;
 using MusicLibraryApi.Client.Fields;
-using MusicLibraryApi.Client.Fields.QueryTypes;
 using MusicLibraryApi.Client.Interfaces;
 
 namespace MusicLibraryApi.IntegrationTests.Tests
@@ -17,7 +16,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 	[TestClass]
 	public class SongsTests : GraphQLTests
 	{
-		private static QueryFieldSet<SongQuery> RequestedFields => SongFields.All + SongFields.Disc(DiscFields.Id) + SongFields.Artist(ArtistFields.Id) + SongFields.Genre(GenreFields.Id);
+		private static QueryFieldSet<OutputSongData> RequestedFields => SongFields.All + SongFields.Disc(DiscFields.Id) + SongFields.Artist(ArtistFields.Id) + SongFields.Genre(GenreFields.Id);
 
 		[TestMethod]
 		public async Task SongsQuery_ReturnsCorrectData()

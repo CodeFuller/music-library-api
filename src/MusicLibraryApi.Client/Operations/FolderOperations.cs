@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using MusicLibraryApi.Client.Contracts.Folders;
 using MusicLibraryApi.Client.Exceptions;
 using MusicLibraryApi.Client.Fields;
-using MusicLibraryApi.Client.Fields.QueryTypes;
 using MusicLibraryApi.Client.GraphQL;
 using MusicLibraryApi.Client.Interfaces;
 using static System.FormattableString;
@@ -19,7 +18,7 @@ namespace MusicLibraryApi.Client.Operations
 		{
 		}
 
-		public async Task<OutputFolderData> GetFolder(int? folderId, QueryFieldSet<FolderQuery> fields, CancellationToken cancellationToken, bool includeDeletedDiscs = false)
+		public async Task<OutputFolderData> GetFolder(int? folderId, QueryFieldSet<OutputFolderData> fields, CancellationToken cancellationToken, bool includeDeletedDiscs = false)
 		{
 			var query = Invariant($@"query GetFolder($folderId: ID, {fields.VariablesDefinition}) {{
 										folder(folderId: $folderId) {{ {fields.QuerySelection} }}

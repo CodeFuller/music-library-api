@@ -7,7 +7,6 @@ using MusicLibraryApi.Client.Contracts.Discs;
 using MusicLibraryApi.Client.Contracts.Folders;
 using MusicLibraryApi.Client.Exceptions;
 using MusicLibraryApi.Client.Fields;
-using MusicLibraryApi.Client.Fields.QueryTypes;
 using MusicLibraryApi.Client.Interfaces;
 
 namespace MusicLibraryApi.IntegrationTests.Tests
@@ -15,7 +14,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 	[TestClass]
 	public class FoldersTests : GraphQLTests
 	{
-		private static QueryFieldSet<FolderQuery> RequestedFields => FolderFields.All + FolderFields.Subfolders(FolderFields.All) + FolderFields.Discs(DiscFields.All);
+		private static QueryFieldSet<OutputFolderData> RequestedFields => FolderFields.All + FolderFields.Subfolders(FolderFields.All) + FolderFields.Discs(DiscFields.All);
 
 		[TestMethod]
 		public async Task FolderQuery_ForRootFolder_ReturnsCorrectData()

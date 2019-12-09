@@ -6,7 +6,6 @@ using Microsoft.Extensions.Logging;
 using MusicLibraryApi.Client.Contracts.Genres;
 using MusicLibraryApi.Client.Exceptions;
 using MusicLibraryApi.Client.Fields;
-using MusicLibraryApi.Client.Fields.QueryTypes;
 using MusicLibraryApi.Client.GraphQL;
 using MusicLibraryApi.Client.Interfaces;
 using static System.FormattableString;
@@ -20,12 +19,12 @@ namespace MusicLibraryApi.Client.Operations
 		{
 		}
 
-		public async Task<IReadOnlyCollection<OutputGenreData>> GetGenres(QueryFieldSet<GenreQuery> fields, CancellationToken cancellationToken)
+		public async Task<IReadOnlyCollection<OutputGenreData>> GetGenres(QueryFieldSet<OutputGenreData> fields, CancellationToken cancellationToken)
 		{
-			return await ExecuteQuery<GenreQuery, OutputGenreData[]>("genres", fields, cancellationToken);
+			return await ExecuteQuery<OutputGenreData, OutputGenreData[]>("genres", fields, cancellationToken);
 		}
 
-		public async Task<OutputGenreData> GetGenre(int genreId, QueryFieldSet<GenreQuery> fields, CancellationToken cancellationToken)
+		public async Task<OutputGenreData> GetGenre(int genreId, QueryFieldSet<OutputGenreData> fields, CancellationToken cancellationToken)
 		{
 			var query = Invariant($@"query GetGenreById($id: ID!) {{
 										genre(id: $id) {{ {fields.QuerySelection} }}

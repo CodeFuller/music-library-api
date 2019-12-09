@@ -6,7 +6,6 @@ using Microsoft.Extensions.Logging;
 using MusicLibraryApi.Client.Contracts.Artists;
 using MusicLibraryApi.Client.Exceptions;
 using MusicLibraryApi.Client.Fields;
-using MusicLibraryApi.Client.Fields.QueryTypes;
 using MusicLibraryApi.Client.GraphQL;
 using MusicLibraryApi.Client.Interfaces;
 using static System.FormattableString;
@@ -20,12 +19,12 @@ namespace MusicLibraryApi.Client.Operations
 		{
 		}
 
-		public async Task<IReadOnlyCollection<OutputArtistData>> GetArtists(QueryFieldSet<ArtistQuery> fields, CancellationToken cancellationToken)
+		public async Task<IReadOnlyCollection<OutputArtistData>> GetArtists(QueryFieldSet<OutputArtistData> fields, CancellationToken cancellationToken)
 		{
-			return await ExecuteQuery<ArtistQuery, OutputArtistData[]>("artists", fields, cancellationToken);
+			return await ExecuteQuery<OutputArtistData, OutputArtistData[]>("artists", fields, cancellationToken);
 		}
 
-		public async Task<OutputArtistData> GetArtist(int artistId, QueryFieldSet<ArtistQuery> fields, CancellationToken cancellationToken)
+		public async Task<OutputArtistData> GetArtist(int artistId, QueryFieldSet<OutputArtistData> fields, CancellationToken cancellationToken)
 		{
 			var query = Invariant($@"query GetArtistById($id: ID!) {{
 										artist(id: $id) {{ {fields.QuerySelection} }}

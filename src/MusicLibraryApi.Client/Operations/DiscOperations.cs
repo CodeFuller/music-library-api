@@ -6,7 +6,6 @@ using Microsoft.Extensions.Logging;
 using MusicLibraryApi.Client.Contracts.Discs;
 using MusicLibraryApi.Client.Exceptions;
 using MusicLibraryApi.Client.Fields;
-using MusicLibraryApi.Client.Fields.QueryTypes;
 using MusicLibraryApi.Client.GraphQL;
 using MusicLibraryApi.Client.Interfaces;
 using static System.FormattableString;
@@ -20,12 +19,12 @@ namespace MusicLibraryApi.Client.Operations
 		{
 		}
 
-		public async Task<IReadOnlyCollection<OutputDiscData>> GetDiscs(QueryFieldSet<DiscQuery> fields, CancellationToken cancellationToken)
+		public async Task<IReadOnlyCollection<OutputDiscData>> GetDiscs(QueryFieldSet<OutputDiscData> fields, CancellationToken cancellationToken)
 		{
-			return await ExecuteQuery<DiscQuery, OutputDiscData[]>("discs", fields, cancellationToken);
+			return await ExecuteQuery<OutputDiscData, OutputDiscData[]>("discs", fields, cancellationToken);
 		}
 
-		public async Task<OutputDiscData> GetDisc(int discId, QueryFieldSet<DiscQuery> fields, CancellationToken cancellationToken)
+		public async Task<OutputDiscData> GetDisc(int discId, QueryFieldSet<OutputDiscData> fields, CancellationToken cancellationToken)
 		{
 			var query = Invariant($@"query GetDiscById($id: ID!) {{
 										disc(id: $id) {{ {fields.QuerySelection} }}

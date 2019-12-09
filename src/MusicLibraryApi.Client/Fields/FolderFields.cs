@@ -1,23 +1,24 @@
-﻿using MusicLibraryApi.Client.Fields.QueryTypes;
+﻿using MusicLibraryApi.Client.Contracts.Discs;
+using MusicLibraryApi.Client.Contracts.Folders;
 
 namespace MusicLibraryApi.Client.Fields
 {
 	public static class FolderFields
 	{
-		public static QueryField<FolderQuery> Id { get; } = new QueryField<FolderQuery>("id");
+		public static QueryField<OutputFolderData> Id { get; } = new QueryField<OutputFolderData>("id");
 
-		public static QueryField<FolderQuery> Name { get; } = new QueryField<FolderQuery>("name");
+		public static QueryField<OutputFolderData> Name { get; } = new QueryField<OutputFolderData>("name");
 
-		public static ComplexQueryField<FolderQuery, FolderQuery> Subfolders(QueryFieldSet<FolderQuery> subfolderFields)
+		public static ComplexQueryField<OutputFolderData, OutputFolderData> Subfolders(QueryFieldSet<OutputFolderData> subfolderFields)
 		{
-			return new ComplexQueryField<FolderQuery, FolderQuery>("subfolders", subfolderFields);
+			return new ComplexQueryField<OutputFolderData, OutputFolderData>("subfolders", subfolderFields);
 		}
 
-		public static ComplexQueryField<FolderQuery, DiscQuery> Discs(QueryFieldSet<DiscQuery> discFields)
+		public static ComplexQueryField<OutputFolderData, OutputDiscData> Discs(QueryFieldSet<OutputDiscData> discFields)
 		{
-			return new ComplexQueryField<FolderQuery, DiscQuery>("discs", discFields, new QueryVariable("Boolean", "includeDeletedDiscs"));
+			return new ComplexQueryField<OutputFolderData, OutputDiscData>("discs", discFields, new QueryVariable("Boolean", "includeDeletedDiscs"));
 		}
 
-		public static QueryFieldSet<FolderQuery> All { get; } = Id + Name;
+		public static QueryFieldSet<OutputFolderData> All { get; } = Id + Name;
 	}
 }

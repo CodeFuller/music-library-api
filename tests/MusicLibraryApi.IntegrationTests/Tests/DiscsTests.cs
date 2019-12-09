@@ -8,7 +8,6 @@ using MusicLibraryApi.Client.Contracts.Folders;
 using MusicLibraryApi.Client.Contracts.Songs;
 using MusicLibraryApi.Client.Exceptions;
 using MusicLibraryApi.Client.Fields;
-using MusicLibraryApi.Client.Fields.QueryTypes;
 using MusicLibraryApi.Client.Interfaces;
 
 namespace MusicLibraryApi.IntegrationTests.Tests
@@ -16,7 +15,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 	[TestClass]
 	public class DiscsTests : GraphQLTests
 	{
-		private static QueryFieldSet<DiscQuery> RequestedFields => DiscFields.All + DiscFields.Folder(FolderFields.Id) + DiscFields.Songs(SongFields.Id);
+		private static QueryFieldSet<OutputDiscData> RequestedFields => DiscFields.All + DiscFields.Folder(FolderFields.Id) + DiscFields.Songs(SongFields.Id);
 
 		[TestMethod]
 		public async Task DiscsQuery_ReturnsCorrectData()
