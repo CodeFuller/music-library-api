@@ -94,7 +94,8 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		{
 			// Arrange
 
-			var newDiscData = new InputDiscData(5, 1994, "Битва на мотоциклах (CD 2)", "1994 - Битва на мотоциклах (CD 2)", "Битва на мотоциклах", "{C7BEC024-8979-4477-8247-419A476C1DFB}", 2);
+			var newDiscData = new InputDiscData(5, 1994, "Битва на мотоциклах (CD 2)", "1994 - Битва на мотоциклах (CD 2)",
+				"Битва на мотоциклах", "{C7BEC024-8979-4477-8247-419A476C1DFB}", 2, new DateTimeOffset(2019, 12, 10, 07, 20, 25, TimeSpan.FromHours(2)), "For a test");
 
 			var client = CreateClient<IDiscsMutation>();
 
@@ -109,7 +110,8 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			// Checking created disc data
 
 			var expectedDisc = new OutputDiscData(id: 8, year: 1994, title: "Битва на мотоциклах (CD 2)", treeTitle: "1994 - Битва на мотоциклах (CD 2)",
-				albumTitle: "Битва на мотоциклах", albumId: "{C7BEC024-8979-4477-8247-419A476C1DFB}", albumOrder: 2, folder: new OutputFolderData(id: 5));
+				albumTitle: "Битва на мотоциклах", albumId: "{C7BEC024-8979-4477-8247-419A476C1DFB}", albumOrder: 2, folder: new OutputFolderData(id: 5),
+				deleteDate: new DateTimeOffset(2019, 12, 10, 07, 20, 25, TimeSpan.FromHours(2)), deleteComment: "For a test");
 
 			var discsQuery = CreateClient<IDiscsQuery>();
 			var receivedDisc = await discsQuery.GetDisc(8, DiscFields.All + DiscFields.Folder(FolderFields.Id), CancellationToken.None);

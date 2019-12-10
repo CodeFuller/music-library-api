@@ -90,7 +90,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			// Arrange
 
 			var newSongData = new InputSongData(1, 2, 3, "Hail Caesar", "04 - Hail Caesar.mp3", 4, new TimeSpan(0, 5, 13), Rating.R4, 320000,
-				new DateTimeOffset(2018, 11, 25, 08, 35, 28, TimeSpan.FromHours(2)), 4);
+				new DateTimeOffset(2018, 11, 25, 08, 35, 28, TimeSpan.FromHours(2)), 4, new DateTimeOffset(2019, 12, 10, 07, 20, 25, TimeSpan.FromHours(2)), "For a test");
 
 			var client = CreateClient<ISongsMutation>();
 
@@ -106,7 +106,8 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var expectedSong = new OutputSongData(id: 4, title: "Hail Caesar", treeTitle: "04 - Hail Caesar.mp3", trackNumber: 4, duration: new TimeSpan(0, 5, 13),
 				disc: new OutputDiscData(id: 1), artist: new OutputArtistData(id: 2), genre: new OutputGenreData(id: 3), rating: Rating.R4, bitRate: 320000,
-				lastPlaybackTime: new DateTimeOffset(2018, 11, 25, 08, 35, 28, TimeSpan.FromHours(2)), playbacksCount: 4);
+				lastPlaybackTime: new DateTimeOffset(2018, 11, 25, 08, 35, 28, TimeSpan.FromHours(2)), playbacksCount: 4,
+				deleteDate: new DateTimeOffset(2019, 12, 10, 07, 20, 25, TimeSpan.FromHours(2)), deleteComment: "For a test");
 
 			var songsQuery = CreateClient<ISongsQuery>();
 			var receivedSong = await songsQuery.GetSong(4, RequestedFields, CancellationToken.None);
