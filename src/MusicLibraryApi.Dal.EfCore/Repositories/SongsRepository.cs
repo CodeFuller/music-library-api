@@ -20,7 +20,7 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 		private readonly IMapper mapper;
 
 		private IQueryable<SongEntity> Songs => context.Songs
-			.Include(s => s.Disc)
+			.Include(s => s.Disc).ThenInclude(d => d.Folder)
 			.Include(s => s.Artist)
 			.Include(s => s.Genre);
 

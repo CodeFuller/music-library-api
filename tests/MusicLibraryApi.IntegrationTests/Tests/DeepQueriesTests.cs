@@ -87,5 +87,28 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			AssertData(expectedFolder, receivedFolder);
 		}
+
+		[TestMethod]
+		public async Task DeepUpwardQuery_ReturnsDataCorrectly()
+		{
+			var requestedFields = SongFields.All + SongFields.Disc(DiscFields.All + DiscFields.Folder(FolderFields.All)) + SongFields.Artist(ArtistFields.All) + SongFields.Genre(GenreFields.All);
+
+			var expectedDisc = new OutputDiscData(id: 1, year: 2001, title: "Platinum Hits (CD 2)", treeTitle: "2001 - Platinum Hits (CD 2)",
+					albumTitle: "Platinum Hits", albumId: "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", albumOrder: 2, folder: new OutputFolderData(id: 1, name: "<ROOT>"));
+
+			var expectedSong = new OutputSongData(id: 2, title: "Highway To Hell", treeTitle: "01 - Highway To Hell.mp3", trackNumber: 1, duration: new TimeSpan(0, 3, 28),
+				disc: expectedDisc, artist: new OutputArtistData(2, "AC/DC"), genre: new OutputGenreData(id: 1, name: "Russian Rock"), rating: Rating.R6, bitRate: 320000,
+				lastPlaybackTime: new DateTimeOffset(2018, 11, 25, 08, 20, 00, TimeSpan.FromHours(2)), playbacksCount: 4);
+
+			var client = CreateClient<ISongsQuery>();
+
+			// Act
+
+			var receivedSong = await client.GetSong(2, requestedFields, CancellationToken.None);
+
+			// Assert
+
+			AssertData(expectedSong, receivedSong);
+		}
 	}
 }
