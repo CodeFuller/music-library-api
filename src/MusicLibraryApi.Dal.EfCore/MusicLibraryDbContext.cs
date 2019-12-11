@@ -16,6 +16,12 @@ namespace MusicLibraryApi.Dal.EfCore
 
 		public DbSet<SongEntity> Songs { get; set; } = null!;
 
+		public static string SongDiscForeignKeyName => "FK_Songs_Discs_DiscId";
+
+		public static string SongArtistForeignKeyName => "FK_Songs_Artists_ArtistId";
+
+		public static string SongGenreForeignKeyName => "FK_Songs_Genres_GenreId";
+
 		public MusicLibraryDbContext(DbContextOptions options)
 			: base(options)
 		{
@@ -55,16 +61,19 @@ namespace MusicLibraryApi.Dal.EfCore
 					.WithMany(d => d.Songs)
 					.IsRequired()
 					.HasForeignKey(s => s.DiscId)
+					.HasConstraintName(SongDiscForeignKeyName)
 					.OnDelete(DeleteBehavior.Restrict);
 
 				b.HasOne(s => s.Artist)
 					.WithMany(a => a!.Songs)
 					.HasForeignKey(s => s.ArtistId)
+					.HasConstraintName(SongArtistForeignKeyName)
 					.OnDelete(DeleteBehavior.Restrict);
 
 				b.HasOne(s => s.Genre)
 					.WithMany(g => g!.Songs)
 					.HasForeignKey(s => s.GenreId)
+					.HasConstraintName(SongGenreForeignKeyName)
 					.OnDelete(DeleteBehavior.Restrict);
 			});
 

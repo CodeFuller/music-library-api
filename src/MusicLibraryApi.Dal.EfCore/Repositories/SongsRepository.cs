@@ -34,15 +34,15 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 			{
 				await context.SaveChangesAsync(cancellationToken);
 			}
-			catch (DbUpdateException e) when (e.IsForeignKeyViolationException("FK_Songs_Discs_DiscId"))
+			catch (DbUpdateException e) when (e.IsForeignKeyViolationException(MusicLibraryDbContext.SongDiscForeignKeyName))
 			{
 				throw new DiscNotFoundException(Invariant($"The disc with id of {song.DiscId} does not exist"));
 			}
-			catch (DbUpdateException e) when (e.IsForeignKeyViolationException("FK_Songs_Artists_ArtistId"))
+			catch (DbUpdateException e) when (e.IsForeignKeyViolationException(MusicLibraryDbContext.SongArtistForeignKeyName))
 			{
 				throw new ArtistNotFoundException(Invariant($"The artist with id of {song.ArtistId} does not exist"));
 			}
-			catch (DbUpdateException e) when (e.IsForeignKeyViolationException("FK_Songs_Genres_GenreId"))
+			catch (DbUpdateException e) when (e.IsForeignKeyViolationException(MusicLibraryDbContext.SongGenreForeignKeyName))
 			{
 				throw new GenreNotFoundException(Invariant($"The genre with id of {song.GenreId} does not exist"));
 			}
