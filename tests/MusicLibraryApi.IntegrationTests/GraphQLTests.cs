@@ -9,12 +9,13 @@ using MusicLibraryApi.Client.Contracts.Folders;
 using MusicLibraryApi.Client.Contracts.Genres;
 using MusicLibraryApi.Client.Contracts.Songs;
 using MusicLibraryApi.IntegrationTests.DataCheckers;
+using MusicLibraryApi.IntegrationTests.Utility;
 
 namespace MusicLibraryApi.IntegrationTests
 {
-	public abstract class GraphQLTests : IDisposable
+	public abstract class GraphQLTests : IWebApplicationConfigurator, IDisposable
 	{
-		protected CustomWebApplicationFactory WebApplicationFactory { get; } = new CustomWebApplicationFactory();
+		protected CustomWebApplicationFactory WebApplicationFactory { get; }
 
 		private readonly FolderDataChecker foldersChecker;
 
@@ -28,6 +29,8 @@ namespace MusicLibraryApi.IntegrationTests
 
 		protected GraphQLTests()
 		{
+			WebApplicationFactory = new CustomWebApplicationFactory(this);
+
 			songsChecker = new SongDataChecker();
 			artistsChecker = new ArtistDataChecker(songsChecker);
 			genresChecker = new GenreDataChecker(songsChecker);
@@ -113,6 +116,10 @@ namespace MusicLibraryApi.IntegrationTests
 		{
 			Dispose(true);
 			GC.SuppressFinalize(this);
+		}
+
+		public virtual void ConfigureServices(IServiceCollection services)
+		{
 		}
 	}
 }
