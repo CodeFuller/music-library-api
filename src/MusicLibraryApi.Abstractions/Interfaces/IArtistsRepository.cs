@@ -11,6 +11,8 @@ namespace MusicLibraryApi.Abstractions.Interfaces
 
 		Task<IReadOnlyCollection<Artist>> GetAllArtists(CancellationToken cancellationToken);
 
+		Task<IReadOnlyCollection<Artist>> GetArtists(IEnumerable<int> artistIds, CancellationToken cancellationToken);
+
 		Task<Artist> GetArtist(int artistId, CancellationToken cancellationToken);
 	}
 }

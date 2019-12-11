@@ -98,25 +98,12 @@ namespace MusicLibraryApi.IntegrationTests
 		 */
 		private static void SeedFoldersData(MusicLibraryDbContext context, IIdentityInsert identityInsert)
 		{
-			var rootFolder = context.Folders.Single(f => f.Id == 1);
-
-			var folder2 = new FolderEntity(2, "Russian");
-			folder2.ParentFolder = rootFolder;
-
-			var folder3 = new FolderEntity(3, "Foreign");
-			folder3.ParentFolder = rootFolder;
-
-			var folder4 = new FolderEntity(4, "Rammstein");
-			folder4.ParentFolder = folder3;
-
-			var folder5 = new FolderEntity(5, "Guano Apes");
-			folder5.ParentFolder = rootFolder;
-
-			var folder6 = new FolderEntity(6, "Some subfolder");
-			folder6.ParentFolder = folder5;
-
-			var folder7 = new FolderEntity(7, "Empty folder");
-			folder7.ParentFolder = folder5;
+			var folder2 = new FolderEntity(2, "Russian", 1);
+			var folder3 = new FolderEntity(3, "Foreign", 1);
+			var folder4 = new FolderEntity(4, "Rammstein", 3);
+			var folder5 = new FolderEntity(5, "Guano Apes", 1);
+			var folder6 = new FolderEntity(6, "Some subfolder", 5);
+			var folder7 = new FolderEntity(7, "Empty folder", 5);
 
 			identityInsert.InitializeIdentityInsert(context, "Folders");
 
@@ -156,28 +143,13 @@ namespace MusicLibraryApi.IntegrationTests
 
 		private static void SeedDiscsData(MusicLibraryDbContext context, IIdentityInsert identityInsert)
 		{
-			var rootFolder = context.Folders.Single(f => f.Id == 1);
-
-			var disc1 = new DiscEntity(1, 2001, "Platinum Hits (CD 2)", "2001 - Platinum Hits (CD 2)", "Platinum Hits", "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", 2);
-			disc1.Folder = rootFolder;
-
-			var disc2 = new DiscEntity(2, 2001, "Platinum Hits (CD 1)", "2001 - Platinum Hits (CD 1)", "Platinum Hits", "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", 1);
-			disc2.Folder = rootFolder;
-
-			var disc3 = new DiscEntity(3, 2000, "Don't Give Me Names", "2000 - Don't Give Me Names", "Don't Give Me Names");
-			disc3.Folder = FindFolder(context, "Guano Apes");
-
-			var disc4 = new DiscEntity(4, null, "Rarities", "Rarities", String.Empty);
-			disc4.Folder = FindFolder(context, "Guano Apes");
-
-			var disc5 = new DiscEntity(5, 1997, "Proud Like A God", "1997 - Proud Like A God", "Proud Like A God");
-			disc5.Folder = FindFolder(context, "Guano Apes");
-
-			var disc6 = new DiscEntity(6, null, "Some deleted disc", "2007 - Some deleted disc", "Some deleted disc", null, null, new DateTimeOffset(2019, 12, 03, 07, 56, 06, TimeSpan.FromHours(2)));
-			disc6.Folder = rootFolder;
-
-			var disc7 = new DiscEntity(7, 2006, "Lost (T)apes", "2006 - Lost (T)apes", "Lost (T)apes", null, null, new DateTimeOffset(2019, 12, 03, 07, 57, 01, TimeSpan.FromHours(2)), "Deleted for a test");
-			disc7.Folder = FindFolder(context, "Guano Apes");
+			var disc1 = new DiscEntity(1, 2001, "Platinum Hits (CD 2)", "2001 - Platinum Hits (CD 2)", "Platinum Hits", 1, "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", 2);
+			var disc2 = new DiscEntity(2, 2001, "Platinum Hits (CD 1)", "2001 - Platinum Hits (CD 1)", "Platinum Hits", 1, "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", 1);
+			var disc3 = new DiscEntity(3, 2000, "Don't Give Me Names", "2000 - Don't Give Me Names", "Don't Give Me Names", 5);
+			var disc4 = new DiscEntity(4, null, "Rarities", "Rarities", String.Empty, 5);
+			var disc5 = new DiscEntity(5, 1997, "Proud Like A God", "1997 - Proud Like A God", "Proud Like A God", 5);
+			var disc6 = new DiscEntity(6, null, "Some deleted disc", "2007 - Some deleted disc", "Some deleted disc", 1, null, null, new DateTimeOffset(2019, 12, 03, 07, 56, 06, TimeSpan.FromHours(2)));
+			var disc7 = new DiscEntity(7, 2006, "Lost (T)apes", "2006 - Lost (T)apes", "Lost (T)apes", 5, null, null, new DateTimeOffset(2019, 12, 03, 07, 57, 01, TimeSpan.FromHours(2)), "Deleted for a test");
 
 			identityInsert.InitializeIdentityInsert(context, "Discs");
 
@@ -189,25 +161,14 @@ namespace MusicLibraryApi.IntegrationTests
 
 		private static void SeedSongsData(MusicLibraryDbContext context, IIdentityInsert identityInsert)
 		{
-			var disc = context.Discs.Single(d => d.Id == 1);
-
-			var song1 = new SongEntity(1, "Hell's Bells", "02 - Hell's Bells.mp3", 2, new TimeSpan(0, 5, 12),
+			var song1 = new SongEntity(1, "Hell's Bells", "02 - Hell's Bells.mp3", 2, new TimeSpan(0, 5, 12), 1, null, 2,
 				Rating.R4, 320000, new DateTimeOffset(2018, 11, 25, 08, 25, 17, TimeSpan.FromHours(2)), 4);
-			song1.Disc = disc;
-			song1.Genre = context.Genres.Single(g => g.Id == 2);
-			song1.Artist = null;
 
-			var song2 = new SongEntity(2, "Highway To Hell", "01 - Highway To Hell.mp3", 1, new TimeSpan(0, 3, 28),
+			var song2 = new SongEntity(2, "Highway To Hell", "01 - Highway To Hell.mp3", 1, new TimeSpan(0, 3, 28), 1, 2, 1,
 				Rating.R6, 320000, new DateTimeOffset(2018, 11, 25, 08, 20, 00, TimeSpan.FromHours(2)), 4);
-			song2.Disc = disc;
-			song2.Genre = context.Genres.Single(g => g.Id == 1);
-			song2.Artist = context.Artists.Single(a => a.Id == 2);
 
-			var song3 = new SongEntity(3, "Are You Ready?", "03 - Are You Ready?.mp3", null, new TimeSpan(0, 4, 09),
+			var song3 = new SongEntity(3, "Are You Ready?", "03 - Are You Ready?.mp3", null, new TimeSpan(0, 4, 09), 1, 1, null,
 				null, null, null, 0);
-			song3.Disc = disc;
-			song3.Genre = null;
-			song3.Artist = context.Artists.Single(a => a.Id == 1);
 
 			identityInsert.InitializeIdentityInsert(context, "Songs");
 
@@ -215,11 +176,6 @@ namespace MusicLibraryApi.IntegrationTests
 			context.SaveChanges();
 
 			identityInsert.FinalizeIdentityInsert(context, "Songs", 4);
-		}
-
-		private static FolderEntity FindFolder(MusicLibraryDbContext context, string folderName)
-		{
-			return context.Folders.Single(f => f.Name == folderName);
 		}
 	}
 }

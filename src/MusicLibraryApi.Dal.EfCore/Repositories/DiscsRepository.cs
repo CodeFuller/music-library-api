@@ -19,35 +19,46 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 
 		private readonly IMapper mapper;
 
-		private IQueryable<DiscEntity> Discs => context.Discs.Include(d => d.Folder);
-
 		public DiscsRepository(MusicLibraryDbContext context, IMapper mapper)
 		{
 			this.context = context ?? throw new ArgumentNullException(nameof(context));
 			this.mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
 		}
 
-		public async Task<int> CreateDisc(int folderId, Disc disc, CancellationToken cancellationToken)
+		public async Task<int> CreateDisc(Disc disc, CancellationToken cancellationToken)
 		{
 			var discEntity = mapper.Map<DiscEntity>(disc);
-			discEntity.Folder = await context.FindFolder(folderId, cancellationToken);
-
 			context.Discs.Add(discEntity);
-			await context.SaveChangesAsync(cancellationToken);
+
+			try
+			{
+				await context.SaveChangesAsync(cancellationToken);
+			}
+			catch (DbUpdateException e) when (e.IsForeignKeyViolationException())
+			{
+				throw new FolderNotFoundException(Invariant($"The folder with id of {disc.FolderId} does not exist"));
+			}
 
 			return discEntity.Id;
 		}
 
 		public async Task<IReadOnlyCollection<Disc>> GetAllDiscs(CancellationToken cancellationToken)
 		{
-			return await Discs
+			return await context.Discs
+				.Select(d => mapper.Map<Disc>(d))
+				.ToListAsync(cancellationToken);
+		}
+
+		public async Task<IReadOnlyCollection<Disc>> GetDiscs(IEnumerable<int> discIds, CancellationToken cancellationToken)
+		{
+			return await context.Discs.Where(d => discIds.Contains(d.Id))
 				.Select(d => mapper.Map<Disc>(d))
 				.ToListAsync(cancellationToken);
 		}
 
 		public async Task<Disc> GetDisc(int discId, CancellationToken cancellationToken)
 		{
-			var discEntity = await Discs
+			var discEntity = await context.Discs
 				.Where(d => d.Id == discId)
 				.SingleOrDefaultAsync(cancellationToken);
 
@@ -61,7 +72,7 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 
 		public async Task<IReadOnlyCollection<Disc>> GetDiscsByFolderIds(IEnumerable<int> folderIds, CancellationToken cancellationToken)
 		{
-			return await Discs.Where(d => folderIds.Contains(d.Folder.Id))
+			return await context.Discs.Where(d => folderIds.Contains(d.FolderId))
 				.Select(s => mapper.Map<Disc>(s))
 				.ToListAsync(cancellationToken);
 		}

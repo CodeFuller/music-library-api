@@ -6,15 +6,16 @@
 
 		public string Name { get; }
 
-		public Folder? ParentFolder { get; private set; }
+		public int? ParentFolderId { get; }
 
-		public Folder(string name)
+		public Folder(string name, int? parentFolderId)
 		{
 			Name = name;
+			ParentFolderId = parentFolderId;
 		}
 
-		public Folder(int id, string name)
-			: this(name)
+		public Folder(int id, string name, int? parentFolderId)
+			: this(name, parentFolderId)
 		{
 			Id = id;
 		}

@@ -16,7 +16,12 @@ namespace MusicLibraryApi.GraphQL.Types
 			Field(x => x.AlbumTitle);
 			Field(x => x.AlbumId, nullable: true);
 			Field(x => x.AlbumOrder, nullable: true);
-			Field<FolderType>("folder", resolve: context => context.Source.Folder);
+			Field<NonNullGraphType<FolderType>>("folder", resolve: context =>
+			{
+				var foldersService = serviceAccessor.FoldersService;
+				var loader = dataLoader.Context.GetOrAddBatchLoader<int, Folder>("GetFoldersById", foldersService.GetFolders);
+				return loader.LoadAsync(context.Source.FolderId);
+			});
 			Field(x => x.DeleteDate, nullable: true);
 			Field(x => x.DeleteComment, nullable: true);
 			Field<ListGraphType<SongType>>(

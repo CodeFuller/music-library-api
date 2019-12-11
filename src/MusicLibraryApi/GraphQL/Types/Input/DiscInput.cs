@@ -5,7 +5,7 @@ namespace MusicLibraryApi.GraphQL.Types.Input
 {
 	public class DiscInput
 	{
-		public int FolderId { get; set; }
+		public int? FolderId { get; set; }
 
 		public int? Year { get; set; }
 
@@ -25,6 +25,11 @@ namespace MusicLibraryApi.GraphQL.Types.Input
 
 		public Disc ToModel()
 		{
+			if (FolderId == null)
+			{
+				throw new InvalidOperationException("Disc folder is not set");
+			}
+
 			if (Title == null)
 			{
 				throw new InvalidOperationException("Disc title is not set");
@@ -40,7 +45,7 @@ namespace MusicLibraryApi.GraphQL.Types.Input
 				throw new InvalidOperationException("Disc album title is not set");
 			}
 
-			return new Disc(Year, Title, TreeTitle, AlbumTitle, AlbumId, AlbumOrder, DeleteDate, DeleteComment);
+			return new Disc(Year, Title, TreeTitle, AlbumTitle, AlbumId, AlbumOrder, FolderId.Value, DeleteDate, DeleteComment);
 		}
 	}
 }

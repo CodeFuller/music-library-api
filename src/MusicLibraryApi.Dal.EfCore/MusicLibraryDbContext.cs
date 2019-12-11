@@ -29,13 +29,13 @@ namespace MusicLibraryApi.Dal.EfCore
 			{
 				b.ToTable("Folders");
 
-				// https://stackoverflow.com/a/47930643/5740031
-				b.HasIndex("ParentFolderId", nameof(FolderEntity.Name)).IsUnique();
+				b.HasIndex(f => new { f.ParentFolderId, f.Name, }).IsUnique();
 				b.HasOne(f => f.ParentFolder)
 					.WithMany(f => f!.Subfolders)
+					.HasForeignKey(d => d.ParentFolderId)
 					.OnDelete(DeleteBehavior.Restrict);
 
-				b.HasData(new FolderEntity(FoldersRepository.RootFolderId, "<ROOT>"));
+				b.HasData(new FolderEntity(FoldersRepository.RootFolderId, "<ROOT>", null));
 			});
 
 			modelBuilder.Entity<DiscEntity>(b =>
@@ -43,6 +43,8 @@ namespace MusicLibraryApi.Dal.EfCore
 				b.ToTable("Discs");
 				b.HasOne(s => s.Folder)
 					.WithMany(f => f!.Discs)
+					.IsRequired()
+					.HasForeignKey(d => d.FolderId)
 					.OnDelete(DeleteBehavior.Restrict);
 			});
 
@@ -52,10 +54,17 @@ namespace MusicLibraryApi.Dal.EfCore
 				b.HasOne(s => s.Disc)
 					.WithMany(d => d.Songs)
 					.IsRequired()
+					.HasForeignKey(s => s.DiscId)
 					.OnDelete(DeleteBehavior.Restrict);
 
 				b.HasOne(s => s.Artist)
 					.WithMany(a => a!.Songs)
+					.HasForeignKey(s => s.ArtistId)
+					.OnDelete(DeleteBehavior.Restrict);
+
+				b.HasOne(s => s.Genre)
+					.WithMany(g => g!.Songs)
+					.HasForeignKey(s => s.GenreId)
 					.OnDelete(DeleteBehavior.Restrict);
 			});
 
@@ -77,6 +86,7 @@ namespace MusicLibraryApi.Dal.EfCore
 				b.HasOne(p => p.Song)
 					.WithMany(s => s.Playbacks)
 					.IsRequired()
+					.HasForeignKey(p => p.SongId)
 					.OnDelete(DeleteBehavior.Restrict);
 			});
 		}

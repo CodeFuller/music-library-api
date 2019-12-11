@@ -28,14 +28,20 @@ namespace MusicLibraryApi.Logic.Services
 		{
 			try
 			{
-				var folder = new Folder(folderName);
-				return await repository.CreateFolder(parentFolderId, folder, cancellationToken);
+				var folder = new Folder(folderName, parentFolderId);
+				return await repository.CreateFolder(folder, cancellationToken);
 			}
 			catch (DuplicateKeyException e)
 			{
 				logger.LogError(e, "Folder {FolderName} already exists", folderName);
 				throw new ServiceOperationFailedException(Invariant($"Folder '{folderName}' already exists"), e);
 			}
+		}
+
+		public async Task<IDictionary<int, Folder>> GetFolders(IEnumerable<int> folderIds, CancellationToken cancellationToken)
+		{
+			var folders = await repository.GetFolders(folderIds, cancellationToken);
+			return folders.ToDictionary(f => f.Id);
 		}
 
 		public async Task<Folder> GetFolder(int? folderId, CancellationToken cancellationToken)
@@ -57,7 +63,7 @@ namespace MusicLibraryApi.Logic.Services
 			var subfolders = await repository.GetSubfoldersByFolderIds(folderIds, cancellationToken);
 			return subfolders
 				.OrderBy(f => f.Name)
-				.ToLookup(f => f.ParentFolder!.Id);
+				.ToLookup(f => f.ParentFolderId ?? 0);
 		}
 	}
 }

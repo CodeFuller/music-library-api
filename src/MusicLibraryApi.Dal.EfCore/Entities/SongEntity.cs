@@ -16,9 +16,15 @@ namespace MusicLibraryApi.Dal.EfCore.Entities
 
 		public TimeSpan Duration { get; private set; }
 
+		public int DiscId { get; private set; }
+
 		public DiscEntity Disc { get; set; } = null!;
 
+		public int? ArtistId { get; private set; }
+
 		public ArtistEntity? Artist { get; set; }
+
+		public int? GenreId { get; private set; }
 
 		public GenreEntity? Genre { get; set; }
 
@@ -36,14 +42,17 @@ namespace MusicLibraryApi.Dal.EfCore.Entities
 
 		public string? DeleteComment { get; private set; }
 
-		public SongEntity(int id, string title, string treeTitle, short? trackNumber, TimeSpan duration, Rating? rating, int? bitRate,
-			DateTimeOffset? lastPlaybackTime, int playbacksCount, DateTimeOffset? deleteDate = null, string? deleteComment = null)
+		public SongEntity(int id, string title, string treeTitle, short? trackNumber, TimeSpan duration, int discId, int? artistId, int? genreId,
+			Rating? rating, int? bitRate, DateTimeOffset? lastPlaybackTime, int playbacksCount, DateTimeOffset? deleteDate = null, string? deleteComment = null)
 		{
 			Id = id;
 			Title = title;
 			TreeTitle = treeTitle;
 			TrackNumber = trackNumber;
 			Duration = duration;
+			DiscId = discId;
+			ArtistId = artistId;
+			GenreId = genreId;
 			Rating = rating;
 			BitRate = bitRate;
 			LastPlaybackTime = lastPlaybackTime;

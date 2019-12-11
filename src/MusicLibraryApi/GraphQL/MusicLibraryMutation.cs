@@ -62,7 +62,7 @@ namespace MusicLibraryApi.GraphQL
 					var discInput = context.GetArgument<DiscInput>("disc");
 					var disc = discInput.ToModel();
 
-					var newDiscId = await serviceAccessor.DiscsService.CreateDisc(discInput.FolderId, disc, context.CancellationToken);
+					var newDiscId = await serviceAccessor.DiscsService.CreateDisc(disc, context.CancellationToken);
 					return new CreateDiscResult(newDiscId);
 				});
 
@@ -75,12 +75,7 @@ namespace MusicLibraryApi.GraphQL
 					var songInput = context.GetArgument<SongInput>("song");
 					var song = songInput.ToModel();
 
-					if (songInput.DiscId == null)
-					{
-						throw new InvalidOperationException("Disc for the song is not set");
-					}
-
-					var newSongId = await serviceAccessor.SongsService.CreateSong(songInput.DiscId.Value, songInput.ArtistId, songInput.GenreId, song, context.CancellationToken);
+					var newSongId = await serviceAccessor.SongsService.CreateSong(song, context.CancellationToken);
 					return new CreateSongResult(newSongId);
 				});
 		}

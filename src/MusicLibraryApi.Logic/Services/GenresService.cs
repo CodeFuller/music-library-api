@@ -43,6 +43,12 @@ namespace MusicLibraryApi.Logic.Services
 			return genres.OrderBy(g => g.Name).ToList();
 		}
 
+		public async Task<IDictionary<int, Genre>> GetGenres(IEnumerable<int> genreIds, CancellationToken cancellationToken)
+		{
+			var genres = await repository.GetGenres(genreIds, cancellationToken);
+			return genres.ToDictionary(g => g.Id);
+		}
+
 		public async Task<Genre> GetGenre(int genreId, CancellationToken cancellationToken)
 		{
 			try

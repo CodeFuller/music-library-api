@@ -8,9 +8,11 @@ namespace MusicLibraryApi.Abstractions.Interfaces
 {
 	public interface IDiscsService
 	{
-		Task<int> CreateDisc(int folderId, Disc disc, CancellationToken cancellationToken);
+		Task<int> CreateDisc(Disc disc, CancellationToken cancellationToken);
 
 		Task<IReadOnlyCollection<Disc>> GetAllDiscs(CancellationToken cancellationToken);
+
+		Task<IDictionary<int, Disc>> GetDiscs(IEnumerable<int> discIds, CancellationToken cancellationToken);
 
 		Task<Disc> GetDisc(int discId, CancellationToken cancellationToken);
 

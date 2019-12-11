@@ -14,11 +14,11 @@ namespace MusicLibraryApi.Abstractions.Models
 
 		public TimeSpan Duration { get; }
 
-		public Disc Disc { get; private set; } = null!;
+		public int DiscId { get; }
 
-		public Artist? Artist { get; private set; }
+		public int? ArtistId { get; }
 
-		public Genre? Genre { get; private set; }
+		public int? GenreId { get; }
 
 		public Rating? Rating { get; }
 
@@ -34,13 +34,16 @@ namespace MusicLibraryApi.Abstractions.Models
 
 		public bool IsDeleted => DeleteDate != null;
 
-		public Song(string title, string treeTitle, short? trackNumber, TimeSpan duration, Rating? rating, int? bitRate,
-			DateTimeOffset? lastPlaybackTime, int playbacksCount, DateTimeOffset? deleteDate, string? deleteComment)
+		public Song(string title, string treeTitle, short? trackNumber, TimeSpan duration, int discId, int? artistId, int? genreId,
+			Rating? rating, int? bitRate, DateTimeOffset? lastPlaybackTime, int playbacksCount, DateTimeOffset? deleteDate, string? deleteComment)
 		{
 			Title = title;
 			TreeTitle = treeTitle;
 			TrackNumber = trackNumber;
 			Duration = duration;
+			DiscId = discId;
+			ArtistId = artistId;
+			GenreId = genreId;
 			Rating = rating;
 			BitRate = bitRate;
 			LastPlaybackTime = lastPlaybackTime;
@@ -49,9 +52,9 @@ namespace MusicLibraryApi.Abstractions.Models
 			DeleteComment = deleteComment;
 		}
 
-		public Song(int id, string title, string treeTitle, short? trackNumber, TimeSpan duration, Rating? rating, int? bitRate,
-			DateTimeOffset? lastPlaybackTime, int playbacksCount, DateTimeOffset? deleteDate, string? deleteComment)
-			: this(title, treeTitle, trackNumber, duration, rating, bitRate, lastPlaybackTime, playbacksCount, deleteDate, deleteComment)
+		public Song(int id, string title, string treeTitle, short? trackNumber, TimeSpan duration, int discId, int? artistId, int? genreId,
+			Rating? rating, int? bitRate, DateTimeOffset? lastPlaybackTime, int playbacksCount, DateTimeOffset? deleteDate, string? deleteComment)
+			: this(title, treeTitle, trackNumber, duration, discId, artistId, genreId, rating, bitRate, lastPlaybackTime, playbacksCount, deleteDate, deleteComment)
 		{
 			Id = id;
 		}

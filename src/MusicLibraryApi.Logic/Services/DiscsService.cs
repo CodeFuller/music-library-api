@@ -23,15 +23,15 @@ namespace MusicLibraryApi.Logic.Services
 			this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
 		}
 
-		public async Task<int> CreateDisc(int folderId, Disc disc, CancellationToken cancellationToken)
+		public async Task<int> CreateDisc(Disc disc, CancellationToken cancellationToken)
 		{
 			try
 			{
-				return await repository.CreateDisc(folderId, disc, cancellationToken);
+				return await repository.CreateDisc(disc, cancellationToken);
 			}
 			catch (FolderNotFoundException e)
 			{
-				throw e.Handle(folderId, logger);
+				throw e.Handle(disc.FolderId, logger);
 			}
 		}
 
@@ -43,6 +43,12 @@ namespace MusicLibraryApi.Logic.Services
 			return discs
 				.Where(d => !d.IsDeleted)
 				.OrderBy(d => d.Id).ToList();
+		}
+
+		public async Task<IDictionary<int, Disc>> GetDiscs(IEnumerable<int> discIds, CancellationToken cancellationToken)
+		{
+			var discs = await repository.GetDiscs(discIds, cancellationToken);
+			return discs.ToDictionary(d => d.Id);
 		}
 
 		public async Task<Disc> GetDisc(int discId, CancellationToken cancellationToken)
@@ -66,7 +72,7 @@ namespace MusicLibraryApi.Logic.Services
 				.ThenBy(d => d.Year)
 				.ThenBy(d => d.AlbumTitle)
 				.ThenBy(d => d.AlbumOrder)
-				.ToLookup(d => d.Folder.Id);
+				.ToLookup(d => d.FolderId);
 		}
 	}
 }

@@ -50,6 +50,13 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 				.ToListAsync(cancellationToken);
 		}
 
+		public async Task<IReadOnlyCollection<Genre>> GetGenres(IEnumerable<int> genreIds, CancellationToken cancellationToken)
+		{
+			return await context.Genres.Where(g => genreIds.Contains(g.Id))
+				.Select(g => mapper.Map<Genre>(g))
+				.ToListAsync(cancellationToken);
+		}
+
 		public async Task<Genre> GetGenre(int genreId, CancellationToken cancellationToken)
 		{
 			var genreEntity = await context.Genres

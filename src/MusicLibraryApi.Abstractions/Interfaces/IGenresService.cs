@@ -11,6 +11,8 @@ namespace MusicLibraryApi.Abstractions.Interfaces
 
 		Task<IReadOnlyCollection<Genre>> GetAllGenres(CancellationToken cancellationToken);
 
+		Task<IDictionary<int, Genre>> GetGenres(IEnumerable<int> genreIds, CancellationToken cancellationToken);
+
 		Task<Genre> GetGenre(int genreId, CancellationToken cancellationToken);
 	}
 }

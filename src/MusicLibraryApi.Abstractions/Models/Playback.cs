@@ -6,14 +6,14 @@ namespace MusicLibraryApi.Abstractions.Models
 	{
 		public int Id { get; }
 
-		public Song Song { get; }
+		public int SongId { get; }
 
 		public DateTimeOffset PlaybackTime { get; }
 
-		public Playback(int id, Song song, DateTimeOffset playbackTime)
+		public Playback(int id, int songId, DateTimeOffset playbackTime)
 		{
 			Id = id;
-			Song = song;
+			SongId = songId;
 			PlaybackTime = playbackTime;
 		}
 	}

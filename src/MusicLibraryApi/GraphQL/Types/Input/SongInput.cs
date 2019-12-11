@@ -33,6 +33,11 @@ namespace MusicLibraryApi.GraphQL.Types.Input
 
 		public Song ToModel()
 		{
+			if (DiscId == null)
+			{
+				throw new InvalidOperationException("Song disc is not set");
+			}
+
 			if (Title == null)
 			{
 				throw new InvalidOperationException("Song title is not set");
@@ -48,7 +53,8 @@ namespace MusicLibraryApi.GraphQL.Types.Input
 				throw new InvalidOperationException("Song duration is not set");
 			}
 
-			return new Song(Title, TreeTitle, TrackNumber, Duration.Value, Rating, BitRate, LastPlaybackTime, PlaybacksCount ?? 0, DeleteDate, DeleteComment);
+			return new Song(Title, TreeTitle, TrackNumber, Duration.Value, DiscId.Value, ArtistId,
+				GenreId, Rating, BitRate, LastPlaybackTime, PlaybacksCount ?? 0, DeleteDate, DeleteComment);
 		}
 	}
 }

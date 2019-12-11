@@ -23,23 +23,23 @@ namespace MusicLibraryApi.Logic.Services
 			this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
 		}
 
-		public async Task<int> CreateSong(int discId, int? artistId, int? genreId, Song song, CancellationToken cancellationToken)
+		public async Task<int> CreateSong(Song song, CancellationToken cancellationToken)
 		{
 			try
 			{
-				return await repository.CreateSong(discId, artistId, genreId, song, cancellationToken);
+				return await repository.CreateSong(song, cancellationToken);
 			}
 			catch (DiscNotFoundException e)
 			{
-				throw e.Handle(discId, logger);
+				throw e.Handle(song.DiscId, logger);
 			}
 			catch (ArtistNotFoundException e)
 			{
-				throw e.Handle(artistId, logger);
+				throw e.Handle(song.ArtistId, logger);
 			}
 			catch (GenreNotFoundException e)
 			{
-				throw e.Handle(genreId, logger);
+				throw e.Handle(song.GenreId, logger);
 			}
 		}
 
@@ -73,21 +73,21 @@ namespace MusicLibraryApi.Logic.Services
 				.OrderBy(s => s.TrackNumber == null)
 				.ThenBy(s => s.TrackNumber)
 				.ThenBy(s => s.Title)
-				.ToLookup(s => s.Disc.Id);
+				.ToLookup(s => s.DiscId);
 		}
 
 		public async Task<ILookup<int, Song>> GetSongsByArtistIds(IEnumerable<int> artistIds, CancellationToken cancellationToken)
 		{
 			var songs = await repository.GetSongsByArtistIds(artistIds, cancellationToken);
 			return FilterAndOrderMixedSongs(songs)
-				.ToLookup(s => s.Artist!.Id);
+				.ToLookup(s => s.ArtistId ?? 0);
 		}
 
 		public async Task<ILookup<int, Song>> GetSongsByGenreIds(IEnumerable<int> genreIds, CancellationToken cancellationToken)
 		{
 			var songs = await repository.GetSongsByGenreIds(genreIds, cancellationToken);
 			return FilterAndOrderMixedSongs(songs)
-				.ToLookup(s => s.Genre!.Id);
+				.ToLookup(s => s.GenreId ?? 0);
 		}
 
 		private IReadOnlyCollection<Song> FilterAndOrderMixedSongs(IReadOnlyCollection<Song> songs)
