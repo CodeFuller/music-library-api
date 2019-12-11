@@ -57,23 +57,16 @@ namespace MusicLibraryApi.Logic.Services
 			}
 		}
 
-		public async Task<IReadOnlyCollection<Disc>> GetFolderDiscs(int folderId, bool includeDeletedDiscs, CancellationToken cancellationToken)
+		public async Task<ILookup<int, Disc>> GetDiscsByFolderIds(IEnumerable<int> folderIds, bool includeDeletedDiscs, CancellationToken cancellationToken)
 		{
-			try
-			{
-				var discs = await repository.GetFolderDiscs(folderId, cancellationToken);
-				return discs
-					.Where(d => includeDeletedDiscs || !d.IsDeleted)
-					.OrderBy(f => f.Year == null)
-					.ThenBy(d => d.Year)
-					.ThenBy(d => d.AlbumTitle)
-					.ThenBy(d => d.AlbumOrder)
-					.ToList();
-			}
-			catch (FolderNotFoundException e)
-			{
-				throw e.Handle(folderId, logger);
-			}
+			var discs = await repository.GetDiscsByFolderIds(folderIds, cancellationToken);
+			return discs
+				.Where(d => includeDeletedDiscs || !d.IsDeleted)
+				.OrderBy(d => d.Year == null)
+				.ThenBy(d => d.Year)
+				.ThenBy(d => d.AlbumTitle)
+				.ThenBy(d => d.AlbumOrder)
+				.ToLookup(d => d.Folder.Id);
 		}
 	}
 }

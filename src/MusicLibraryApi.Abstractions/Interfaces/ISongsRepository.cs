@@ -13,10 +13,10 @@ namespace MusicLibraryApi.Abstractions.Interfaces
 
 		Task<Song> GetSong(int songId, CancellationToken cancellationToken);
 
-		Task<IReadOnlyCollection<Song>> GetDiscSongs(int discId, CancellationToken cancellationToken);
+		Task<IReadOnlyCollection<Song>> GetSongsByDiscIds(IEnumerable<int> discIds, CancellationToken cancellationToken);
 
-		Task<IReadOnlyCollection<Song>> GetGenreSongs(int genreId, CancellationToken cancellationToken);
+		Task<IReadOnlyCollection<Song>> GetSongsByArtistIds(IEnumerable<int> artistIds, CancellationToken cancellationToken);
 
-		Task<IReadOnlyCollection<Song>> GetArtistSongs(int artistId, CancellationToken cancellationToken);
+		Task<IReadOnlyCollection<Song>> GetSongsByGenreIds(IEnumerable<int> genreIds, CancellationToken cancellationToken);
 	}
 }

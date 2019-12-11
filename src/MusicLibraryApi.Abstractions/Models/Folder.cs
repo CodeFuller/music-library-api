@@ -6,6 +6,8 @@
 
 		public string Name { get; }
 
+		public Folder? ParentFolder { get; private set; }
+
 		public Folder(string name)
 		{
 			Name = name;

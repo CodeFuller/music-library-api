@@ -59,10 +59,10 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 			return mapper.Map<Disc>(discEntity);
 		}
 
-		public async Task<IReadOnlyCollection<Disc>> GetFolderDiscs(int folderId, CancellationToken cancellationToken)
+		public async Task<IReadOnlyCollection<Disc>> GetDiscsByFolderIds(IEnumerable<int> folderIds, CancellationToken cancellationToken)
 		{
-			return await Discs.Where(d => d.Folder.Id == folderId)
-				.Select(d => mapper.Map<Disc>(d))
+			return await Discs.Where(d => folderIds.Contains(d.Folder.Id))
+				.Select(s => mapper.Map<Disc>(s))
 				.ToListAsync(cancellationToken);
 		}
 	}

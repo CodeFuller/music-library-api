@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MusicLibraryApi.Abstractions.Models;
@@ -13,6 +14,6 @@ namespace MusicLibraryApi.Abstractions.Interfaces
 
 		Task<Disc> GetDisc(int discId, CancellationToken cancellationToken);
 
-		Task<IReadOnlyCollection<Disc>> GetFolderDiscs(int folderId, bool includeDeletedDiscs, CancellationToken cancellationToken);
+		Task<ILookup<int, Disc>> GetDiscsByFolderIds(IEnumerable<int> folderIds, bool includeDeletedDiscs, CancellationToken cancellationToken);
 	}
 }

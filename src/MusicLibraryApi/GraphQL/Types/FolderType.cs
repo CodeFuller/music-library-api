@@ -1,4 +1,5 @@
-﻿using GraphQL.Types;
+﻿using GraphQL.DataLoader;
+using GraphQL.Types;
 using MusicLibraryApi.Abstractions.Models;
 using MusicLibraryApi.Interfaces;
 
@@ -6,21 +7,27 @@ namespace MusicLibraryApi.GraphQL.Types
 {
 	public class FolderType : ObjectGraphType<Folder>
 	{
-		public FolderType(IContextServiceAccessor serviceAccessor)
+		public FolderType(IContextServiceAccessor serviceAccessor, IDataLoaderContextAccessor dataLoader)
 		{
 			Field(x => x.Id);
 			Field(x => x.Name);
-			FieldAsync<NonNullGraphType<ListGraphType<NonNullGraphType<FolderType>>>>(
+			Field<ListGraphType<FolderType>>(
 				"subfolders",
-				resolve: async context => await serviceAccessor.FoldersService.GetFolderSubfolders(context.Source.Id, context.CancellationToken));
-			FieldAsync<NonNullGraphType<ListGraphType<NonNullGraphType<DiscType>>>>(
+				resolve: context =>
+				{
+					var foldersService = serviceAccessor.FoldersService;
+					var loader = dataLoader.Context.GetOrAddCollectionBatchLoader<int, Folder>("GetSubfoldersByFolderIds", foldersService.GetSubfoldersByFolderIds);
+					return loader.LoadAsync(context.Source.Id);
+				});
+			Field<ListGraphType<DiscType>>(
 				"discs",
-				arguments: new QueryArguments(
-					new QueryArgument<BooleanGraphType> { Name = "includeDeletedDiscs" }),
-				resolve: async context =>
+				arguments: new QueryArguments(new QueryArgument<BooleanGraphType> { Name = "includeDeletedDiscs" }),
+				resolve: context =>
 				{
 					var includeDeletedDiscs = context.GetArgument<bool?>("includeDeletedDiscs") ?? false;
-					return await serviceAccessor.DiscsService.GetFolderDiscs(context.Source.Id, includeDeletedDiscs, context.CancellationToken);
+					var foldersService = serviceAccessor.DiscsService;
+					var loader = dataLoader.Context.GetOrAddCollectionBatchLoader<int, Disc>("GetDiscsByFolderIds", (ids, cnt) => foldersService.GetDiscsByFolderIds(ids, includeDeletedDiscs, cnt));
+					return loader.LoadAsync(context.Source.Id);
 				});
 		}
 	}

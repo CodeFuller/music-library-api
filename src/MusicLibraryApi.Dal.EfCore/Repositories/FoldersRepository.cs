@@ -56,13 +56,11 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 			return mapper.Map<Folder>(folder);
 		}
 
-		public async Task<IReadOnlyCollection<Folder>> GetFolderSubfolders(int folderId, CancellationToken cancellationToken)
+		public async Task<IReadOnlyCollection<Folder>> GetSubfoldersByFolderIds(IEnumerable<int> folderIds, CancellationToken cancellationToken)
 		{
-			var subFolders = await context.Folders.Where(f => f.ParentFolder != null && f.ParentFolder.Id == folderId)
+			return await context.Folders.Where(f => f.ParentFolder != null && folderIds.Contains(f.ParentFolder.Id))
 				.Select(f => mapper.Map<Folder>(f))
 				.ToListAsync(cancellationToken);
-
-			return subFolders;
 		}
 	}
 }

@@ -16,11 +16,11 @@ namespace MusicLibraryApi.GraphQL.Types
 			Field<ArtistType>("artist", resolve: context => context.Source.Artist);
 			Field<GenreType>("genre", resolve: context => context.Source.Genre);
 			Field<RatingEnumType>("rating");
-			Field(x => x.BitRate, true);
-			Field(x => x.LastPlaybackTime, true);
+			Field(x => x.BitRate, nullable: true);
+			Field(x => x.LastPlaybackTime, nullable: true);
 			Field(x => x.PlaybacksCount);
-			Field(x => x.DeleteDate, true);
-			Field(x => x.DeleteComment, true);
+			Field(x => x.DeleteDate, nullable: true);
+			Field(x => x.DeleteComment, nullable: true);
 		}
 	}
 }

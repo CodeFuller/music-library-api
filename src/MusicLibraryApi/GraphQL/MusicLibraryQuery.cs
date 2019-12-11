@@ -44,7 +44,7 @@ namespace MusicLibraryApi.GraphQL
 					return await serviceAccessor.FoldersService.GetFolder(folderId, context.CancellationToken);
 				});
 
-			FieldAsync<ListGraphType<NonNullGraphType<DiscType>>>(
+			FieldAsync<ListGraphType<DiscType>>(
 				"discs",
 				resolve: async context => await serviceAccessor.DiscsService.GetAllDiscs(context.CancellationToken));
 
@@ -57,7 +57,7 @@ namespace MusicLibraryApi.GraphQL
 					return await serviceAccessor.DiscsService.GetDisc(discId, context.CancellationToken);
 				});
 
-			FieldAsync<ListGraphType<NonNullGraphType<SongType>>>(
+			FieldAsync<ListGraphType<SongType>>(
 				"songs",
 				resolve: async context => await serviceAccessor.SongsService.GetAllSongs(context.CancellationToken));
 

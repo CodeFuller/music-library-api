@@ -13,6 +13,6 @@ namespace MusicLibraryApi.Abstractions.Interfaces
 
 		Task<Disc> GetDisc(int discId, CancellationToken cancellationToken);
 
-		Task<IReadOnlyCollection<Disc>> GetFolderDiscs(int folderId, CancellationToken cancellationToken);
+		Task<IReadOnlyCollection<Disc>> GetDiscsByFolderIds(IEnumerable<int> folderIds, CancellationToken cancellationToken);
 	}
 }

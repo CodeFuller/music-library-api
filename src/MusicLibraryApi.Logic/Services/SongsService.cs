@@ -65,34 +65,29 @@ namespace MusicLibraryApi.Logic.Services
 			}
 		}
 
-		public async Task<IReadOnlyCollection<Song>> GetDiscSongs(int discId, CancellationToken cancellationToken)
+		public async Task<ILookup<int, Song>> GetSongsByDiscIds(IEnumerable<int> discIds, CancellationToken cancellationToken)
 		{
-			try
-			{
-				var songs = await repository.GetDiscSongs(discId, cancellationToken);
-				return songs
-					.Where(s => !s.IsDeleted)
-					.OrderBy(s => s.TrackNumber == null)
-					.ThenBy(s => s.TrackNumber)
-					.ThenBy(s => s.Title)
-					.ToList();
-			}
-			catch (DiscNotFoundException e)
-			{
-				throw e.Handle(discId, logger);
-			}
+			var songs = await repository.GetSongsByDiscIds(discIds, cancellationToken);
+			return songs.Select(s => s)
+				.Where(s => !s.IsDeleted)
+				.OrderBy(s => s.TrackNumber == null)
+				.ThenBy(s => s.TrackNumber)
+				.ThenBy(s => s.Title)
+				.ToLookup(s => s.Disc.Id);
 		}
 
-		public async Task<IReadOnlyCollection<Song>> GetGenreSongs(int genreId, CancellationToken cancellationToken)
+		public async Task<ILookup<int, Song>> GetSongsByArtistIds(IEnumerable<int> artistIds, CancellationToken cancellationToken)
 		{
-			var songs = await repository.GetGenreSongs(genreId, cancellationToken);
-			return FilterAndOrderMixedSongs(songs);
+			var songs = await repository.GetSongsByArtistIds(artistIds, cancellationToken);
+			return FilterAndOrderMixedSongs(songs)
+				.ToLookup(s => s.Artist!.Id);
 		}
 
-		public async Task<IReadOnlyCollection<Song>> GetArtistSongs(int artistId, CancellationToken cancellationToken)
+		public async Task<ILookup<int, Song>> GetSongsByGenreIds(IEnumerable<int> genreIds, CancellationToken cancellationToken)
 		{
-			var songs = await repository.GetArtistSongs(artistId, cancellationToken);
-			return FilterAndOrderMixedSongs(songs);
+			var songs = await repository.GetSongsByGenreIds(genreIds, cancellationToken);
+			return FilterAndOrderMixedSongs(songs)
+				.ToLookup(s => s.Genre!.Id);
 		}
 
 		private IReadOnlyCollection<Song> FilterAndOrderMixedSongs(IReadOnlyCollection<Song> songs)

@@ -52,9 +52,9 @@ namespace MusicLibraryApi
 			services.AddSingleton<IDependencyResolver>(s => new FuncDependencyResolver(s.GetRequiredService));
 
 			services.AddGraphQL(options => { options.ExposeExceptions = false; })
+				.AddDataLoader()
 				.AddGraphTypes(ServiceLifetime.Singleton);
 
-			services.AddTransient<IDocumentExecuter, SerialDocumentExecuter>();
 			services.AddTransient<IGraphQLExecuter<MusicLibrarySchema>, CustomGraphQLExecuter>();
 
 			// Fix for the error "Synchronous operations are disallowed. Call ReadAsync or set AllowSynchronousIO to true instead."

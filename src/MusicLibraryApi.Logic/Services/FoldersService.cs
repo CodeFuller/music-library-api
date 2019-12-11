@@ -52,19 +52,12 @@ namespace MusicLibraryApi.Logic.Services
 			}
 		}
 
-		public async Task<IReadOnlyCollection<Folder>> GetFolderSubfolders(int folderId, CancellationToken cancellationToken)
+		public async Task<ILookup<int, Folder>> GetSubfoldersByFolderIds(IEnumerable<int> folderIds, CancellationToken cancellationToken)
 		{
-			try
-			{
-				var subfolders = await repository.GetFolderSubfolders(folderId, cancellationToken);
-				return subfolders
-					.OrderBy(f => f.Name)
-					.ToList();
-			}
-			catch (FolderNotFoundException e)
-			{
-				throw e.Handle(folderId, logger);
-			}
+			var subfolders = await repository.GetSubfoldersByFolderIds(folderIds, cancellationToken);
+			return subfolders
+				.OrderBy(f => f.Name)
+				.ToLookup(f => f.ParentFolder!.Id);
 		}
 	}
 }

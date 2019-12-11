@@ -1,4 +1,5 @@
-﻿using GraphQL.Types;
+﻿using GraphQL.DataLoader;
+using GraphQL.Types;
 using MusicLibraryApi.Abstractions.Models;
 using MusicLibraryApi.Interfaces;
 
@@ -6,13 +7,18 @@ namespace MusicLibraryApi.GraphQL.Types
 {
 	public class ArtistType : ObjectGraphType<Artist>
 	{
-		public ArtistType(IContextServiceAccessor serviceAccessor)
+		public ArtistType(IContextServiceAccessor serviceAccessor, IDataLoaderContextAccessor dataLoader)
 		{
 			Field(x => x.Id);
 			Field(x => x.Name);
-			FieldAsync<NonNullGraphType<ListGraphType<NonNullGraphType<SongType>>>>(
+			Field<ListGraphType<SongType>>(
 				"songs",
-				resolve: async context => await serviceAccessor.SongsService.GetArtistSongs(context.Source.Id, context.CancellationToken));
+				resolve: context =>
+				{
+					var songsService = serviceAccessor.SongsService;
+					var loader = dataLoader.Context.GetOrAddCollectionBatchLoader<int, Song>("GetSongsByArtistIds", songsService.GetSongsByArtistIds);
+					return loader.LoadAsync(context.Source.Id);
+				});
 		}
 	}
 }
