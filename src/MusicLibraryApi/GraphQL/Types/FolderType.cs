@@ -7,7 +7,7 @@ namespace MusicLibraryApi.GraphQL.Types
 {
 	public class FolderType : ObjectGraphType<Folder>
 	{
-		public FolderType(IContextServiceAccessor serviceAccessor, IDataLoaderContextAccessor dataLoader)
+		public FolderType(IServiceAccessor serviceAccessor, IDataLoaderContextAccessor dataLoader)
 		{
 			Field(x => x.Id);
 			Field(x => x.Name);

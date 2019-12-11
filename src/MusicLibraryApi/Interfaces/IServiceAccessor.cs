@@ -2,7 +2,7 @@
 
 namespace MusicLibraryApi.Interfaces
 {
-	public interface IContextServiceAccessor
+	public interface IServiceAccessor
 	{
 		IGenresService GenresService { get; }
 

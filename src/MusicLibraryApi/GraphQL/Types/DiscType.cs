@@ -7,7 +7,7 @@ namespace MusicLibraryApi.GraphQL.Types
 {
 	public class DiscType : ObjectGraphType<Disc>
 	{
-		public DiscType(IContextServiceAccessor serviceAccessor, IDataLoaderContextAccessor dataLoader)
+		public DiscType(IServiceAccessor serviceAccessor, IDataLoaderContextAccessor dataLoader)
 		{
 			Field(x => x.Id);
 			Field(x => x.Year, nullable: true);

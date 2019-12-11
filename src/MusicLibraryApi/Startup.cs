@@ -34,7 +34,7 @@ namespace MusicLibraryApi
 				.AddNewtonsoftJson();
 
 			services.AddHttpContextAccessor();
-			services.AddSingleton<IContextServiceAccessor, ContextServiceAccessor>();
+			services.AddSingleton<IServiceAccessor, ServiceAccessor>();
 
 			var connectionString = Configuration.GetConnectionString("musicLibraryDB");
 			if (String.IsNullOrWhiteSpace(connectionString))

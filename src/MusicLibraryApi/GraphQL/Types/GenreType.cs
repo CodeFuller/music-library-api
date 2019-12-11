@@ -7,7 +7,7 @@ namespace MusicLibraryApi.GraphQL.Types
 {
 	public class GenreType : ObjectGraphType<Genre>
 	{
-		public GenreType(IContextServiceAccessor serviceAccessor, IDataLoaderContextAccessor dataLoader)
+		public GenreType(IServiceAccessor serviceAccessor, IDataLoaderContextAccessor dataLoader)
 		{
 			Field(x => x.Id);
 			Field(x => x.Name);

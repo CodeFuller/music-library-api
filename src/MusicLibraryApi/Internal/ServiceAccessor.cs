@@ -1,15 +1,13 @@
 ﻿using System;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using MusicLibraryApi.Abstractions.Interfaces;
 using MusicLibraryApi.Interfaces;
 
 namespace MusicLibraryApi.Internal
 {
-	// https://github.com/graphql-dotnet/graphql-dotnet/issues/648#issuecomment-431489339
-	public class ContextServiceAccessor : IContextServiceAccessor
+	public class ServiceAccessor : IServiceAccessor
 	{
-		private readonly IHttpContextAccessor httpContextAccessor;
+		private readonly IServiceProvider serviceProvider;
 
 		public IGenresService GenresService => GetService<IGenresService>();
 
@@ -21,14 +19,14 @@ namespace MusicLibraryApi.Internal
 
 		public ISongsService SongsService => GetService<ISongsService>();
 
-		public ContextServiceAccessor(IHttpContextAccessor httpContextAccessor)
+		public ServiceAccessor(IServiceProvider serviceProvider)
 		{
-			this.httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
+			this.serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
 		}
 
 		private TService GetService<TService>()
 		{
-			return httpContextAccessor.HttpContext.RequestServices.GetRequiredService<TService>();
+			return serviceProvider.GetRequiredService<TService>();
 		}
 	}
 }

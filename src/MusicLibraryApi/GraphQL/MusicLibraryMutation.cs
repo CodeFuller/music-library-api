@@ -8,7 +8,7 @@ namespace MusicLibraryApi.GraphQL
 {
 	public class MusicLibraryMutation : ObjectGraphType
 	{
-		public MusicLibraryMutation(IContextServiceAccessor serviceAccessor)
+		public MusicLibraryMutation(IServiceAccessor serviceAccessor)
 		{
 			FieldAsync<CreateGenreResultType>(
 				"createGenre",

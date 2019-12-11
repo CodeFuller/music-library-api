@@ -7,7 +7,7 @@ namespace MusicLibraryApi.GraphQL
 {
 	public class MusicLibraryQuery : ObjectGraphType
 	{
-		public MusicLibraryQuery(IContextServiceAccessor serviceAccessor)
+		public MusicLibraryQuery(IServiceAccessor serviceAccessor)
 		{
 			FieldAsync<ListGraphType<GenreType>>(
 				"genres",
