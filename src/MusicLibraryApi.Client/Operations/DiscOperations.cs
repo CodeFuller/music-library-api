@@ -14,7 +14,7 @@ namespace MusicLibraryApi.Client.Operations
 {
 	public class DiscOperations : BasicQuery, IDiscsQuery, IDiscsMutation
 	{
-		public DiscOperations(IHttpClientFactory httpClientFactory, ILogger<BasicQuery> logger)
+		public DiscOperations(IHttpClientFactory httpClientFactory, ILogger<DiscOperations> logger)
 			: base(httpClientFactory, logger)
 		{
 		}

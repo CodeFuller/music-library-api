@@ -45,10 +45,10 @@ namespace MusicLibraryApi.Logic.Services
 
 		public async Task<IReadOnlyCollection<Song>> GetAllSongs(CancellationToken cancellationToken)
 		{
-			var discs = await repository.GetAllSongs(cancellationToken);
+			var songs = await repository.GetAllSongs(cancellationToken);
 
 			// There is no meaningful sorting for all songs. We sort them by id here mostly for steady IT baselines.
-			return discs
+			return songs
 				.Where(d => !d.IsDeleted)
 				.OrderBy(d => d.Id).ToList();
 		}

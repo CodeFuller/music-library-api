@@ -60,7 +60,7 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 		public async Task<Artist> GetArtist(int artistId, CancellationToken cancellationToken)
 		{
 			var artistEntity = await context.Artists
-				.Where(x => x.Id == artistId)
+				.Where(a => a.Id == artistId)
 				.SingleOrDefaultAsync(cancellationToken);
 
 			if (artistEntity == null)

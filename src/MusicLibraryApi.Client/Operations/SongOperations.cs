@@ -14,7 +14,7 @@ namespace MusicLibraryApi.Client.Operations
 {
 	public class SongOperations : BasicQuery, ISongsQuery, ISongsMutation
 	{
-		public SongOperations(IHttpClientFactory httpClientFactory, ILogger<BasicQuery> logger)
+		public SongOperations(IHttpClientFactory httpClientFactory, ILogger<SongOperations> logger)
 			: base(httpClientFactory, logger)
 		{
 		}

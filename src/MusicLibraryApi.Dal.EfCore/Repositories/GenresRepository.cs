@@ -60,7 +60,7 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 		public async Task<Genre> GetGenre(int genreId, CancellationToken cancellationToken)
 		{
 			var genreEntity = await context.Genres
-				.Where(x => x.Id == genreId)
+				.Where(g => g.Id == genreId)
 				.SingleOrDefaultAsync(cancellationToken);
 
 			if (genreEntity == null)

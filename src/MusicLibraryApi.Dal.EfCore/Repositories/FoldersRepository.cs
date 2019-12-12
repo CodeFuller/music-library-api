@@ -68,7 +68,7 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 		public async Task<Folder> GetFolder(int folderId, CancellationToken cancellationToken)
 		{
 			var folderEntity = await context.Folders
-				.Where(x => x.Id == folderId)
+				.Where(f => f.Id == folderId)
 				.SingleOrDefaultAsync(cancellationToken);
 
 			if (folderEntity == null)

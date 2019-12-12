@@ -73,7 +73,7 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 		public async Task<IReadOnlyCollection<Disc>> GetDiscsByFolderIds(IEnumerable<int> folderIds, CancellationToken cancellationToken)
 		{
 			return await context.Discs.Where(d => folderIds.Contains(d.FolderId))
-				.Select(s => mapper.Map<Disc>(s))
+				.Select(d => mapper.Map<Disc>(d))
 				.ToListAsync(cancellationToken);
 		}
 	}
