@@ -13,5 +13,7 @@ namespace MusicLibraryApi.Interfaces
 		IDiscsService DiscsService { get; }
 
 		ISongsService SongsService { get; }
+
+		IPlaybacksService PlaybacksService { get; }
 	}
 }

@@ -72,6 +72,7 @@ namespace MusicLibraryApi.IntegrationTests
 			context.Folders.RemoveRange(context.Folders.Where(f => f.Id != FoldersRepository.RootFolderId));
 			context.Artists.RemoveRange(context.Artists);
 			context.Genres.RemoveRange(context.Genres);
+			context.Playbacks.RemoveRange(context.Playbacks);
 			context.SaveChanges();
 
 			SeedFoldersData(context, identityInsert);
@@ -79,6 +80,7 @@ namespace MusicLibraryApi.IntegrationTests
 			SeedArtistsData(context, identityInsert);
 			SeedDiscsData(context, identityInsert);
 			SeedSongsData(context, identityInsert);
+			SeedPlaybacksData(context, identityInsert);
 		}
 
 		/*
@@ -168,10 +170,10 @@ namespace MusicLibraryApi.IntegrationTests
 		private static void SeedSongsData(MusicLibraryDbContext context, IIdentityInsert identityInsert)
 		{
 			var song1 = new SongEntity(1, "Hell's Bells", "02 - Hell's Bells.mp3", 2, new TimeSpan(0, 5, 12), 1, null, 2,
-				Rating.R4, 320000, new DateTimeOffset(2018, 11, 25, 08, 25, 17, TimeSpan.FromHours(2)), 4);
+				Rating.R4, 320000, new DateTimeOffset(2018, 11, 25, 08, 25, 17, TimeSpan.FromHours(2)), 2);
 
 			var song2 = new SongEntity(2, "Highway To Hell", "01 - Highway To Hell.mp3", 1, new TimeSpan(0, 3, 28), 1, 2, 1,
-				Rating.R6, 320000, new DateTimeOffset(2018, 11, 25, 08, 20, 00, TimeSpan.FromHours(2)), 4);
+				Rating.R6, 320000, new DateTimeOffset(2018, 11, 25, 08, 20, 00, TimeSpan.FromHours(2)), 1);
 
 			var song3 = new SongEntity(3, "Are You Ready?", "03 - Are You Ready?.mp3", null, new TimeSpan(0, 4, 09), 1, 1, null,
 				null, null, null, 0);
@@ -182,6 +184,20 @@ namespace MusicLibraryApi.IntegrationTests
 			context.SaveChanges();
 
 			identityInsert.FinalizeIdentityInsert(context, "Songs", 4);
+		}
+
+		private static void SeedPlaybacksData(MusicLibraryDbContext context, IIdentityInsert identityInsert)
+		{
+			var playback1 = new PlaybackEntity(1, 1, new DateTimeOffset(2018, 11, 25, 08, 25, 17, TimeSpan.FromHours(2)));
+			var playback2 = new PlaybackEntity(2, 2, new DateTimeOffset(2018, 11, 25, 08, 20, 00, TimeSpan.FromHours(2)));
+			var playback3 = new PlaybackEntity(3, 1, new DateTimeOffset(2015, 10, 23, 15, 18, 43, TimeSpan.FromHours(2)));
+
+			identityInsert.InitializeIdentityInsert(context, "Playbacks");
+
+			context.Playbacks.AddRange(playback1, playback2, playback3);
+			context.SaveChanges();
+
+			identityInsert.FinalizeIdentityInsert(context, "Playbacks", 4);
 		}
 	}
 }

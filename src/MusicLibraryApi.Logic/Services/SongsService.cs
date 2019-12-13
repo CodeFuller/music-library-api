@@ -53,6 +53,12 @@ namespace MusicLibraryApi.Logic.Services
 				.OrderBy(d => d.Id).ToList();
 		}
 
+		public async Task<IDictionary<int, Song>> GetSongs(IEnumerable<int> songIds, CancellationToken cancellationToken)
+		{
+			var songs = await repository.GetSongs(songIds, cancellationToken);
+			return songs.ToDictionary(g => g.Id);
+		}
+
 		public async Task<Song> GetSong(int songId, CancellationToken cancellationToken)
 		{
 			try

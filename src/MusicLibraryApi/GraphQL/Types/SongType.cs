@@ -46,6 +46,14 @@ namespace MusicLibraryApi.GraphQL.Types
 			Field(x => x.BitRate, nullable: true);
 			Field(x => x.LastPlaybackTime, nullable: true);
 			Field(x => x.PlaybacksCount);
+			Field<ListGraphType<PlaybackType>>(
+				"playbacks",
+				resolve: context =>
+				{
+					var playbacksService = serviceAccessor.PlaybacksService;
+					var loader = dataLoader.Context.GetOrAddCollectionBatchLoader<int, Playback>("GetPlaybacksBySongIds", playbacksService.GetPlaybacksBySongIds);
+					return loader.LoadAsync(context.Source.Id);
+				});
 			Field(x => x.DeleteDate, nullable: true);
 			Field(x => x.DeleteComment, nullable: true);
 		}

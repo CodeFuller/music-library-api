@@ -78,6 +78,19 @@ namespace MusicLibraryApi.GraphQL
 					var newSongId = await serviceAccessor.SongsService.CreateSong(song, context.CancellationToken);
 					return new CreateSongResult(newSongId);
 				});
+
+			FieldAsync<AddPlaybackResultType>(
+				"addSongPlayback",
+				arguments: new QueryArguments(
+					new QueryArgument<NonNullGraphType<PlaybackInputType>> { Name = "playback" }),
+				resolve: async context =>
+				{
+					var playbackInput = context.GetArgument<PlaybackInput>("playback");
+					var playback = playbackInput.ToModel();
+
+					var newPlaybackId = await serviceAccessor.PlaybacksService.CreatePlayback(playback, context.CancellationToken);
+					return new AddPlaybackResult(newPlaybackId);
+				});
 		}
 	}
 }

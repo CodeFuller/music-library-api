@@ -12,6 +12,8 @@ namespace MusicLibraryApi.Abstractions.Interfaces
 
 		Task<IReadOnlyCollection<Song>> GetAllSongs(CancellationToken cancellationToken);
 
+		Task<IDictionary<int, Song>> GetSongs(IEnumerable<int> songIds, CancellationToken cancellationToken);
+
 		Task<Song> GetSong(int songId, CancellationToken cancellationToken);
 
 		Task<ILookup<int, Song>> GetSongsByDiscIds(IEnumerable<int> discIds, CancellationToken cancellationToken);

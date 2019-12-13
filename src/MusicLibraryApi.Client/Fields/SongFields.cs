@@ -1,6 +1,7 @@
 ﻿using MusicLibraryApi.Client.Contracts.Artists;
 using MusicLibraryApi.Client.Contracts.Discs;
 using MusicLibraryApi.Client.Contracts.Genres;
+using MusicLibraryApi.Client.Contracts.Playbacks;
 using MusicLibraryApi.Client.Contracts.Songs;
 
 namespace MusicLibraryApi.Client.Fields
@@ -38,6 +39,11 @@ namespace MusicLibraryApi.Client.Fields
 		public static ComplexQueryField<OutputSongData, OutputGenreData> Genre(QueryFieldSet<OutputGenreData> genreFields)
 		{
 			return new ComplexQueryField<OutputSongData, OutputGenreData>("genre", genreFields);
+		}
+
+		public static ComplexQueryField<OutputSongData, OutputPlaybackData> Playbacks(QueryFieldSet<OutputPlaybackData> playbackFields)
+		{
+			return new ComplexQueryField<OutputSongData, OutputPlaybackData>("playbacks", playbackFields);
 		}
 
 		public static QueryField<OutputSongData> DeleteDate { get; } = new QueryField<OutputSongData>("deleteDate");

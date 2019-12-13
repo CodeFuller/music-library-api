@@ -6,6 +6,7 @@ using MusicLibraryApi.Client.Contracts.Artists;
 using MusicLibraryApi.Client.Contracts.Discs;
 using MusicLibraryApi.Client.Contracts.Folders;
 using MusicLibraryApi.Client.Contracts.Genres;
+using MusicLibraryApi.Client.Contracts.Playbacks;
 using MusicLibraryApi.Client.Contracts.Songs;
 using MusicLibraryApi.Client.Fields;
 using MusicLibraryApi.Client.Interfaces;
@@ -21,7 +22,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			// Arrange
 
 			var subfolderFields = FolderFields.All + FolderFields.Subfolders(FolderFields.All) + FolderFields.Discs(DiscFields.All);
-			var songFields = SongFields.All + SongFields.Artist(ArtistFields.All) + SongFields.Genre(GenreFields.All) + SongFields.Disc(DiscFields.Id);
+			var songFields = SongFields.All + SongFields.Artist(ArtistFields.All) + SongFields.Genre(GenreFields.All) + SongFields.Disc(DiscFields.Id) + SongFields.Playbacks(PlaybackFields.Id);
 			var discFields = DiscFields.All + DiscFields.Songs(songFields) + DiscFields.Folder(FolderFields.All);
 			var requestedFields = FolderFields.All + FolderFields.Subfolders(subfolderFields) + FolderFields.Discs(discFields);
 
@@ -54,14 +55,17 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			{
 				new OutputSongData(id: 2, title: "Highway To Hell", treeTitle: "01 - Highway To Hell.mp3", trackNumber: 1, duration: new TimeSpan(0, 3, 28),
 					disc: new OutputDiscData(id: 1), artist: new OutputArtistData(id: 2, name: "AC/DC"), genre: new OutputGenreData(id: 1, name: "Russian Rock"), rating: Rating.R6, bitRate: 320000,
-					lastPlaybackTime: new DateTimeOffset(2018, 11, 25, 08, 20, 00, TimeSpan.FromHours(2)), playbacksCount: 4),
+					lastPlaybackTime: new DateTimeOffset(2018, 11, 25, 08, 20, 00, TimeSpan.FromHours(2)), playbacksCount: 1,
+					playbacks: new[] { new OutputPlaybackData(id: 2) }),
 
 				new OutputSongData(id: 1, title: "Hell's Bells", treeTitle: "02 - Hell's Bells.mp3", trackNumber: 2, duration: new TimeSpan(0, 5, 12),
 					disc: new OutputDiscData(id: 1), artist: null, genre: new OutputGenreData(id: 2, name: "Nu Metal"), rating: Rating.R4, bitRate: 320000,
-					lastPlaybackTime: new DateTimeOffset(2018, 11, 25, 08, 25, 17, TimeSpan.FromHours(2)), playbacksCount: 4),
+					lastPlaybackTime: new DateTimeOffset(2018, 11, 25, 08, 25, 17, TimeSpan.FromHours(2)), playbacksCount: 2,
+					playbacks: new[] { new OutputPlaybackData(id: 3), new OutputPlaybackData(id: 1), }),
 
 				new OutputSongData(id: 3, title: "Are You Ready?", treeTitle: "03 - Are You Ready?.mp3", duration: new TimeSpan(0, 4, 09),
-					disc: new OutputDiscData(id: 1), artist: new OutputArtistData(id: 1, name: "Nautilus Pompilius"), genre: null, playbacksCount: 0),
+					disc: new OutputDiscData(id: 1), artist: new OutputArtistData(id: 1, name: "Nautilus Pompilius"), genre: null, playbacksCount: 0,
+					playbacks: Array.Empty<OutputPlaybackData>()),
 			};
 
 			var expectedDiscs1 = new[]
@@ -91,24 +95,27 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		[TestMethod]
 		public async Task DeepUpwardQuery_ReturnsDataCorrectly()
 		{
-			var requestedFields = SongFields.All + SongFields.Disc(DiscFields.All + DiscFields.Folder(FolderFields.All)) + SongFields.Artist(ArtistFields.All) + SongFields.Genre(GenreFields.All);
+			var songFields = SongFields.All + SongFields.Disc(DiscFields.All + DiscFields.Folder(FolderFields.All)) + SongFields.Artist(ArtistFields.All) + SongFields.Genre(GenreFields.All);
+			var requestedFields = PlaybackFields.All + PlaybackFields.Song(songFields);
 
 			var expectedDisc = new OutputDiscData(id: 1, year: 2001, title: "Platinum Hits (CD 2)", treeTitle: "2001 - Platinum Hits (CD 2)",
 					albumTitle: "Platinum Hits", albumId: "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", albumOrder: 2, folder: new OutputFolderData(id: 1, name: "<ROOT>"));
 
 			var expectedSong = new OutputSongData(id: 2, title: "Highway To Hell", treeTitle: "01 - Highway To Hell.mp3", trackNumber: 1, duration: new TimeSpan(0, 3, 28),
 				disc: expectedDisc, artist: new OutputArtistData(2, "AC/DC"), genre: new OutputGenreData(id: 1, name: "Russian Rock"), rating: Rating.R6, bitRate: 320000,
-				lastPlaybackTime: new DateTimeOffset(2018, 11, 25, 08, 20, 00, TimeSpan.FromHours(2)), playbacksCount: 4);
+				lastPlaybackTime: new DateTimeOffset(2018, 11, 25, 08, 20, 00, TimeSpan.FromHours(2)), playbacksCount: 1);
 
-			var client = CreateClient<ISongsQuery>();
+			var expectedPlayback = new OutputPlaybackData(id: 2, playbackTime: new DateTimeOffset(2018, 11, 25, 08, 20, 00, TimeSpan.FromHours(2)), song: expectedSong);
+
+			var client = CreateClient<IPlaybacksQuery>();
 
 			// Act
 
-			var receivedSong = await client.GetSong(2, requestedFields, CancellationToken.None);
+			var receivedPlayback = await client.GetPlayback(2, requestedFields, CancellationToken.None);
 
 			// Assert
 
-			AssertData(expectedSong, receivedSong);
+			AssertData(expectedPlayback, receivedPlayback);
 		}
 	}
 }

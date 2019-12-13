@@ -16,6 +16,8 @@ namespace MusicLibraryApi.Dal.EfCore
 
 		public DbSet<SongEntity> Songs { get; set; } = null!;
 
+		public DbSet<PlaybackEntity> Playbacks { get; set; } = null!;
+
 		public static string SongDiscForeignKeyName => "FK_Songs_Discs_DiscId";
 
 		public static string SongArtistForeignKeyName => "FK_Songs_Artists_ArtistId";

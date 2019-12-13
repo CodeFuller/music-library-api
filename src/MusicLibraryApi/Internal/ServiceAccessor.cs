@@ -19,6 +19,8 @@ namespace MusicLibraryApi.Internal
 
 		public ISongsService SongsService => GetService<ISongsService>();
 
+		public IPlaybacksService PlaybacksService => GetService<IPlaybacksService>();
+
 		public ServiceAccessor(IServiceProvider serviceProvider)
 		{
 			this.serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));

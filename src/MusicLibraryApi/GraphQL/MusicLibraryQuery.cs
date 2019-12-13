@@ -70,6 +70,19 @@ namespace MusicLibraryApi.GraphQL
 					return await serviceAccessor.SongsService.GetSong(songId, context.CancellationToken);
 				});
 
+			FieldAsync<ListGraphType<PlaybackType>>(
+				"playbacks",
+				resolve: async context => await serviceAccessor.PlaybacksService.GetAllPlaybacks(context.CancellationToken));
+
+			FieldAsync<PlaybackType>(
+				"playback",
+				arguments: new QueryArguments(new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "id" }),
+				resolve: async context =>
+				{
+					var playbackId = context.GetArgument<int>("id");
+					return await serviceAccessor.PlaybacksService.GetPlayback(playbackId, context.CancellationToken);
+				});
+
 			// This 'error' field was added for IT purpose.
 			// It is required for testing of error handling middleware that hides internal sensitive exceptions.
 			Field<StringGraphType>(

@@ -8,6 +8,7 @@ namespace MusicLibraryApi.GraphQL.Types.Input
 		{
 			Name = "PlaybackInput";
 
+			Field<NonNullGraphType<IdGraphType>>("songId");
 			Field<NonNullGraphType<DateTimeOffsetGraphType>>("playbackTime");
 		}
 	}

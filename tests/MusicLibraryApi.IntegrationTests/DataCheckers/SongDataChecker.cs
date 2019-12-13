@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using MusicLibraryApi.Client.Contracts.Artists;
 using MusicLibraryApi.Client.Contracts.Discs;
 using MusicLibraryApi.Client.Contracts.Genres;
+using MusicLibraryApi.Client.Contracts.Playbacks;
 using MusicLibraryApi.Client.Contracts.Songs;
 
 namespace MusicLibraryApi.IntegrationTests.DataCheckers
@@ -14,6 +15,8 @@ namespace MusicLibraryApi.IntegrationTests.DataCheckers
 		public IDataChecker<OutputArtistData>? ArtistsChecker { get; set; }
 
 		public IDataChecker<OutputGenreData>? GenresChecker { get; set; }
+
+		public IDataChecker<OutputPlaybackData>? PlaybacksChecker { get; set; }
 
 		protected override IEnumerable<Action<OutputSongData, OutputSongData, string>> PropertiesCheckers
 		{
@@ -34,6 +37,11 @@ namespace MusicLibraryApi.IntegrationTests.DataCheckers
 					throw new InvalidOperationException($"{nameof(SongDataChecker)}.{nameof(GenresChecker)}  is not set");
 				}
 
+				if (PlaybacksChecker == null)
+				{
+					throw new InvalidOperationException($"{nameof(SongDataChecker)}.{nameof(PlaybacksChecker)}  is not set");
+				}
+
 				yield return FieldChecker(s => s.Id, nameof(OutputSongData.Id));
 				yield return FieldChecker(s => s.Title, nameof(OutputSongData.Title));
 				yield return FieldChecker(s => s.TreeTitle, nameof(OutputSongData.TreeTitle));
@@ -46,6 +54,7 @@ namespace MusicLibraryApi.IntegrationTests.DataCheckers
 				yield return FieldChecker(s => s.BitRate, nameof(OutputSongData.BitRate));
 				yield return FieldChecker(s => s.LastPlaybackTime, nameof(OutputSongData.LastPlaybackTime));
 				yield return FieldChecker(s => s.PlaybacksCount, nameof(OutputSongData.PlaybacksCount));
+				yield return FieldChecker(s => s.Playbacks, PlaybacksChecker, nameof(OutputSongData.Playbacks));
 				yield return FieldChecker(s => s.DeleteDate, nameof(OutputSongData.DeleteDate));
 				yield return FieldChecker(s => s.DeleteComment, nameof(OutputSongData.DeleteComment));
 			}

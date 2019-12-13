@@ -2,7 +2,7 @@
 using MusicLibraryApi.Abstractions.Interfaces;
 using MusicLibraryApi.Logic.Services;
 
-namespace MusicLibraryApi.Logic
+namespace MusicLibraryApi.Logic.Extensions
 {
 	public static class LogicServiceCollectionExtensions
 	{
@@ -13,6 +13,7 @@ namespace MusicLibraryApi.Logic
 			services.AddTransient<IFoldersService, FoldersService>();
 			services.AddTransient<IDiscsService, DiscsService>();
 			services.AddTransient<ISongsService, SongsService>();
+			services.AddTransient<IPlaybacksService, PlaybacksService>();
 
 			return services;
 		}

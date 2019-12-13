@@ -7,6 +7,7 @@ using MusicLibraryApi.Client.Contracts.Artists;
 using MusicLibraryApi.Client.Contracts.Discs;
 using MusicLibraryApi.Client.Contracts.Folders;
 using MusicLibraryApi.Client.Contracts.Genres;
+using MusicLibraryApi.Client.Contracts.Playbacks;
 using MusicLibraryApi.Client.Contracts.Songs;
 using MusicLibraryApi.IntegrationTests.DataCheckers;
 using MusicLibraryApi.IntegrationTests.Utility;
@@ -27,6 +28,8 @@ namespace MusicLibraryApi.IntegrationTests
 
 		private readonly SongDataChecker songsChecker;
 
+		private readonly PlaybackDataChecker playbacksChecker;
+
 		protected GraphQLTests()
 		{
 			WebApplicationFactory = new CustomWebApplicationFactory(this);
@@ -36,10 +39,12 @@ namespace MusicLibraryApi.IntegrationTests
 			genresChecker = new GenreDataChecker(songsChecker);
 			discsChecker = new DiscDataChecker(songsChecker);
 			foldersChecker = new FolderDataChecker(discsChecker);
+			playbacksChecker = new PlaybackDataChecker(songsChecker);
 
 			songsChecker.DiscsChecker = discsChecker;
 			songsChecker.ArtistsChecker = artistsChecker;
 			songsChecker.GenresChecker = genresChecker;
+			songsChecker.PlaybacksChecker = playbacksChecker;
 			discsChecker.FoldersChecker = foldersChecker;
 		}
 
@@ -102,6 +107,16 @@ namespace MusicLibraryApi.IntegrationTests
 		protected void AssertData(IEnumerable<OutputSongData>? expected, IEnumerable<OutputSongData>? actual)
 		{
 			songsChecker.CheckData(expected?.ToList(), actual?.ToList(), String.Empty);
+		}
+
+		protected void AssertData(OutputPlaybackData? expected, OutputPlaybackData? actual)
+		{
+			playbacksChecker.CheckData(expected, actual, String.Empty);
+		}
+
+		protected void AssertData(IEnumerable<OutputPlaybackData>? expected, IEnumerable<OutputPlaybackData>? actual)
+		{
+			playbacksChecker.CheckData(expected?.ToList(), actual?.ToList(), String.Empty);
 		}
 
 		protected virtual void Dispose(bool disposing)

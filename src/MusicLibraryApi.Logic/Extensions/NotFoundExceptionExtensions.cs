@@ -35,5 +35,11 @@ namespace MusicLibraryApi.Logic.Extensions
 			logger.LogError(e, "The genre with id of {GenreId} does not exist", genreId);
 			throw new ServiceOperationFailedException(Invariant($"The genre with id of '{genreId}' does not exist"), e);
 		}
+
+		public static ServiceOperationFailedException Handle(this PlaybackNotFoundException e, int? playbackId, ILogger logger)
+		{
+			logger.LogError(e, "The playback with id of {PlaybackId} does not exist", playbackId);
+			throw new ServiceOperationFailedException(Invariant($"The playback with id of '{playbackId}' does not exist"), e);
+		}
 	}
 }

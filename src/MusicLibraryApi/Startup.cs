@@ -15,7 +15,7 @@ using MusicLibraryApi.Dal.EfCore;
 using MusicLibraryApi.GraphQL;
 using MusicLibraryApi.Interfaces;
 using MusicLibraryApi.Internal;
-using MusicLibraryApi.Logic;
+using MusicLibraryApi.Logic.Extensions;
 
 namespace MusicLibraryApi
 {

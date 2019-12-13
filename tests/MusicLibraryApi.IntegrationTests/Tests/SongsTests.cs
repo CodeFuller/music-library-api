@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MusicLibraryApi.Client.Contracts.Artists;
 using MusicLibraryApi.Client.Contracts.Discs;
 using MusicLibraryApi.Client.Contracts.Genres;
+using MusicLibraryApi.Client.Contracts.Playbacks;
 using MusicLibraryApi.Client.Contracts.Songs;
 using MusicLibraryApi.Client.Exceptions;
 using MusicLibraryApi.Client.Fields;
@@ -15,7 +16,8 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 	[TestClass]
 	public class SongsTests : GraphQLTests
 	{
-		private static QueryFieldSet<OutputSongData> RequestedFields => SongFields.All + SongFields.Disc(DiscFields.Id) + SongFields.Artist(ArtistFields.Id) + SongFields.Genre(GenreFields.Id);
+		private static QueryFieldSet<OutputSongData> RequestedFields => SongFields.All + SongFields.Disc(DiscFields.Id) + SongFields.Artist(ArtistFields.Id) +
+		                                                                SongFields.Genre(GenreFields.Id) + SongFields.Playbacks(PlaybackFields.Id);
 
 		[TestMethod]
 		public async Task SongsQuery_ReturnsCorrectData()
@@ -26,14 +28,17 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			{
 				new OutputSongData(id: 1, title: "Hell's Bells", treeTitle: "02 - Hell's Bells.mp3", trackNumber: 2, duration: new TimeSpan(0, 5, 12),
 					disc: new OutputDiscData(id: 1), artist: null, genre: new OutputGenreData(id: 2), rating: Rating.R4, bitRate: 320000,
-					lastPlaybackTime: new DateTimeOffset(2018, 11, 25, 08, 25, 17, TimeSpan.FromHours(2)), playbacksCount: 4),
+					lastPlaybackTime: new DateTimeOffset(2018, 11, 25, 08, 25, 17, TimeSpan.FromHours(2)), playbacksCount: 2,
+					playbacks: new[] { new OutputPlaybackData(id: 3), new OutputPlaybackData(id: 1), }),
 
 				new OutputSongData(id: 2, title: "Highway To Hell", treeTitle: "01 - Highway To Hell.mp3", trackNumber: 1, duration: new TimeSpan(0, 3, 28),
 					disc: new OutputDiscData(id: 1), artist: new OutputArtistData(id: 2), genre: new OutputGenreData(id: 1), rating: Rating.R6, bitRate: 320000,
-					lastPlaybackTime: new DateTimeOffset(2018, 11, 25, 08, 20, 00, TimeSpan.FromHours(2)), playbacksCount: 4),
+					lastPlaybackTime: new DateTimeOffset(2018, 11, 25, 08, 20, 00, TimeSpan.FromHours(2)), playbacksCount: 1,
+					playbacks: new[] { new OutputPlaybackData(id: 2) }),
 
 				new OutputSongData(id: 3, title: "Are You Ready?", treeTitle: "03 - Are You Ready?.mp3", duration: new TimeSpan(0, 4, 09),
-					disc: new OutputDiscData(id: 1), artist: new OutputArtistData(id: 1), genre: null, playbacksCount: 0),
+					disc: new OutputDiscData(id: 1), artist: new OutputArtistData(id: 1), genre: null, playbacksCount: 0,
+					playbacks: Array.Empty<OutputPlaybackData>()),
 			};
 
 			var client = CreateClient<ISongsQuery>();
@@ -54,7 +59,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var expectedSong = new OutputSongData(id: 2, title: "Highway To Hell", treeTitle: "01 - Highway To Hell.mp3", trackNumber: 1, duration: new TimeSpan(0, 3, 28),
 				disc: new OutputDiscData(id: 1), artist: new OutputArtistData(id: 2), genre: new OutputGenreData(id: 1), rating: Rating.R6, bitRate: 320000,
-				lastPlaybackTime: new DateTimeOffset(2018, 11, 25, 08, 20, 00, TimeSpan.FromHours(2)), playbacksCount: 4);
+				lastPlaybackTime: new DateTimeOffset(2018, 11, 25, 08, 20, 00, TimeSpan.FromHours(2)), playbacksCount: 1, playbacks: new[] { new OutputPlaybackData(id: 2) });
 
 			var client = CreateClient<ISongsQuery>();
 
@@ -106,7 +111,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var expectedSong = new OutputSongData(id: 4, title: "Hail Caesar", treeTitle: "04 - Hail Caesar.mp3", trackNumber: 4, duration: new TimeSpan(0, 5, 13),
 				disc: new OutputDiscData(id: 1), artist: new OutputArtistData(id: 2), genre: new OutputGenreData(id: 3), rating: Rating.R4, bitRate: 320000,
-				lastPlaybackTime: new DateTimeOffset(2018, 11, 25, 08, 35, 28, TimeSpan.FromHours(2)), playbacksCount: 4,
+				lastPlaybackTime: new DateTimeOffset(2018, 11, 25, 08, 35, 28, TimeSpan.FromHours(2)), playbacksCount: 4, playbacks: Array.Empty<OutputPlaybackData>(),
 				deleteDate: new DateTimeOffset(2019, 12, 10, 07, 20, 25, TimeSpan.FromHours(2)), deleteComment: "For a test");
 
 			var songsQuery = CreateClient<ISongsQuery>();
@@ -136,7 +141,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var expectedSong = new OutputSongData(id: 4, title: "Hail Caesar", treeTitle: "04 - Hail Caesar.mp3", trackNumber: null, duration: new TimeSpan(0, 5, 13),
 				disc: new OutputDiscData(id: 1), artist: null, genre: null, rating: null, bitRate: null,
-				lastPlaybackTime: null, playbacksCount: 0);
+				lastPlaybackTime: null, playbacksCount: 0, playbacks: Array.Empty<OutputPlaybackData>());
 
 			var songsQuery = CreateClient<ISongsQuery>();
 			var receivedSong = await songsQuery.GetSong(4, RequestedFields, CancellationToken.None);
