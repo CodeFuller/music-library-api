@@ -1,4 +1,5 @@
 ﻿using System;
+using MusicLibraryApi.Abstractions.Models;
 
 namespace MusicLibraryApi.GraphQL.Types.Input
 {
@@ -8,14 +9,19 @@ namespace MusicLibraryApi.GraphQL.Types.Input
 
 		public int? ParentFolderId { get; set; }
 
-		public string GetFolderName()
+		public Folder ToModel()
 		{
+			if (ParentFolderId == null)
+			{
+				throw new InvalidOperationException("Parent folder id is not set");
+			}
+
 			if (String.IsNullOrEmpty(Name))
 			{
 				throw new InvalidOperationException("The folder name is not set");
 			}
 
-			return Name;
+			return new Folder(Name, ParentFolderId);
 		}
 	}
 }

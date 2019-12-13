@@ -7,7 +7,7 @@ namespace MusicLibraryApi.Abstractions.Interfaces
 {
 	public interface IDiscsRepository
 	{
-		Task<int> CreateDisc(Disc disc, CancellationToken cancellationToken);
+		Task AddDisc(Disc disc, CancellationToken cancellationToken);
 
 		Task<IReadOnlyCollection<Disc>> GetAllDiscs(CancellationToken cancellationToken);
 

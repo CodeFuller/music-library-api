@@ -7,7 +7,7 @@ namespace MusicLibraryApi.Abstractions.Interfaces
 {
 	public interface IPlaybacksRepository
 	{
-		Task<int> CreatePlayback(Playback playback, CancellationToken cancellationToken);
+		Task AddPlayback(Playback playback, CancellationToken cancellationToken);
 
 		Task<IReadOnlyCollection<Playback>> GetAllPlaybacks(CancellationToken cancellationToken);
 

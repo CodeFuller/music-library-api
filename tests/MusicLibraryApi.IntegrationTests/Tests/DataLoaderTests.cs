@@ -116,13 +116,13 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			services.AddSingleton<IArtistsService>(sp =>
 			{
-				ArtistsService = new ArtistsServiceMock(new ArtistsService(sp.GetRequiredService<IArtistsRepository>(), sp.GetRequiredService<ILogger<ArtistsService>>()));
+				ArtistsService = new ArtistsServiceMock(new ArtistsService(sp.GetRequiredService<IUnitOfWork>(), sp.GetRequiredService<ILogger<ArtistsService>>()));
 				return ArtistsService;
 			});
 
 			services.AddSingleton<IDiscsService>(sp =>
 			{
-				DiscsService = new DiscsServiceMock(new DiscsService(sp.GetRequiredService<IDiscsRepository>(), sp.GetRequiredService<ILogger<DiscsService>>()));
+				DiscsService = new DiscsServiceMock(new DiscsService(sp.GetRequiredService<IUnitOfWork>(), sp.GetRequiredService<ILogger<DiscsService>>()));
 				return DiscsService;
 			});
 		}

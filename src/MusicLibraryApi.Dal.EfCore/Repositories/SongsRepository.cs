@@ -20,28 +20,10 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 			this.context = context ?? throw new ArgumentNullException(nameof(context));
 		}
 
-		public async Task<int> CreateSong(Song song, CancellationToken cancellationToken)
+		public Task AddSong(Song song, CancellationToken cancellationToken)
 		{
 			context.Songs.Add(song);
-
-			try
-			{
-				await context.SaveChangesAsync(cancellationToken);
-			}
-			catch (DbUpdateException e) when (e.IsForeignKeyViolationException(MusicLibraryDbContext.SongDiscForeignKeyName))
-			{
-				throw new DiscNotFoundException(Invariant($"The disc with id of {song.DiscId} does not exist"));
-			}
-			catch (DbUpdateException e) when (e.IsForeignKeyViolationException(MusicLibraryDbContext.SongArtistForeignKeyName))
-			{
-				throw new ArtistNotFoundException(Invariant($"The artist with id of {song.ArtistId} does not exist"));
-			}
-			catch (DbUpdateException e) when (e.IsForeignKeyViolationException(MusicLibraryDbContext.SongGenreForeignKeyName))
-			{
-				throw new GenreNotFoundException(Invariant($"The genre with id of {song.GenreId} does not exist"));
-			}
-
-			return song.Id;
+			return Task.CompletedTask;
 		}
 
 		public async Task<IReadOnlyCollection<Song>> GetAllSongs(CancellationToken cancellationToken)

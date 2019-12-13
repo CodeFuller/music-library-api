@@ -18,6 +18,10 @@ namespace MusicLibraryApi.Dal.EfCore
 
 		public DbSet<Playback> Playbacks { get; set; } = null!;
 
+		public static string DiscFolderForeignKeyName => "FK_Discs_Folders_FolderId";
+
+		public static string FolderParentFolderForeignKeyName => "FK_Folders_Folders_ParentFolderId";
+
 		public static string SongDiscForeignKeyName => "FK_Songs_Discs_DiscId";
 
 		public static string SongArtistForeignKeyName => "FK_Songs_Artists_ArtistId";
@@ -41,6 +45,7 @@ namespace MusicLibraryApi.Dal.EfCore
 				b.HasOne(f => f.ParentFolder)
 					.WithMany(f => f!.Subfolders)
 					.HasForeignKey(d => d.ParentFolderId)
+					.HasConstraintName(FolderParentFolderForeignKeyName)
 					.OnDelete(DeleteBehavior.Restrict);
 
 				b.HasData(new Folder(FoldersRepository.RootFolderId, "<ROOT>", null));
@@ -53,6 +58,7 @@ namespace MusicLibraryApi.Dal.EfCore
 					.WithMany(f => f!.Discs)
 					.IsRequired()
 					.HasForeignKey(d => d.FolderId)
+					.HasConstraintName(DiscFolderForeignKeyName)
 					.OnDelete(DeleteBehavior.Restrict);
 			});
 

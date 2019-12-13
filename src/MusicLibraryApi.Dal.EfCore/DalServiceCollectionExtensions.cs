@@ -17,6 +17,8 @@ namespace MusicLibraryApi.Dal.EfCore
 			services.AddTransient<ISongsRepository, SongsRepository>();
 			services.AddTransient<IPlaybacksRepository, PlaybacksRepository>();
 
+			services.AddTransient<IUnitOfWork, UnitOfWork>();
+
 			services.AddDbContext<MusicLibraryDbContext>(
 				options => options.UseNpgsql(connectionString, b => b.MigrationsAssembly(MigrationsAssembly.Name)),
 				contextLifetime: ServiceLifetime.Transient,

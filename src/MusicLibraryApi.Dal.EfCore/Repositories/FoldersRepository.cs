@@ -27,29 +27,10 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 			return Task.FromResult(RootFolderId);
 		}
 
-		public async Task<int> CreateFolder(Folder folder, CancellationToken cancellationToken)
+		public Task AddFolder(Folder folder, CancellationToken cancellationToken)
 		{
-			if (folder.ParentFolderId == null)
-			{
-				throw new InvalidOperationException("Can not create a folder without a parent");
-			}
-
 			context.Folders.Add(folder);
-
-			try
-			{
-				await context.SaveChangesAsync(cancellationToken);
-			}
-			catch (DbUpdateException e) when (e.IsForeignKeyViolationException())
-			{
-				throw new FolderNotFoundException(Invariant($"The parent folder with id of {folder.ParentFolderId} does not exist"));
-			}
-			catch (DbUpdateException e) when (e.IsUniqueViolationException())
-			{
-				throw new DuplicateKeyException($"Failed to add folder '{folder.Name}' to the database", e);
-			}
-
-			return folder.Id;
+			return Task.CompletedTask;
 		}
 
 		public async Task<IReadOnlyCollection<Folder>> GetFolders(IEnumerable<int> folderIds, CancellationToken cancellationToken)

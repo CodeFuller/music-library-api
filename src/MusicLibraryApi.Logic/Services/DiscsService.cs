@@ -13,21 +13,28 @@ namespace MusicLibraryApi.Logic.Services
 {
 	public class DiscsService : IDiscsService
 	{
+		private readonly IUnitOfWork unitOfWork;
+
 		private readonly IDiscsRepository repository;
 
 		private readonly ILogger<DiscsService> logger;
 
-		public DiscsService(IDiscsRepository repository, ILogger<DiscsService> logger)
+		public DiscsService(IUnitOfWork unitOfWork, ILogger<DiscsService> logger)
 		{
-			this.repository = repository ?? throw new ArgumentNullException(nameof(repository));
+			this.unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
 			this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
+			this.repository = unitOfWork.DiscsRepository;
 		}
 
 		public async Task<int> CreateDisc(Disc disc, CancellationToken cancellationToken)
 		{
 			try
 			{
-				return await repository.CreateDisc(disc, cancellationToken);
+				await repository.AddDisc(disc, cancellationToken);
+				await unitOfWork.Commit(cancellationToken);
+
+				return disc.Id;
 			}
 			catch (FolderNotFoundException e)
 			{

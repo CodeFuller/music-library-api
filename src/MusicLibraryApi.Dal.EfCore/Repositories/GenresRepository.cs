@@ -20,20 +20,10 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 			this.context = context ?? throw new ArgumentNullException(nameof(context));
 		}
 
-		public async Task<int> CreateGenre(Genre genre, CancellationToken cancellationToken)
+		public Task AddGenre(Genre genre, CancellationToken cancellationToken)
 		{
 			context.Genres.Add(genre);
-
-			try
-			{
-				await context.SaveChangesAsync(cancellationToken);
-			}
-			catch (DbUpdateException e) when (e.IsUniqueViolationException())
-			{
-				throw new DuplicateKeyException($"Failed to add genre '{genre.Name}' to the database", e);
-			}
-
-			return genre.Id;
+			return Task.CompletedTask;
 		}
 
 		public async Task<IReadOnlyCollection<Genre>> GetAllGenres(CancellationToken cancellationToken)

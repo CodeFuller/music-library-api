@@ -8,7 +8,7 @@ namespace MusicLibraryApi.Abstractions.Interfaces
 {
 	public interface IFoldersService
 	{
-		Task<int> CreateFolder(int parentFolderId, string folderName, CancellationToken cancellationToken);
+		Task<int> CreateFolder(Folder folder, CancellationToken cancellationToken);
 
 		Task<IDictionary<int, Folder>> GetFolders(IEnumerable<int> folderIds, CancellationToken cancellationToken);
 

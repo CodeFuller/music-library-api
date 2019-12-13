@@ -7,7 +7,7 @@ namespace MusicLibraryApi.Abstractions.Interfaces
 {
 	public interface IArtistsRepository
 	{
-		Task<int> CreateArtist(Artist artist, CancellationToken cancellationToken);
+		Task AddArtist(Artist artist, CancellationToken cancellationToken);
 
 		Task<IReadOnlyCollection<Artist>> GetAllArtists(CancellationToken cancellationToken);
 

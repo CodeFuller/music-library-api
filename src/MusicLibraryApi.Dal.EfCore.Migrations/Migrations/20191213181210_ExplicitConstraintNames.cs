@@ -2,7 +2,7 @@
 
 namespace MusicLibraryApi.Dal.EfCore.Migrations.Migrations
 {
-    public partial class Test : Migration
+    public partial class ExplicitConstraintNames : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

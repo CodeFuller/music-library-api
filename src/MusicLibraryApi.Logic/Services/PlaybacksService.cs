@@ -13,26 +13,48 @@ namespace MusicLibraryApi.Logic.Services
 {
 	public class PlaybacksService : IPlaybacksService
 	{
+		private readonly IUnitOfWork unitOfWork;
+
 		private readonly IPlaybacksRepository repository;
 
 		private readonly ILogger<PlaybacksService> logger;
 
-		public PlaybacksService(IPlaybacksRepository repository, ILogger<PlaybacksService> logger)
+		public PlaybacksService(IUnitOfWork unitOfWork, ILogger<PlaybacksService> logger)
 		{
-			this.repository = repository ?? throw new ArgumentNullException(nameof(repository));
+			this.unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
 			this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
+			this.repository = unitOfWork.PlaybacksRepository;
 		}
 
 		public async Task<int> CreatePlayback(Playback playback, CancellationToken cancellationToken)
 		{
+			var playbackTime = playback.PlaybackTime;
+
+			Song song;
+
 			try
 			{
-				return await repository.CreatePlayback(playback, cancellationToken);
+				song = await unitOfWork.SongsRepository.GetSong(playback.SongId, cancellationToken);
 			}
 			catch (SongNotFoundException e)
 			{
 				throw e.Handle(playback.SongId, logger);
 			}
+
+			if (song.LastPlaybackTime != null && playbackTime <= song.LastPlaybackTime)
+			{
+				throw new ServiceOperationFailedException($"Can not add earlier playback for the song: {playbackTime:yyyy.MM.dd HH:mm:ss} <= {song.LastPlaybackTime:yyyy.MM.dd HH:mm:ss}");
+			}
+
+			await repository.AddPlayback(playback, cancellationToken);
+
+			song.PlaybacksCount += 1;
+			song.LastPlaybackTime = playbackTime;
+
+			await unitOfWork.Commit(cancellationToken);
+
+			return playback.Id;
 		}
 
 		public async Task<IReadOnlyCollection<Playback>> GetAllPlaybacks(CancellationToken cancellationToken)

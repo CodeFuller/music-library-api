@@ -14,21 +14,28 @@ namespace MusicLibraryApi.Logic.Services
 {
 	public class GenresService : IGenresService
 	{
+		private readonly IUnitOfWork unitOfWork;
+
 		private readonly IGenresRepository repository;
 
 		private readonly ILogger<GenresService> logger;
 
-		public GenresService(IGenresRepository repository, ILogger<GenresService> logger)
+		public GenresService(IUnitOfWork unitOfWork, ILogger<GenresService> logger)
 		{
-			this.repository = repository ?? throw new ArgumentNullException(nameof(repository));
+			this.unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
 			this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
+			this.repository = unitOfWork.GenresRepository;
 		}
 
 		public async Task<int> CreateGenre(Genre genre, CancellationToken cancellationToken)
 		{
 			try
 			{
-				return await repository.CreateGenre(genre, cancellationToken);
+				await repository.AddGenre(genre, cancellationToken);
+				await unitOfWork.Commit(cancellationToken);
+
+				return genre.Id;
 			}
 			catch (DuplicateKeyException e)
 			{

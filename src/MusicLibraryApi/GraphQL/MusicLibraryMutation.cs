@@ -1,5 +1,4 @@
-﻿using System;
-using GraphQL.Types;
+﻿using GraphQL.Types;
 using MusicLibraryApi.GraphQL.Types.Input;
 using MusicLibraryApi.GraphQL.Types.Output;
 using MusicLibraryApi.Interfaces;
@@ -43,13 +42,9 @@ namespace MusicLibraryApi.GraphQL
 				resolve: async context =>
 				{
 					var folderInput = context.GetArgument<FolderInput>("folder");
+					var folder = folderInput.ToModel();
 
-					if (folderInput.ParentFolderId == null)
-					{
-						throw new InvalidOperationException("Parent folder id is not set");
-					}
-
-					var newFolderId = await serviceAccessor.FoldersService.CreateFolder(folderInput.ParentFolderId.Value, folderInput.GetFolderName(), context.CancellationToken);
+					var newFolderId = await serviceAccessor.FoldersService.CreateFolder(folder, context.CancellationToken);
 					return new CreateFolderResult(newFolderId);
 				});
 

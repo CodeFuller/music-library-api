@@ -92,7 +92,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Checking created playback data
 
-			var expectedSong = new OutputSongData(lastPlaybackTime: null, playbacksCount: 0,
+			var expectedSong = new OutputSongData(lastPlaybackTime: new DateTimeOffset(2019, 12, 13, 07, 05, 42, TimeSpan.FromHours(2)), playbacksCount: 1,
 				playbacks: new[] { new OutputPlaybackData(id: 4, playbackTime: new DateTimeOffset(2019, 12, 13, 07, 05, 42, TimeSpan.FromHours(2))), });
 
 			var songsQuery = CreateClient<ISongsQuery>();
@@ -128,7 +128,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 				new OutputPlaybackData(id: 4, playbackTime: new DateTimeOffset(2019, 12, 13, 07, 05, 42, TimeSpan.FromHours(2))),
 			};
 
-			var expectedSong = new OutputSongData(lastPlaybackTime: new DateTimeOffset(2018, 11, 25, 08, 25, 17, TimeSpan.FromHours(2)), playbacksCount: 2, playbacks: expectedPlaybacks);
+			var expectedSong = new OutputSongData(lastPlaybackTime: new DateTimeOffset(2019, 12, 13, 07, 05, 42, TimeSpan.FromHours(2)), playbacksCount: 3, playbacks: expectedPlaybacks);
 
 			var songsQuery = CreateClient<ISongsQuery>();
 			var requestedFields = SongFields.PlaybacksCount + SongFields.LastPlaybackTime + SongFields.PlaybacksCount + SongFields.Playbacks(PlaybackFields.Id + PlaybackFields.PlaybackTime);
@@ -154,6 +154,25 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var exception = await Assert.ThrowsExceptionAsync<GraphQLRequestFailedException>(() => addPlaybackTask);
 			Assert.AreEqual("The song with id of '12345' does not exist", exception.Message);
+		}
+
+		[TestMethod]
+		public async Task CreatePlaybackMutation_ForInconsistentPlaybackTime_ReturnsError()
+		{
+			// Arrange
+
+			var newPlaybackData = new InputPlaybackData(1, new DateTimeOffset(2018, 11, 25, 08, 18, 17, TimeSpan.FromHours(2)));
+
+			var client = CreateClient<IPlaybacksMutation>();
+
+			// Act
+
+			var addPlaybackTask = client.AddSongPlayback(newPlaybackData, CancellationToken.None);
+
+			// Assert
+
+			var exception = await Assert.ThrowsExceptionAsync<GraphQLRequestFailedException>(() => addPlaybackTask);
+			Assert.AreEqual("Can not add earlier playback for the song: 2018.11.25 09:18:17 <= 2018.11.25 09:25:17", exception.Message);
 		}
 	}
 }

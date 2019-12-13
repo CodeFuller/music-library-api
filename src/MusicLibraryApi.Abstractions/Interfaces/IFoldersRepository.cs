@@ -9,7 +9,7 @@ namespace MusicLibraryApi.Abstractions.Interfaces
 	{
 		Task<int> GetRooFolderId(CancellationToken cancellationToken);
 
-		Task<int> CreateFolder(Folder folder, CancellationToken cancellationToken);
+		Task AddFolder(Folder folder, CancellationToken cancellationToken);
 
 		Task<IReadOnlyCollection<Folder>> GetFolders(IEnumerable<int> folderIds, CancellationToken cancellationToken);
 

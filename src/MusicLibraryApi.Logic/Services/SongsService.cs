@@ -13,21 +13,28 @@ namespace MusicLibraryApi.Logic.Services
 {
 	public class SongsService : ISongsService
 	{
+		private readonly IUnitOfWork unitOfWork;
+
 		private readonly ISongsRepository repository;
 
 		private readonly ILogger<SongsService> logger;
 
-		public SongsService(ISongsRepository repository, ILogger<SongsService> logger)
+		public SongsService(IUnitOfWork unitOfWork, ILogger<SongsService> logger)
 		{
-			this.repository = repository ?? throw new ArgumentNullException(nameof(repository));
+			this.unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
 			this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
+			this.repository = unitOfWork.SongsRepository;
 		}
 
 		public async Task<int> CreateSong(Song song, CancellationToken cancellationToken)
 		{
 			try
 			{
-				return await repository.CreateSong(song, cancellationToken);
+				await repository.AddSong(song, cancellationToken);
+				await unitOfWork.Commit(cancellationToken);
+
+				return song.Id;
 			}
 			catch (DiscNotFoundException e)
 			{
@@ -96,12 +103,11 @@ namespace MusicLibraryApi.Logic.Services
 				.ToLookup(s => s.GenreId ?? 0);
 		}
 
-		private IReadOnlyCollection<Song> FilterAndOrderMixedSongs(IReadOnlyCollection<Song> songs)
+		private static IEnumerable<Song> FilterAndOrderMixedSongs(IEnumerable<Song> songs)
 		{
 			return songs
 				.Where(s => !s.IsDeleted)
-				.OrderBy(s => s.Id)
-				.ToList();
+				.OrderBy(s => s.Id);
 		}
 	}
 }

@@ -14,27 +14,33 @@ namespace MusicLibraryApi.Logic.Services
 {
 	public class FoldersService : IFoldersService
 	{
+		private readonly IUnitOfWork unitOfWork;
+
 		private readonly IFoldersRepository repository;
 
 		private readonly ILogger<FoldersService> logger;
 
-		public FoldersService(IFoldersRepository repository, ILogger<FoldersService> logger)
+		public FoldersService(IUnitOfWork unitOfWork, ILogger<FoldersService> logger)
 		{
-			this.repository = repository ?? throw new ArgumentNullException(nameof(repository));
+			this.unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
 			this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
+			this.repository = unitOfWork.FoldersRepository;
 		}
 
-		public async Task<int> CreateFolder(int parentFolderId, string folderName, CancellationToken cancellationToken)
+		public async Task<int> CreateFolder(Folder folder, CancellationToken cancellationToken)
 		{
 			try
 			{
-				var folder = new Folder(folderName, parentFolderId);
-				return await repository.CreateFolder(folder, cancellationToken);
+				await repository.AddFolder(folder, cancellationToken);
+				await unitOfWork.Commit(cancellationToken);
+
+				return folder.Id;
 			}
 			catch (DuplicateKeyException e)
 			{
-				logger.LogError(e, "Folder {FolderName} already exists", folderName);
-				throw new ServiceOperationFailedException(Invariant($"Folder '{folderName}' already exists"), e);
+				logger.LogError(e, "Folder {FolderName} already exists", folder.Name);
+				throw new ServiceOperationFailedException(Invariant($"Folder '{folder.Name}' already exists"), e);
 			}
 		}
 

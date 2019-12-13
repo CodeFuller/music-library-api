@@ -20,20 +20,10 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 			this.context = context ?? throw new ArgumentNullException(nameof(context));
 		}
 
-		public async Task<int> CreatePlayback(Playback playback, CancellationToken cancellationToken)
+		public Task AddPlayback(Playback playback, CancellationToken cancellationToken)
 		{
 			context.Playbacks.Add(playback);
-
-			try
-			{
-				await context.SaveChangesAsync(cancellationToken);
-			}
-			catch (DbUpdateException e) when (e.IsForeignKeyViolationException())
-			{
-				throw new SongNotFoundException(Invariant($"The song with id of {playback.SongId} does not exist"));
-			}
-
-			return playback.Id;
+			return Task.CompletedTask;
 		}
 
 		public async Task<IReadOnlyCollection<Playback>> GetAllPlaybacks(CancellationToken cancellationToken)

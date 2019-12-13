@@ -20,20 +20,10 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 			this.context = context ?? throw new ArgumentNullException(nameof(context));
 		}
 
-		public async Task<int> CreateDisc(Disc disc, CancellationToken cancellationToken)
+		public Task AddDisc(Disc disc, CancellationToken cancellationToken)
 		{
 			context.Discs.Add(disc);
-
-			try
-			{
-				await context.SaveChangesAsync(cancellationToken);
-			}
-			catch (DbUpdateException e) when (e.IsForeignKeyViolationException())
-			{
-				throw new FolderNotFoundException(Invariant($"The folder with id of {disc.FolderId} does not exist"));
-			}
-
-			return disc.Id;
+			return Task.CompletedTask;
 		}
 
 		public async Task<IReadOnlyCollection<Disc>> GetAllDiscs(CancellationToken cancellationToken)

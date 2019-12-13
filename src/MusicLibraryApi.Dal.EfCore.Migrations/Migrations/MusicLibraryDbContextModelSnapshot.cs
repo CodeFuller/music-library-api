@@ -212,6 +212,7 @@ namespace MusicLibraryApi.Dal.EfCore.Migrations.Migrations
                     b.HasOne("MusicLibraryApi.Abstractions.Models.Folder", "Folder")
                         .WithMany("Discs")
                         .HasForeignKey("FolderId")
+                        .HasConstraintName("FK_Discs_Folders_FolderId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
@@ -221,6 +222,7 @@ namespace MusicLibraryApi.Dal.EfCore.Migrations.Migrations
                     b.HasOne("MusicLibraryApi.Abstractions.Models.Folder", "ParentFolder")
                         .WithMany("Subfolders")
                         .HasForeignKey("ParentFolderId")
+                        .HasConstraintName("FK_Folders_Folders_ParentFolderId")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
