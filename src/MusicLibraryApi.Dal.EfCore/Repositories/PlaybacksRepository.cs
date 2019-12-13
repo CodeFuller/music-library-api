@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using MusicLibraryApi.Abstractions.Exceptions;
 using MusicLibraryApi.Abstractions.Interfaces;
 using MusicLibraryApi.Abstractions.Models;
-using MusicLibraryApi.Dal.EfCore.Entities;
 using static System.FormattableString;
 
 namespace MusicLibraryApi.Dal.EfCore.Repositories
@@ -17,18 +15,14 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 	{
 		private readonly MusicLibraryDbContext context;
 
-		private readonly IMapper mapper;
-
-		public PlaybacksRepository(MusicLibraryDbContext context, IMapper mapper)
+		public PlaybacksRepository(MusicLibraryDbContext context)
 		{
 			this.context = context ?? throw new ArgumentNullException(nameof(context));
-			this.mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
 		}
 
 		public async Task<int> CreatePlayback(Playback playback, CancellationToken cancellationToken)
 		{
-			var playbackEntity = mapper.Map<PlaybackEntity>(playback);
-			context.Playbacks.Add(playbackEntity);
+			context.Playbacks.Add(playback);
 
 			try
 			{
@@ -39,34 +33,32 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 				throw new SongNotFoundException(Invariant($"The song with id of {playback.SongId} does not exist"));
 			}
 
-			return playbackEntity.Id;
+			return playback.Id;
 		}
 
 		public async Task<IReadOnlyCollection<Playback>> GetAllPlaybacks(CancellationToken cancellationToken)
 		{
 			return await context.Playbacks
-				.Select(p => mapper.Map<Playback>(p))
 				.ToListAsync(cancellationToken);
 		}
 
 		public async Task<Playback> GetPlayback(int playbackId, CancellationToken cancellationToken)
 		{
-			var playbackEntity = await context.Playbacks
+			var playback = await context.Playbacks
 				.Where(p => p.Id == playbackId)
 				.SingleOrDefaultAsync(cancellationToken);
 
-			if (playbackEntity == null)
+			if (playback == null)
 			{
 				throw new PlaybackNotFoundException(Invariant($"The playback with id of {playbackId} does not exist"));
 			}
 
-			return mapper.Map<Playback>(playbackEntity);
+			return playback;
 		}
 
 		public async Task<IReadOnlyCollection<Playback>> GetPlaybacksBySongIds(IEnumerable<int> songIds, CancellationToken cancellationToken)
 		{
 			return await context.Playbacks.Where(p => songIds.Contains(p.SongId))
-				.Select(p => mapper.Map<Playback>(p))
 				.ToListAsync(cancellationToken);
 		}
 	}

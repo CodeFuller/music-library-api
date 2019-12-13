@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using MusicLibraryApi.Abstractions.Exceptions;
 using MusicLibraryApi.Abstractions.Interfaces;
 using MusicLibraryApi.Abstractions.Models;
-using MusicLibraryApi.Dal.EfCore.Entities;
 using static System.FormattableString;
 
 namespace MusicLibraryApi.Dal.EfCore.Repositories
@@ -17,19 +15,14 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 	{
 		private readonly MusicLibraryDbContext context;
 
-		private readonly IMapper mapper;
-
-		public GenresRepository(MusicLibraryDbContext context, IMapper mapper)
+		public GenresRepository(MusicLibraryDbContext context)
 		{
 			this.context = context ?? throw new ArgumentNullException(nameof(context));
-			this.mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
 		}
 
 		public async Task<int> CreateGenre(Genre genre, CancellationToken cancellationToken)
 		{
-			var genreEntity = mapper.Map<GenreEntity>(genre);
-
-			context.Genres.Add(genreEntity);
+			context.Genres.Add(genre);
 
 			try
 			{
@@ -40,35 +33,33 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 				throw new DuplicateKeyException($"Failed to add genre '{genre.Name}' to the database", e);
 			}
 
-			return genreEntity.Id;
+			return genre.Id;
 		}
 
 		public async Task<IReadOnlyCollection<Genre>> GetAllGenres(CancellationToken cancellationToken)
 		{
 			return await context.Genres
-				.Select(g => mapper.Map<Genre>(g))
 				.ToListAsync(cancellationToken);
 		}
 
 		public async Task<IReadOnlyCollection<Genre>> GetGenres(IEnumerable<int> genreIds, CancellationToken cancellationToken)
 		{
 			return await context.Genres.Where(g => genreIds.Contains(g.Id))
-				.Select(g => mapper.Map<Genre>(g))
 				.ToListAsync(cancellationToken);
 		}
 
 		public async Task<Genre> GetGenre(int genreId, CancellationToken cancellationToken)
 		{
-			var genreEntity = await context.Genres
+			var genre = await context.Genres
 				.Where(g => g.Id == genreId)
 				.SingleOrDefaultAsync(cancellationToken);
 
-			if (genreEntity == null)
+			if (genre == null)
 			{
 				throw new GenreNotFoundException(Invariant($"The genre with id of {genreId} does not exist"));
 			}
 
-			return mapper.Map<Genre>(genreEntity);
+			return genre;
 		}
 	}
 }

@@ -1,22 +1,22 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MusicLibraryApi.Dal.EfCore.Entities;
+using MusicLibraryApi.Abstractions.Models;
 using MusicLibraryApi.Dal.EfCore.Repositories;
 
 namespace MusicLibraryApi.Dal.EfCore
 {
 	public class MusicLibraryDbContext : DbContext
 	{
-		public DbSet<GenreEntity> Genres { get; set; } = null!;
+		public DbSet<Genre> Genres { get; set; } = null!;
 
-		public DbSet<ArtistEntity> Artists { get; set; } = null!;
+		public DbSet<Artist> Artists { get; set; } = null!;
 
-		public DbSet<FolderEntity> Folders { get; set; } = null!;
+		public DbSet<Folder> Folders { get; set; } = null!;
 
-		public DbSet<DiscEntity> Discs { get; set; } = null!;
+		public DbSet<Disc> Discs { get; set; } = null!;
 
-		public DbSet<SongEntity> Songs { get; set; } = null!;
+		public DbSet<Song> Songs { get; set; } = null!;
 
-		public DbSet<PlaybackEntity> Playbacks { get; set; } = null!;
+		public DbSet<Playback> Playbacks { get; set; } = null!;
 
 		public static string SongDiscForeignKeyName => "FK_Songs_Discs_DiscId";
 
@@ -33,7 +33,7 @@ namespace MusicLibraryApi.Dal.EfCore
 		{
 			base.OnModelCreating(modelBuilder);
 
-			modelBuilder.Entity<FolderEntity>(b =>
+			modelBuilder.Entity<Folder>(b =>
 			{
 				b.ToTable("Folders");
 
@@ -43,10 +43,10 @@ namespace MusicLibraryApi.Dal.EfCore
 					.HasForeignKey(d => d.ParentFolderId)
 					.OnDelete(DeleteBehavior.Restrict);
 
-				b.HasData(new FolderEntity(FoldersRepository.RootFolderId, "<ROOT>", null));
+				b.HasData(new Folder(FoldersRepository.RootFolderId, "<ROOT>", null));
 			});
 
-			modelBuilder.Entity<DiscEntity>(b =>
+			modelBuilder.Entity<Disc>(b =>
 			{
 				b.ToTable("Discs");
 				b.HasOne(s => s.Folder)
@@ -56,7 +56,7 @@ namespace MusicLibraryApi.Dal.EfCore
 					.OnDelete(DeleteBehavior.Restrict);
 			});
 
-			modelBuilder.Entity<SongEntity>(b =>
+			modelBuilder.Entity<Song>(b =>
 			{
 				b.ToTable("Songs");
 				b.HasOne(s => s.Disc)
@@ -79,19 +79,19 @@ namespace MusicLibraryApi.Dal.EfCore
 					.OnDelete(DeleteBehavior.Restrict);
 			});
 
-			modelBuilder.Entity<ArtistEntity>(b =>
+			modelBuilder.Entity<Artist>(b =>
 			{
 				b.ToTable("Artists");
 				b.HasIndex(e => e.Name).IsUnique();
 			});
 
-			modelBuilder.Entity<GenreEntity>(b =>
+			modelBuilder.Entity<Genre>(b =>
 			{
 				b.ToTable("Genres");
 				b.HasIndex(e => e.Name).IsUnique();
 			});
 
-			modelBuilder.Entity<PlaybackEntity>(b =>
+			modelBuilder.Entity<Playback>(b =>
 			{
 				b.ToTable("Playbacks");
 				b.HasOne(p => p.Song)

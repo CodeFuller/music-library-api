@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using MusicLibraryApi.Abstractions.Exceptions;
 using MusicLibraryApi.Abstractions.Interfaces;
 using MusicLibraryApi.Abstractions.Models;
-using MusicLibraryApi.Dal.EfCore.Entities;
 using static System.FormattableString;
 
 namespace MusicLibraryApi.Dal.EfCore.Repositories
@@ -17,18 +15,14 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 	{
 		private readonly MusicLibraryDbContext context;
 
-		private readonly IMapper mapper;
-
-		public SongsRepository(MusicLibraryDbContext context, IMapper mapper)
+		public SongsRepository(MusicLibraryDbContext context)
 		{
 			this.context = context ?? throw new ArgumentNullException(nameof(context));
-			this.mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
 		}
 
 		public async Task<int> CreateSong(Song song, CancellationToken cancellationToken)
 		{
-			var songEntity = mapper.Map<SongEntity>(song);
-			context.Songs.Add(songEntity);
+			context.Songs.Add(song);
 
 			try
 			{
@@ -47,55 +41,50 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 				throw new GenreNotFoundException(Invariant($"The genre with id of {song.GenreId} does not exist"));
 			}
 
-			return songEntity.Id;
+			return song.Id;
 		}
 
 		public async Task<IReadOnlyCollection<Song>> GetAllSongs(CancellationToken cancellationToken)
 		{
 			return await context.Songs
-				.Select(s => mapper.Map<Song>(s))
 				.ToListAsync(cancellationToken);
 		}
 
 		public async Task<IReadOnlyCollection<Song>> GetSongs(IEnumerable<int> songIds, CancellationToken cancellationToken)
 		{
 			return await context.Songs.Where(s => songIds.Contains(s.Id))
-				.Select(s => mapper.Map<Song>(s))
 				.ToListAsync(cancellationToken);
 		}
 
 		public async Task<Song> GetSong(int songId, CancellationToken cancellationToken)
 		{
-			var songEntity = await context.Songs
+			var song = await context.Songs
 				.Where(s => s.Id == songId)
 				.SingleOrDefaultAsync(cancellationToken);
 
-			if (songEntity == null)
+			if (song == null)
 			{
 				throw new SongNotFoundException(Invariant($"The song with id of {songId} does not exist"));
 			}
 
-			return mapper.Map<Song>(songEntity);
+			return song;
 		}
 
 		public async Task<IReadOnlyCollection<Song>> GetSongsByDiscIds(IEnumerable<int> discIds, CancellationToken cancellationToken)
 		{
 			return await context.Songs.Where(s => discIds.Contains(s.DiscId))
-				.Select(s => mapper.Map<Song>(s))
 				.ToListAsync(cancellationToken);
 		}
 
 		public async Task<IReadOnlyCollection<Song>> GetSongsByArtistIds(IEnumerable<int> artistIds, CancellationToken cancellationToken)
 		{
 			return await context.Songs.Where(s => s.ArtistId != null && artistIds.Contains(s.ArtistId.Value))
-				.Select(s => mapper.Map<Song>(s))
 				.ToListAsync(cancellationToken);
 		}
 
 		public async Task<IReadOnlyCollection<Song>> GetSongsByGenreIds(IEnumerable<int> genreIds, CancellationToken cancellationToken)
 		{
 			return await context.Songs.Where(s => s.GenreId != null && genreIds.Contains(s.GenreId.Value))
-				.Select(s => mapper.Map<Song>(s))
 				.ToListAsync(cancellationToken);
 		}
 	}

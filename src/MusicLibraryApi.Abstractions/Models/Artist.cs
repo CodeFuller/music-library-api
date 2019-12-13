@@ -1,10 +1,14 @@
-﻿namespace MusicLibraryApi.Abstractions.Models
+﻿using System.Collections.Generic;
+
+namespace MusicLibraryApi.Abstractions.Models
 {
 	public class Artist
 	{
-		public int Id { get; }
+		public int Id { get; private set; }
 
-		public string Name { get; }
+		public string Name { get; set; }
+
+		public IReadOnlyCollection<Song> Songs { get; } = new List<Song>();
 
 		public Artist(string name)
 		{

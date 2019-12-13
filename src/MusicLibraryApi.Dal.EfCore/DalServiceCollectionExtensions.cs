@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-using AutoMapper;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using MusicLibraryApi.Abstractions.Interfaces;
 using MusicLibraryApi.Dal.EfCore.Repositories;
@@ -23,8 +21,6 @@ namespace MusicLibraryApi.Dal.EfCore
 				options => options.UseNpgsql(connectionString, b => b.MigrationsAssembly(MigrationsAssembly.Name)),
 				contextLifetime: ServiceLifetime.Transient,
 				optionsLifetime: ServiceLifetime.Transient);
-
-			services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
 			return services;
 		}

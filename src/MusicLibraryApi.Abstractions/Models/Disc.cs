@@ -1,33 +1,38 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace MusicLibraryApi.Abstractions.Models
 {
 	public class Disc
 	{
-		public int Id { get; }
+		public int Id { get; private set; }
 
-		public int? Year { get; }
+		public int? Year { get; set; }
 
-		public string Title { get; }
+		public string Title { get; set; }
 
-		public string? TreeTitle { get; }
+		public string TreeTitle { get; set; }
 
-		public string AlbumTitle { get; }
+		public string AlbumTitle { get; set; }
 
-		public string? AlbumId { get; }
+		public string? AlbumId { get; set; }
 
-		public int? AlbumOrder { get; }
+		public int? AlbumOrder { get; set; }
 
-		public int FolderId { get; }
+		public int FolderId { get; set; }
 
-		public DateTimeOffset? DeleteDate { get; }
+		public Folder Folder { get; set; } = null!;
 
-		public string? DeleteComment { get; }
+		public DateTimeOffset? DeleteDate { get; set; }
+
+		public string? DeleteComment { get; set; }
 
 		public bool IsDeleted => DeleteDate != null;
 
-		public Disc(int? year, string title, string? treeTitle, string albumTitle, string? albumId,
-			int? albumOrder, int folderId, DateTimeOffset? deleteDate, string? deleteComment)
+		public IReadOnlyCollection<Song> Songs { get; } = new List<Song>();
+
+		public Disc(int? year, string title, string treeTitle, string albumTitle, int folderId, string? albumId = null,
+			int? albumOrder = null, DateTimeOffset? deleteDate = null, string? deleteComment = null)
 		{
 			Year = year;
 			Title = title;
@@ -40,9 +45,9 @@ namespace MusicLibraryApi.Abstractions.Models
 			DeleteComment = deleteComment;
 		}
 
-		public Disc(int id, int? year, string title, string? treeTitle, string albumTitle, string? albumId,
-			int? albumOrder, int folderId, DateTimeOffset? deleteDate, string? deleteComment)
-			: this(year, title, treeTitle, albumTitle, albumId, albumOrder, folderId, deleteDate, deleteComment)
+		public Disc(int id, int? year, string title, string treeTitle, string albumTitle, int folderId,
+			string? albumId = null, int? albumOrder = null, DateTimeOffset? deleteDate = null, string? deleteComment = null)
+			: this(year, title, treeTitle, albumTitle, folderId, albumId, albumOrder, deleteDate, deleteComment)
 		{
 			Id = id;
 		}

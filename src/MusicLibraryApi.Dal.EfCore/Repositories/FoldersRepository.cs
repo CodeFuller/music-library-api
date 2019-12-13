@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using MusicLibraryApi.Abstractions.Exceptions;
 using MusicLibraryApi.Abstractions.Interfaces;
 using MusicLibraryApi.Abstractions.Models;
-using MusicLibraryApi.Dal.EfCore.Entities;
 using static System.FormattableString;
 
 namespace MusicLibraryApi.Dal.EfCore.Repositories
@@ -17,14 +15,11 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 	{
 		private readonly MusicLibraryDbContext context;
 
-		private readonly IMapper mapper;
-
 		public static int RootFolderId => 1;
 
-		public FoldersRepository(MusicLibraryDbContext context, IMapper mapper)
+		public FoldersRepository(MusicLibraryDbContext context)
 		{
 			this.context = context ?? throw new ArgumentNullException(nameof(context));
-			this.mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
 		}
 
 		public Task<int> GetRooFolderId(CancellationToken cancellationToken)
@@ -39,8 +34,7 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 				throw new InvalidOperationException("Can not create a folder without a parent");
 			}
 
-			var folderEntity = mapper.Map<FolderEntity>(folder);
-			context.Folders.Add(folderEntity);
+			context.Folders.Add(folder);
 
 			try
 			{
@@ -55,34 +49,32 @@ namespace MusicLibraryApi.Dal.EfCore.Repositories
 				throw new DuplicateKeyException($"Failed to add folder '{folder.Name}' to the database", e);
 			}
 
-			return folderEntity.Id;
+			return folder.Id;
 		}
 
 		public async Task<IReadOnlyCollection<Folder>> GetFolders(IEnumerable<int> folderIds, CancellationToken cancellationToken)
 		{
 			return await context.Folders.Where(f => folderIds.Contains(f.Id))
-				.Select(f => mapper.Map<Folder>(f))
 				.ToListAsync(cancellationToken);
 		}
 
 		public async Task<Folder> GetFolder(int folderId, CancellationToken cancellationToken)
 		{
-			var folderEntity = await context.Folders
+			var folder = await context.Folders
 				.Where(f => f.Id == folderId)
 				.SingleOrDefaultAsync(cancellationToken);
 
-			if (folderEntity == null)
+			if (folder == null)
 			{
 				throw new FolderNotFoundException(Invariant($"The folder with id of {folderId} does not exist"));
 			}
 
-			return mapper.Map<Folder>(folderEntity);
+			return folder;
 		}
 
 		public async Task<IReadOnlyCollection<Folder>> GetSubfoldersByFolderIds(IEnumerable<int> folderIds, CancellationToken cancellationToken)
 		{
 			return await context.Folders.Where(f => f.ParentFolderId != null && folderIds.Contains(f.ParentFolderId.Value))
-				.Select(f => mapper.Map<Folder>(f))
 				.ToListAsync(cancellationToken);
 		}
 	}
