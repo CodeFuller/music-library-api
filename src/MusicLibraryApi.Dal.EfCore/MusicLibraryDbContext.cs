@@ -49,6 +49,9 @@ namespace MusicLibraryApi.Dal.EfCore
 					.OnDelete(DeleteBehavior.Restrict);
 
 				b.HasData(new Folder(FoldersRepository.RootFolderId, "<ROOT>", null));
+				b.Property(f => f.Id)
+					.UseIdentityColumn()
+					.HasIdentityOptions(startValue: FoldersRepository.RootFolderId + 1);
 			});
 
 			modelBuilder.Entity<Disc>(b =>
