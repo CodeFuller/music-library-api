@@ -37,7 +37,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 					playbacks: new[] { new OutputPlaybackData(id: 2) }),
 
 				new OutputSongData(id: 3, title: "Are You Ready?", treeTitle: "03 - Are You Ready?.mp3", duration: new TimeSpan(0, 4, 09),
-					disc: new OutputDiscData(id: 1), artist: new OutputArtistData(id: 1), genre: null, playbacksCount: 0,
+					disc: new OutputDiscData(id: 2), artist: new OutputArtistData(id: 1), genre: null, playbacksCount: 0,
 					playbacks: Array.Empty<OutputPlaybackData>()),
 			};
 
@@ -105,17 +105,17 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Assert
 
-			Assert.AreEqual(4, newSongId);
+			Assert.AreEqual(5, newSongId);
 
 			// Checking created song data
 
-			var expectedSong = new OutputSongData(id: 4, title: "Hail Caesar", treeTitle: "04 - Hail Caesar.mp3", trackNumber: 4, duration: new TimeSpan(0, 5, 13),
+			var expectedSong = new OutputSongData(id: 5, title: "Hail Caesar", treeTitle: "04 - Hail Caesar.mp3", trackNumber: 4, duration: new TimeSpan(0, 5, 13),
 				disc: new OutputDiscData(id: 1), artist: new OutputArtistData(id: 2), genre: new OutputGenreData(id: 3), rating: Rating.R4, bitRate: 320000,
 				lastPlaybackTime: new DateTimeOffset(2018, 11, 25, 08, 35, 28, TimeSpan.FromHours(2)), playbacksCount: 4, playbacks: Array.Empty<OutputPlaybackData>(),
 				deleteDate: new DateTimeOffset(2019, 12, 10, 07, 20, 25, TimeSpan.FromHours(2)), deleteComment: "For a test");
 
 			var songsQuery = CreateClient<ISongsQuery>();
-			var receivedSong = await songsQuery.GetSong(4, RequestedFields, CancellationToken.None);
+			var receivedSong = await songsQuery.GetSong(5, RequestedFields, CancellationToken.None);
 
 			AssertData(expectedSong, receivedSong);
 		}
@@ -135,16 +135,16 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Assert
 
-			Assert.AreEqual(4, newSongId);
+			Assert.AreEqual(5, newSongId);
 
 			// Checking created song data
 
-			var expectedSong = new OutputSongData(id: 4, title: "Hail Caesar", treeTitle: "04 - Hail Caesar.mp3", trackNumber: null, duration: new TimeSpan(0, 5, 13),
+			var expectedSong = new OutputSongData(id: 5, title: "Hail Caesar", treeTitle: "04 - Hail Caesar.mp3", trackNumber: null, duration: new TimeSpan(0, 5, 13),
 				disc: new OutputDiscData(id: 1), artist: null, genre: null, rating: null, bitRate: null,
 				lastPlaybackTime: null, playbacksCount: 0, playbacks: Array.Empty<OutputPlaybackData>());
 
 			var songsQuery = CreateClient<ISongsQuery>();
-			var receivedSong = await songsQuery.GetSong(4, RequestedFields, CancellationToken.None);
+			var receivedSong = await songsQuery.GetSong(5, RequestedFields, CancellationToken.None);
 
 			AssertData(expectedSong, receivedSong);
 		}

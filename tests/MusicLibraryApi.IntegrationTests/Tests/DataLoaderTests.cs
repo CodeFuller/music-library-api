@@ -144,7 +144,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Sanity check that multiple results were processed.
 			Assert.AreEqual(2, folderData.Discs?.Count);
-			var songs = folderData.Discs?.Last().Songs.ToList();
+			var songs = folderData.Discs?.SelectMany(d => d.Songs).ToList();
 			Assert.AreEqual(2, songs?.Select(s => s.Artist?.Id).Where(id => id != null).Distinct().Count());
 
 			Assert.AreEqual(1, ArtistsService?.GetCallsNumber("ArtistsService.GetArtists"));

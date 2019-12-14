@@ -14,6 +14,7 @@ namespace MusicLibraryApi.Logic.Extensions
 			services.AddTransient<IDiscsService, DiscsService>();
 			services.AddTransient<ISongsService, SongsService>();
 			services.AddTransient<IPlaybacksService, PlaybacksService>();
+			services.AddTransient<IStatisticsService, StatisticsService>();
 
 			return services;
 		}

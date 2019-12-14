@@ -25,11 +25,11 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			{
 				new OutputDiscData(id: 1, year: 2001, title: "Platinum Hits (CD 2)", treeTitle: "2001 - Platinum Hits (CD 2)",
 					albumTitle: "Platinum Hits", albumId: "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", albumOrder: 2, folder: new OutputFolderData(id: 1),
-					songs: new[] { new OutputSongData(id: 2), new OutputSongData(id: 1), new OutputSongData(id: 3), }),
+					songs: new[] { new OutputSongData(id: 2), new OutputSongData(id: 1), }),
 
 				new OutputDiscData(id: 2, year: 2001, title: "Platinum Hits (CD 1)", treeTitle: "2001 - Platinum Hits (CD 1)",
 					albumTitle: "Platinum Hits", albumId: "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", albumOrder: 1, folder: new OutputFolderData(id: 1),
-					songs: Array.Empty<OutputSongData>()),
+					songs: new[] { new OutputSongData(id: 3), }),
 
 				new OutputDiscData(id: 3, year: 2000, title: "Don't Give Me Names", treeTitle: "2000 - Don't Give Me Names",
 					albumTitle: "Don't Give Me Names", folder: new OutputFolderData(id: 5),
@@ -59,7 +59,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var expectedDisc = new OutputDiscData(id: 1, year: 2001, title: "Platinum Hits (CD 2)", treeTitle: "2001 - Platinum Hits (CD 2)",
 				albumTitle: "Platinum Hits", albumId: "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", albumOrder: 2, folder: new OutputFolderData(id: 1),
-				songs: new[] { new OutputSongData(id: 2), new OutputSongData(id: 1), new OutputSongData(id: 3), });
+				songs: new[] { new OutputSongData(id: 2), new OutputSongData(id: 1), });
 
 			var client = CreateClient<IDiscsQuery>();
 

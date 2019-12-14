@@ -51,7 +51,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 				new OutputFolderData(id: 2, name: "Russian", subfolders: Array.Empty<OutputFolderData>(), discs: Array.Empty<OutputDiscData>()),
 			};
 
-			var expectedSongs = new[]
+			var expectedSongs1 = new[]
 			{
 				new OutputSongData(id: 2, title: "Highway To Hell", treeTitle: "01 - Highway To Hell.mp3", trackNumber: 1, duration: new TimeSpan(0, 3, 28),
 					disc: new OutputDiscData(id: 1), artist: new OutputArtistData(id: 2, name: "AC/DC"), genre: new OutputGenreData(id: 1, name: "Russian Rock"), rating: Rating.R6, bitRate: 320000,
@@ -62,9 +62,12 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 					disc: new OutputDiscData(id: 1), artist: null, genre: new OutputGenreData(id: 2, name: "Nu Metal"), rating: Rating.R4, bitRate: 320000,
 					lastPlaybackTime: new DateTimeOffset(2018, 11, 25, 08, 25, 17, TimeSpan.FromHours(2)), playbacksCount: 2,
 					playbacks: new[] { new OutputPlaybackData(id: 3), new OutputPlaybackData(id: 1), }),
+			};
 
+			var expectedSongs2 = new[]
+			{
 				new OutputSongData(id: 3, title: "Are You Ready?", treeTitle: "03 - Are You Ready?.mp3", duration: new TimeSpan(0, 4, 09),
-					disc: new OutputDiscData(id: 1), artist: new OutputArtistData(id: 1, name: "Nautilus Pompilius"), genre: null, playbacksCount: 0,
+					disc: new OutputDiscData(id: 2), artist: new OutputArtistData(id: 1, name: "Nautilus Pompilius"), genre: null, playbacksCount: 0,
 					playbacks: Array.Empty<OutputPlaybackData>()),
 			};
 
@@ -72,11 +75,11 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			{
 				new OutputDiscData(id: 2, year: 2001, title: "Platinum Hits (CD 1)", treeTitle: "2001 - Platinum Hits (CD 1)",
 					albumTitle: "Platinum Hits", albumId: "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", albumOrder: 1, folder: new OutputFolderData(id: 1, name: "<ROOT>"),
-					songs: Array.Empty<OutputSongData>()),
+					songs: expectedSongs2),
 
 				new OutputDiscData(id: 1, year: 2001, title: "Platinum Hits (CD 2)", treeTitle: "2001 - Platinum Hits (CD 2)",
 					albumTitle: "Platinum Hits", albumId: "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", albumOrder: 2, folder: new OutputFolderData(id: 1, name: "<ROOT>"),
-					songs: expectedSongs),
+					songs: expectedSongs1),
 			};
 
 			var expectedFolder = new OutputFolderData(id: 1, name: "<ROOT>", subfolders: expectedSubfolders1, discs: expectedDiscs1);

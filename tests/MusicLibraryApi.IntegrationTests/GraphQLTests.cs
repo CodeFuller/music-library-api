@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MusicLibraryApi.Client.Contracts;
 using MusicLibraryApi.Client.Contracts.Artists;
 using MusicLibraryApi.Client.Contracts.Discs;
 using MusicLibraryApi.Client.Contracts.Folders;
@@ -30,6 +31,8 @@ namespace MusicLibraryApi.IntegrationTests
 
 		private readonly PlaybackDataChecker playbacksChecker;
 
+		private readonly StatisticsDataChecker statisticsChecker;
+
 		protected GraphQLTests()
 		{
 			WebApplicationFactory = new CustomWebApplicationFactory(this);
@@ -40,6 +43,7 @@ namespace MusicLibraryApi.IntegrationTests
 			discsChecker = new DiscDataChecker(songsChecker);
 			foldersChecker = new FolderDataChecker(discsChecker);
 			playbacksChecker = new PlaybackDataChecker(songsChecker);
+			statisticsChecker = new StatisticsDataChecker();
 
 			songsChecker.DiscsChecker = discsChecker;
 			songsChecker.ArtistsChecker = artistsChecker;
@@ -117,6 +121,11 @@ namespace MusicLibraryApi.IntegrationTests
 		protected void AssertData(IEnumerable<OutputPlaybackData>? expected, IEnumerable<OutputPlaybackData>? actual)
 		{
 			playbacksChecker.CheckData(expected?.ToList(), actual?.ToList(), String.Empty);
+		}
+
+		protected void AssertData(OutputStatisticsData? expected, OutputStatisticsData? actual)
+		{
+			statisticsChecker.CheckData(expected, actual, String.Empty);
 		}
 
 		protected virtual void Dispose(bool disposing)

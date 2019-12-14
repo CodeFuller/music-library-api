@@ -83,6 +83,10 @@ namespace MusicLibraryApi.GraphQL
 					return await serviceAccessor.PlaybacksService.GetPlayback(playbackId, context.CancellationToken);
 				});
 
+			Field<NonNullGraphType<StatisticsType>>(
+				"statistics",
+				resolve: context => new object());
+
 			// This 'error' field was added for IT purpose.
 			// It is required for testing of error handling middleware that hides internal sensitive exceptions.
 			Field<StringGraphType>(
