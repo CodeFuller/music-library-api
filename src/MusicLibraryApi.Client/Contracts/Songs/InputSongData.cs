@@ -15,7 +15,7 @@ namespace MusicLibraryApi.Client.Contracts.Songs
 		[DataMember(Name = "genreId")]
 		public int? GenreId { get; }
 
-		public InputSongData(int discId, int? artistId, int? genreId, string? title, string treeTitle, short? trackNumber, TimeSpan? duration, Rating? rating,
+		public InputSongData(int discId, int? artistId, int? genreId, string title, string treeTitle, short? trackNumber, TimeSpan duration, Rating? rating,
 			int? bitRate, DateTimeOffset? lastPlaybackTime = null, int playbacksCount = 0, DateTimeOffset? deleteDate = null, string? deleteComment = null)
 			: base(title, treeTitle, trackNumber, duration, rating, bitRate, lastPlaybackTime, playbacksCount, deleteDate, deleteComment)
 		{
