@@ -46,7 +46,7 @@ namespace MusicLibraryApi.GraphQL.Types
 			Field(x => x.BitRate, nullable: true);
 			Field(x => x.LastPlaybackTime, nullable: true);
 			Field(x => x.PlaybacksCount);
-			Field<ListGraphType<PlaybackType>>(
+			Field<NonNullGraphType<ListGraphType<NonNullGraphType<PlaybackType>>>>(
 				"playbacks",
 				resolve: context =>
 				{

@@ -11,7 +11,7 @@ namespace MusicLibraryApi.GraphQL.Types
 		{
 			Field(x => x.Id);
 			Field(x => x.Name);
-			Field<ListGraphType<SongType>>(
+			Field<NonNullGraphType<ListGraphType<NonNullGraphType<SongType>>>>(
 				"songs",
 				resolve: context =>
 				{

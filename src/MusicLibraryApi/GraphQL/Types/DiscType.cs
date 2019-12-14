@@ -24,7 +24,7 @@ namespace MusicLibraryApi.GraphQL.Types
 			});
 			Field(x => x.DeleteDate, nullable: true);
 			Field(x => x.DeleteComment, nullable: true);
-			Field<ListGraphType<SongType>>(
+			Field<NonNullGraphType<ListGraphType<NonNullGraphType<SongType>>>>(
 				"songs",
 				resolve: context =>
 				{

@@ -9,7 +9,7 @@ namespace MusicLibraryApi.GraphQL
 	{
 		public MusicLibraryMutation(IServiceAccessor serviceAccessor)
 		{
-			FieldAsync<CreateGenreResultType>(
+			FieldAsync<NonNullGraphType<CreateGenreResultType>>(
 				"createGenre",
 				arguments: new QueryArguments(
 					new QueryArgument<NonNullGraphType<GenreInputType>> { Name = "genre" }),
@@ -22,7 +22,7 @@ namespace MusicLibraryApi.GraphQL
 					return new CreateGenreResult(newGenreId);
 				});
 
-			FieldAsync<CreateArtistResultType>(
+			FieldAsync<NonNullGraphType<CreateArtistResultType>>(
 				"createArtist",
 				arguments: new QueryArguments(
 					new QueryArgument<NonNullGraphType<ArtistInputType>> { Name = "artist" }),
@@ -35,7 +35,7 @@ namespace MusicLibraryApi.GraphQL
 					return new CreateArtistResult(newArtistId);
 				});
 
-			FieldAsync<CreateFolderResultType>(
+			FieldAsync<NonNullGraphType<CreateFolderResultType>>(
 				"createFolder",
 				arguments: new QueryArguments(
 					new QueryArgument<NonNullGraphType<FolderInputType>> { Name = "folder" }),
@@ -48,7 +48,7 @@ namespace MusicLibraryApi.GraphQL
 					return new CreateFolderResult(newFolderId);
 				});
 
-			FieldAsync<CreateDiscResultType>(
+			FieldAsync<NonNullGraphType<CreateDiscResultType>>(
 				"createDisc",
 				arguments: new QueryArguments(
 					new QueryArgument<NonNullGraphType<DiscInputType>> { Name = "disc" }),
@@ -61,7 +61,7 @@ namespace MusicLibraryApi.GraphQL
 					return new CreateDiscResult(newDiscId);
 				});
 
-			FieldAsync<CreateSongResultType>(
+			FieldAsync<NonNullGraphType<CreateSongResultType>>(
 				"createSong",
 				arguments: new QueryArguments(
 					new QueryArgument<NonNullGraphType<SongInputType>> { Name = "song" }),
@@ -74,7 +74,7 @@ namespace MusicLibraryApi.GraphQL
 					return new CreateSongResult(newSongId);
 				});
 
-			FieldAsync<AddPlaybackResultType>(
+			FieldAsync<NonNullGraphType<AddPlaybackResultType>>(
 				"addSongPlayback",
 				arguments: new QueryArguments(
 					new QueryArgument<NonNullGraphType<PlaybackInputType>> { Name = "playback" }),

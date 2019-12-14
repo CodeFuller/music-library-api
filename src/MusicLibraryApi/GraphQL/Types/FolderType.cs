@@ -11,7 +11,7 @@ namespace MusicLibraryApi.GraphQL.Types
 		{
 			Field(x => x.Id);
 			Field(x => x.Name);
-			Field<ListGraphType<FolderType>>(
+			Field<NonNullGraphType<ListGraphType<NonNullGraphType<FolderType>>>>(
 				"subfolders",
 				resolve: context =>
 				{
@@ -19,7 +19,7 @@ namespace MusicLibraryApi.GraphQL.Types
 					var loader = dataLoader.Context.GetOrAddCollectionBatchLoader<int, Folder>("GetSubfoldersByFolderIds", foldersService.GetSubfoldersByFolderIds);
 					return loader.LoadAsync(context.Source.Id);
 				});
-			Field<ListGraphType<DiscType>>(
+			Field<NonNullGraphType<ListGraphType<NonNullGraphType<DiscType>>>>(
 				"discs",
 				arguments: new QueryArguments(new QueryArgument<BooleanGraphType> { Name = "includeDeletedDiscs" }),
 				resolve: context =>

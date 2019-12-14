@@ -11,7 +11,7 @@ namespace MusicLibraryApi.GraphQL.Types
 		{
 			Field(x => x.Id);
 			Field(x => x.PlaybackTime);
-			Field<SongType>("song", resolve: context =>
+			Field<NonNullGraphType<SongType>>("song", resolve: context =>
 			{
 				var songsService = serviceAccessor.SongsService;
 				var loader = dataLoader.Context.GetOrAddBatchLoader<int, Song>("GetSongs", songsService.GetSongs);
