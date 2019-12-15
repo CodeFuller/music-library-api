@@ -33,8 +33,9 @@ namespace MusicLibraryApi
 			services.AddControllers()
 				.AddNewtonsoftJson();
 
-			services.AddHttpContextAccessor();
-			services.AddSingleton<IServiceAccessor, ServiceAccessor>();
+			// ServiceAccessor should be registered with Scoped (or Transient) lifetime.
+			// If it is registered with Singleton lifetime, then all instances created via inner ServiceProvider will be disposed only on application exit.
+			services.AddScoped<IServiceAccessor, ServiceAccessor>();
 
 			var connectionString = Configuration.GetConnectionString("musicLibraryDB");
 			if (String.IsNullOrWhiteSpace(connectionString))
@@ -45,15 +46,15 @@ namespace MusicLibraryApi
 			services.AddLogic();
 			services.AddDal(connectionString);
 
-			services.AddSingleton<MusicLibraryQuery>();
-			services.AddSingleton<MusicLibraryMutation>();
-			services.AddSingleton<MusicLibrarySchema>();
+			services.AddScoped<MusicLibraryQuery>();
+			services.AddScoped<MusicLibraryMutation>();
+			services.AddScoped<MusicLibrarySchema>();
 
-			services.AddSingleton<IDependencyResolver>(s => new FuncDependencyResolver(s.GetRequiredService));
+			services.AddScoped<IDependencyResolver>(s => new FuncDependencyResolver(s.GetRequiredService));
 
 			services.AddGraphQL(options => { options.ExposeExceptions = false; })
 				.AddDataLoader()
-				.AddGraphTypes(ServiceLifetime.Singleton);
+				.AddGraphTypes(ServiceLifetime.Scoped);
 
 			services.AddTransient<IGraphQLExecuter<MusicLibrarySchema>, CustomGraphQLExecuter>();
 
