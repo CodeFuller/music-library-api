@@ -54,6 +54,12 @@ namespace MusicLibraryApi.GraphQL.Types
 				var statisticsService = serviceAccessor.StatisticsService;
 				return await statisticsService.GetUnheardSongsNumber(context.CancellationToken);
 			});
+
+			FieldAsync<NonNullGraphType<ListGraphType<NonNullGraphType<RatingSongsNumberType>>>>("songsRatings", resolve: async context =>
+			{
+				var statisticsService = serviceAccessor.StatisticsService;
+				return await statisticsService.GetSongsRatingsNumbers(context.CancellationToken);
+			});
 		}
 	}
 }

@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using MusicLibraryApi.Abstractions.Models;
 
 namespace MusicLibraryApi.Abstractions.Interfaces
 {
@@ -21,5 +23,7 @@ namespace MusicLibraryApi.Abstractions.Interfaces
 		Task<int> GetPlaybacksNumber(CancellationToken cancellationToken);
 
 		Task<int> GetUnheardSongsNumber(CancellationToken cancellationToken);
+
+		Task<IReadOnlyCollection<(Rating?, int)>> GetSongsRatingsNumbers(CancellationToken cancellationToken);
 	}
 }

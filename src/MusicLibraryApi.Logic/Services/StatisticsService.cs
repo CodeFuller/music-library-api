@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MusicLibraryApi.Abstractions.Interfaces;
+using MusicLibraryApi.Abstractions.Models;
 using MusicLibraryApi.Logic.Extensions;
 
 namespace MusicLibraryApi.Logic.Services
@@ -86,6 +88,35 @@ namespace MusicLibraryApi.Logic.Services
 			return songs
 				.Where(s => !s.IsDeleted)
 				.Count(s => s.PlaybacksCount == 0);
+		}
+
+		public async Task<IReadOnlyCollection<(Rating?, int)>> GetSongsRatingsNumbers(CancellationToken cancellationToken)
+		{
+			var songs = await unitOfWork.SongsRepository.GetAllSongs(cancellationToken);
+
+			var ratingSongNumbers = songs
+				.Where(s => !s.IsDeleted)
+				.GroupBy(s => s.Rating)
+				.ToDictionary(g => g.Key ?? Rating.Unassigned, g => g.Count());
+
+			var allRatings = new[]
+			{
+				Rating.R1,
+				Rating.R2,
+				Rating.R3,
+				Rating.R4,
+				Rating.R5,
+				Rating.R6,
+				Rating.R7,
+				Rating.R8,
+				Rating.R9,
+				Rating.R10,
+				Rating.Unassigned,
+			};
+
+			return allRatings
+				.Select(r => (r == Rating.Unassigned ? (Rating?)null : r, ratingSongNumbers.TryGetValue(r, out var count) ? count : 0))
+				.ToList();
 		}
 	}
 }

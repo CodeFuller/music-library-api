@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using MusicLibraryApi.Client.Contracts;
+using MusicLibraryApi.Client.Contracts.Statistics;
 using MusicLibraryApi.Client.Fields;
 
 namespace MusicLibraryApi.Client.Interfaces

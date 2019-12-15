@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MusicLibraryApi.Client.Contracts;
 using MusicLibraryApi.Client.Contracts.Artists;
 using MusicLibraryApi.Client.Contracts.Discs;
 using MusicLibraryApi.Client.Contracts.Folders;
 using MusicLibraryApi.Client.Contracts.Genres;
 using MusicLibraryApi.Client.Contracts.Playbacks;
 using MusicLibraryApi.Client.Contracts.Songs;
+using MusicLibraryApi.Client.Contracts.Statistics;
 using MusicLibraryApi.IntegrationTests.DataCheckers;
 using MusicLibraryApi.IntegrationTests.Utility;
 
@@ -33,6 +33,8 @@ namespace MusicLibraryApi.IntegrationTests
 
 		private readonly StatisticsDataChecker statisticsChecker;
 
+		private readonly SongsRatingsDataChecker songsRatingsChecker;
+
 		protected GraphQLTests()
 		{
 			WebApplicationFactory = new CustomWebApplicationFactory(this);
@@ -43,7 +45,8 @@ namespace MusicLibraryApi.IntegrationTests
 			discsChecker = new DiscDataChecker(songsChecker);
 			foldersChecker = new FolderDataChecker(discsChecker);
 			playbacksChecker = new PlaybackDataChecker(songsChecker);
-			statisticsChecker = new StatisticsDataChecker();
+			songsRatingsChecker = new SongsRatingsDataChecker();
+			statisticsChecker = new StatisticsDataChecker(songsRatingsChecker);
 
 			songsChecker.DiscsChecker = discsChecker;
 			songsChecker.ArtistsChecker = artistsChecker;

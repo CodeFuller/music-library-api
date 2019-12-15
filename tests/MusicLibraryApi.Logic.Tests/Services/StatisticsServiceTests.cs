@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -497,6 +498,135 @@ namespace MusicLibraryApi.Logic.Tests.Services
 			// Assert
 
 			Assert.AreEqual(2, unheardSongsNumber);
+		}
+
+		[TestMethod]
+		public async Task GetSongsRatingsNumbers_ForSongsWithRatingSet_CountsCorrectly()
+		{
+			// Arrange
+
+			var songs = new[]
+			{
+				new Song { Rating = Rating.R6, },
+				new Song { Rating = Rating.R8, },
+				new Song { Rating = Rating.R6, },
+			};
+
+			var songsRepositoryStub = new Mock<ISongsRepository>();
+			songsRepositoryStub.Setup(x => x.GetAllSongs(It.IsAny<CancellationToken>())).ReturnsAsync(songs);
+
+			var unitOfWorkStub = new Mock<IUnitOfWork>();
+			unitOfWorkStub.Setup(x => x.SongsRepository).Returns(songsRepositoryStub.Object);
+
+			var target = new StatisticsService(unitOfWorkStub.Object);
+
+			// Act
+
+			var songsRatingsNumbers = await target.GetSongsRatingsNumbers(CancellationToken.None);
+
+			// Assert
+
+			var expectedNumbers = new[]
+			{
+				(Rating.R1, 0),
+				(Rating.R2, 0),
+				(Rating.R3, 0),
+				(Rating.R4, 0),
+				(Rating.R5, 0),
+				(Rating.R6, 2),
+				(Rating.R7, 0),
+				(Rating.R8, 1),
+				(Rating.R9, 0),
+				(Rating.R10, 0),
+				((Rating?)null, 0),
+			};
+
+			CollectionAssert.AreEqual(expectedNumbers, songsRatingsNumbers.ToList());
+		}
+
+		[TestMethod]
+		public async Task GetSongsRatingsNumbers_ForDeletedSongs_DoesNotCount()
+		{
+			// Arrange
+
+			var songs = new[]
+			{
+				new Song { Rating = Rating.R8, DeleteDate = new DateTimeOffset(2019, 12, 14, 18, 00, 00, TimeSpan.Zero), },
+			};
+
+			var songsRepositoryStub = new Mock<ISongsRepository>();
+			songsRepositoryStub.Setup(x => x.GetAllSongs(It.IsAny<CancellationToken>())).ReturnsAsync(songs);
+
+			var unitOfWorkStub = new Mock<IUnitOfWork>();
+			unitOfWorkStub.Setup(x => x.SongsRepository).Returns(songsRepositoryStub.Object);
+
+			var target = new StatisticsService(unitOfWorkStub.Object);
+
+			// Act
+
+			var songsRatingsNumbers = await target.GetSongsRatingsNumbers(CancellationToken.None);
+
+			// Assert
+
+			var expectedNumbers = new[]
+			{
+				(Rating.R1, 0),
+				(Rating.R2, 0),
+				(Rating.R3, 0),
+				(Rating.R4, 0),
+				(Rating.R5, 0),
+				(Rating.R6, 0),
+				(Rating.R7, 0),
+				(Rating.R8, 0),
+				(Rating.R9, 0),
+				(Rating.R10, 0),
+				((Rating?)null, 0),
+			};
+
+			CollectionAssert.AreEqual(expectedNumbers, songsRatingsNumbers.ToList());
+		}
+
+		[TestMethod]
+		public async Task GetSongsRatingsNumbers_ForSongsWithoutRatingSet_CountsWithNullRating()
+		{
+			// Arrange
+
+			var songs = new[]
+			{
+				new Song { Rating = null, },
+				new Song { Rating = null, },
+			};
+
+			var songsRepositoryStub = new Mock<ISongsRepository>();
+			songsRepositoryStub.Setup(x => x.GetAllSongs(It.IsAny<CancellationToken>())).ReturnsAsync(songs);
+
+			var unitOfWorkStub = new Mock<IUnitOfWork>();
+			unitOfWorkStub.Setup(x => x.SongsRepository).Returns(songsRepositoryStub.Object);
+
+			var target = new StatisticsService(unitOfWorkStub.Object);
+
+			// Act
+
+			var songsRatingsNumbers = await target.GetSongsRatingsNumbers(CancellationToken.None);
+
+			// Assert
+
+			var expectedNumbers = new[]
+			{
+				(Rating.R1, 0),
+				(Rating.R2, 0),
+				(Rating.R3, 0),
+				(Rating.R4, 0),
+				(Rating.R5, 0),
+				(Rating.R6, 0),
+				(Rating.R7, 0),
+				(Rating.R8, 0),
+				(Rating.R9, 0),
+				(Rating.R10, 0),
+				((Rating?)null, 2),
+			};
+
+			CollectionAssert.AreEqual(expectedNumbers, songsRatingsNumbers.ToList());
 		}
 	}
 }

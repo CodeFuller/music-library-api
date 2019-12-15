@@ -1,7 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace MusicLibraryApi.Client.Contracts
+namespace MusicLibraryApi.Client.Contracts.Statistics
 {
 	[DataContract]
 	public class OutputStatisticsData
@@ -30,8 +31,12 @@ namespace MusicLibraryApi.Client.Contracts
 		[DataMember(Name = "unheardSongsNumber")]
 		public int? UnheardSongsNumber { get; set; }
 
-		public OutputStatisticsData(int? artistsNumber = null, int? discArtistsNumber = null, int? discsNumber = null, int? songsNumber = null,
-			TimeSpan? songsDuration = null, TimeSpan? playbacksDuration = null, int? playbacksNumber = null, int? unheardSongsNumber = null)
+		[DataMember(Name = "songsRatings")]
+		public IReadOnlyCollection<RatingSongsData>? SongsRatings { get; set; }
+
+		public OutputStatisticsData(int? artistsNumber = null, int? discArtistsNumber = null, int? discsNumber = null,
+			int? songsNumber = null, TimeSpan? songsDuration = null, TimeSpan? playbacksDuration = null,
+			int? playbacksNumber = null, int? unheardSongsNumber = null, IReadOnlyCollection<RatingSongsData>? songsRatings = null)
 		{
 			ArtistsNumber = artistsNumber;
 			DiscArtistsNumber = discArtistsNumber;
@@ -41,6 +46,7 @@ namespace MusicLibraryApi.Client.Contracts
 			PlaybacksDuration = playbacksDuration;
 			PlaybacksNumber = playbacksNumber;
 			UnheardSongsNumber = unheardSongsNumber;
+			SongsRatings = songsRatings;
 		}
 	}
 }

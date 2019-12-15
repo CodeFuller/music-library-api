@@ -1,5 +1,5 @@
 ﻿using System;
-using MusicLibraryApi.Client.Contracts.Songs;
+using MusicLibraryApi.Client.Contracts;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 

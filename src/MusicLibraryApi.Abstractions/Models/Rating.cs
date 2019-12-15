@@ -2,7 +2,7 @@
 {
 	public enum Rating
 	{
-		Invalid = 0,
+		Unassigned = 0,
 		R1 = 1,
 		R2 = 2,
 		R3 = 3,

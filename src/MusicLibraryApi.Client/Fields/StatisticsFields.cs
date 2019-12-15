@@ -1,4 +1,4 @@
-﻿using MusicLibraryApi.Client.Contracts;
+﻿using MusicLibraryApi.Client.Contracts.Statistics;
 
 namespace MusicLibraryApi.Client.Fields
 {
@@ -19,6 +19,11 @@ namespace MusicLibraryApi.Client.Fields
 		public static QueryField<OutputStatisticsData> PlaybacksNumber { get; } = new QueryField<OutputStatisticsData>("playbacksNumber");
 
 		public static QueryField<OutputStatisticsData> UnheardSongsNumber { get; } = new QueryField<OutputStatisticsData>("unheardSongsNumber");
+
+		public static ComplexQueryField<OutputStatisticsData, RatingSongsData> SongsRatings(QueryFieldSet<RatingSongsData> songsRatingsFields)
+		{
+			return new ComplexQueryField<OutputStatisticsData, RatingSongsData>("songsRatings", songsRatingsFields);
+		}
 
 		public static QueryFieldSet<OutputStatisticsData> All { get; } = ArtistsNumber + DiscArtistsNumber + DiscsNumber + SongsNumber +
 		                                                                 SongsDuration + PlaybacksDuration + PlaybacksNumber + UnheardSongsNumber;

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using MusicLibraryApi.Client.Contracts.Songs;
+using MusicLibraryApi.Client.Contracts;
 using Newtonsoft.Json;
 
 namespace MusicLibraryApi.Client.Converters
