@@ -18,8 +18,13 @@ namespace MusicLibraryApi.Logic.Services
 
 		public async Task<int> GetArtistsNumber(CancellationToken cancellationToken)
 		{
-			var artists = await unitOfWork.ArtistsRepository.GetAllArtists(cancellationToken);
-			return artists.Count;
+			var songs = await unitOfWork.SongsRepository.GetAllSongs(cancellationToken);
+			return songs
+				.Where(s => !s.IsDeleted)
+				.Select(s => s.ArtistId)
+				.Where(artistId => artistId != null)
+				.Distinct()
+				.Count();
 		}
 
 		public async Task<int> GetDiscArtistsNumber(CancellationToken cancellationToken)

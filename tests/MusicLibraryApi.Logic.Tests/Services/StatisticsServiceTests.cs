@@ -14,6 +14,64 @@ namespace MusicLibraryApi.Logic.Tests.Services
 	public class StatisticsServiceTests
 	{
 		[TestMethod]
+		public async Task GetArtistsNumber_ForDeletedSongs_DoesNotCountArtists()
+		{
+			// Arrange
+
+			var songs = new[]
+			{
+				new Song { ArtistId = 1, },
+				new Song { ArtistId = 2, DeleteDate = DateTimeOffset.FromUnixTimeSeconds(10), },
+				new Song { ArtistId = 3, },
+			};
+
+			var songsRepositoryStub = new Mock<ISongsRepository>();
+			songsRepositoryStub.Setup(x => x.GetAllSongs(It.IsAny<CancellationToken>())).ReturnsAsync(songs);
+
+			var unitOfWorkStub = new Mock<IUnitOfWork>();
+			unitOfWorkStub.Setup(x => x.SongsRepository).Returns(songsRepositoryStub.Object);
+
+			var target = new StatisticsService(unitOfWorkStub.Object);
+
+			// Act
+
+			var artistsNumber = await target.GetArtistsNumber(CancellationToken.None);
+
+			// Assert
+
+			Assert.AreEqual(2, artistsNumber);
+		}
+
+		[TestMethod]
+		public async Task GetArtistsNumber_ForSongsWithCountedArtist_DoesNotCountArtists()
+		{
+			// Arrange
+
+			var songs = new[]
+			{
+				new Song { ArtistId = 1, },
+				new Song { ArtistId = 2, },
+				new Song { ArtistId = 1, },
+			};
+
+			var songsRepositoryStub = new Mock<ISongsRepository>();
+			songsRepositoryStub.Setup(x => x.GetAllSongs(It.IsAny<CancellationToken>())).ReturnsAsync(songs);
+
+			var unitOfWorkStub = new Mock<IUnitOfWork>();
+			unitOfWorkStub.Setup(x => x.SongsRepository).Returns(songsRepositoryStub.Object);
+
+			var target = new StatisticsService(unitOfWorkStub.Object);
+
+			// Act
+
+			var artistsNumber = await target.GetArtistsNumber(CancellationToken.None);
+
+			// Assert
+
+			Assert.AreEqual(2, artistsNumber);
+		}
+
+		[TestMethod]
 		public async Task GetDiscArtistsNumber_ForDiscWithAllSongsFromOneArtist_CountsArtistAsDiscArtist()
 		{
 			// Arrange
@@ -43,7 +101,7 @@ namespace MusicLibraryApi.Logic.Tests.Services
 		}
 
 		[TestMethod]
-		public async Task GetDiscArtistsNumber_SkipsDeletedDiscs()
+		public async Task GetDiscArtistsNumber_ForDeletedDiscs_DoesNotCountArtist()
 		{
 			// Arrange
 
@@ -70,7 +128,7 @@ namespace MusicLibraryApi.Logic.Tests.Services
 		}
 
 		[TestMethod]
-		public async Task GetDiscArtistsNumber_DoesNotCountArtistsOfDeletedSongs()
+		public async Task GetDiscArtistsNumber_ForDeletedDiscSongs_DoesNotCountArtist()
 		{
 			// Arrange
 
@@ -98,7 +156,7 @@ namespace MusicLibraryApi.Logic.Tests.Services
 		}
 
 		[TestMethod]
-		public async Task GetDiscArtistsNumber_DoesNotCountMixedDiscArtists()
+		public async Task GetDiscArtistsNumber_ForDiscsWithMixedArtists_DoesNotCountArtists()
 		{
 			// Arrange
 
@@ -154,7 +212,7 @@ namespace MusicLibraryApi.Logic.Tests.Services
 		}
 
 		[TestMethod]
-		public async Task GetDiscsNumber_SkipsDeletedDiscs()
+		public async Task GetDiscsNumber_ForDeletedDiscs_DoesNotCount()
 		{
 			// Arrange
 
@@ -183,7 +241,7 @@ namespace MusicLibraryApi.Logic.Tests.Services
 		}
 
 		[TestMethod]
-		public async Task GetSongsNumber_SkipsDeletedSongs()
+		public async Task GetSongsNumber_ForDeletedSongs_DoesNotCount()
 		{
 			// Arrange
 
@@ -212,7 +270,7 @@ namespace MusicLibraryApi.Logic.Tests.Services
 		}
 
 		[TestMethod]
-		public async Task GetSongsDuration_SkipsDeletedSongs()
+		public async Task GetSongsDuration_ForDeletedSongs_DoesNotCount()
 		{
 			// Arrange
 
@@ -241,7 +299,7 @@ namespace MusicLibraryApi.Logic.Tests.Services
 		}
 
 		[TestMethod]
-		public async Task GetPlaybacksDuration_IncludesDeletedSongs()
+		public async Task GetPlaybacksDuration_ForDeletedSongs_AddsToPlaybacksDuration()
 		{
 			// Arrange
 
@@ -270,7 +328,7 @@ namespace MusicLibraryApi.Logic.Tests.Services
 		}
 
 		[TestMethod]
-		public async Task GetPlaybacksNumber_IncludesDeletedSongs()
+		public async Task GetPlaybacksNumber_ForDeletedSongs_AddsToPlaybacksNumber()
 		{
 			// Arrange
 
@@ -299,7 +357,7 @@ namespace MusicLibraryApi.Logic.Tests.Services
 		}
 
 		[TestMethod]
-		public async Task GetUnheardSongsNumber_SkipsDeletedSongs()
+		public async Task GetUnheardSongsNumber_ForDeletedSongs_DoesNotCount()
 		{
 			// Arrange
 
@@ -328,7 +386,7 @@ namespace MusicLibraryApi.Logic.Tests.Services
 		}
 
 		[TestMethod]
-		public async Task GetUnheardSongsNumber_SkipsListenedSongs()
+		public async Task GetUnheardSongsNumber_ForListenedSongs_DoesNotCount()
 		{
 			// Arrange
 
