@@ -16,7 +16,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		{
 			// Arrange
 
-			var expectedStatistics = new OutputStatisticsData(artistsNumber: 2, discArtistsNumber: 2, discsNumber: 5, songsNumber: 3,
+			var expectedStatistics = new OutputStatisticsData(artistsNumber: 2, discArtistsNumber: 1, discsNumber: 5, songsNumber: 3,
 				songsDuration: new TimeSpan(0, 12, 49), playbacksDuration: new TimeSpan(0, 21, 49), playbacksNumber: 4, unheardSongsNumber: 1);
 
 			var client = CreateClient<IStatisticsQuery>();

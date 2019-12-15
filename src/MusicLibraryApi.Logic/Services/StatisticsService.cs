@@ -33,9 +33,10 @@ namespace MusicLibraryApi.Logic.Services
 			return songs
 				.Where(s => !s.IsDeleted)
 				.GroupBy(s => s.DiscId)
-				.Select(discSongs => discSongs.Select(s => s.ArtistId).Where(id => id != null).OfType<int>().Distinct())
+				.Select(discSongs => discSongs.Select(s => s.ArtistId).Distinct())
 				.Where(discSongArtists => discSongArtists.Count() == 1)
 				.Select(discSongArtists => discSongArtists.Single())
+				.Where(artistId => artistId != null)
 				.Distinct()
 				.Count();
 		}

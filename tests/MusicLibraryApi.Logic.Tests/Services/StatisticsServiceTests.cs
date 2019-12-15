@@ -43,6 +43,35 @@ namespace MusicLibraryApi.Logic.Tests.Services
 		}
 
 		[TestMethod]
+		public async Task GetArtistsNumber_ForSongsWithoutArtist_DoesNotCountMissingArtist()
+		{
+			// Arrange
+
+			var songs = new[]
+			{
+				new Song { ArtistId = 1, },
+				new Song { ArtistId = null, },
+				new Song { ArtistId = 2, },
+			};
+
+			var songsRepositoryStub = new Mock<ISongsRepository>();
+			songsRepositoryStub.Setup(x => x.GetAllSongs(It.IsAny<CancellationToken>())).ReturnsAsync(songs);
+
+			var unitOfWorkStub = new Mock<IUnitOfWork>();
+			unitOfWorkStub.Setup(x => x.SongsRepository).Returns(songsRepositoryStub.Object);
+
+			var target = new StatisticsService(unitOfWorkStub.Object);
+
+			// Act
+
+			var artistsNumber = await target.GetArtistsNumber(CancellationToken.None);
+
+			// Assert
+
+			Assert.AreEqual(2, artistsNumber);
+		}
+
+		[TestMethod]
 		public async Task GetArtistsNumber_ForSongsWithCountedArtist_DoesNotCountArtists()
 		{
 			// Arrange
@@ -164,6 +193,62 @@ namespace MusicLibraryApi.Logic.Tests.Services
 			{
 				new Song { DiscId = 1, ArtistId = 1, },
 				new Song { DiscId = 1, ArtistId = 2, },
+			};
+
+			var songsRepositoryStub = new Mock<ISongsRepository>();
+			songsRepositoryStub.Setup(x => x.GetAllSongs(It.IsAny<CancellationToken>())).ReturnsAsync(songs);
+
+			var unitOfWorkStub = new Mock<IUnitOfWork>();
+			unitOfWorkStub.Setup(x => x.SongsRepository).Returns(songsRepositoryStub.Object);
+
+			var target = new StatisticsService(unitOfWorkStub.Object);
+
+			// Act
+
+			var discArtistsNumber = await target.GetDiscArtistsNumber(CancellationToken.None);
+
+			// Assert
+
+			Assert.AreEqual(0, discArtistsNumber);
+		}
+
+		[TestMethod]
+		public async Task GetDiscArtistsNumber_IfSomeDiscSongsDoNotHaveArtist_DoesNotCountDiscArtist()
+		{
+			// Arrange
+
+			var songs = new[]
+			{
+				new Song { DiscId = 1, ArtistId = 1, },
+				new Song { DiscId = 1, ArtistId = null, },
+			};
+
+			var songsRepositoryStub = new Mock<ISongsRepository>();
+			songsRepositoryStub.Setup(x => x.GetAllSongs(It.IsAny<CancellationToken>())).ReturnsAsync(songs);
+
+			var unitOfWorkStub = new Mock<IUnitOfWork>();
+			unitOfWorkStub.Setup(x => x.SongsRepository).Returns(songsRepositoryStub.Object);
+
+			var target = new StatisticsService(unitOfWorkStub.Object);
+
+			// Act
+
+			var discArtistsNumber = await target.GetDiscArtistsNumber(CancellationToken.None);
+
+			// Assert
+
+			Assert.AreEqual(0, discArtistsNumber);
+		}
+
+		[TestMethod]
+		public async Task GetDiscArtistsNumber_ForDiscWithoutArtist_DoesNotCountDiscArtist()
+		{
+			// Arrange
+
+			var songs = new[]
+			{
+				new Song { DiscId = 1, ArtistId = null, },
+				new Song { DiscId = 1, ArtistId = null, },
 			};
 
 			var songsRepositoryStub = new Mock<ISongsRepository>();
