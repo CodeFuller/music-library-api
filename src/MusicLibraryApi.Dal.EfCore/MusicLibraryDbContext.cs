@@ -48,7 +48,14 @@ namespace MusicLibraryApi.Dal.EfCore
 					.HasConstraintName(FolderParentFolderForeignKeyName)
 					.OnDelete(DeleteBehavior.Restrict);
 
-				b.HasData(new Folder(FoldersRepository.RootFolderId, "<ROOT>", null));
+				var rootFolder = new Folder
+				{
+					Id = FoldersRepository.RootFolderId,
+					Name = "<ROOT>",
+					ParentFolderId = null,
+				};
+
+				b.HasData(rootFolder);
 				b.Property(f => f.Id)
 					.UseIdentityColumn()
 					.HasIdentityOptions(startValue: FoldersRepository.RootFolderId + 1);

@@ -20,9 +20,9 @@ namespace MusicLibraryApi.Logic.Tests.Services
 
 			var songs = new[]
 			{
-				new Song("title1", "treeTitle1", trackNumber: 1, TimeSpan.Zero, discId: 1, artistId: 1, genreId: null, Rating.R1, bitRate: null, lastPlaybackTime: null, playbacksCount: 0),
-				new Song("title2", "treeTitle2", trackNumber: 1, TimeSpan.Zero, discId: 2, artistId: 2, genreId: null, Rating.R1, bitRate: null, lastPlaybackTime: null, playbacksCount: 0),
-				new Song("title3", "treeTitle3", trackNumber: 1, TimeSpan.Zero, discId: 1, artistId: 1, genreId: null, Rating.R1, bitRate: null, lastPlaybackTime: null, playbacksCount: 0),
+				new Song { DiscId = 1, ArtistId = 1, },
+				new Song { DiscId = 2, ArtistId = 2, },
+				new Song { DiscId = 1, ArtistId = 1, },
 			};
 
 			var songsRepositoryStub = new Mock<ISongsRepository>();
@@ -49,8 +49,7 @@ namespace MusicLibraryApi.Logic.Tests.Services
 
 			var songs = new[]
 			{
-				new Song("title1", "treeTitle1", trackNumber: 1, TimeSpan.Zero, discId: 1, artistId: 1, genreId: null, Rating.R1, bitRate: null,
-					lastPlaybackTime: null, playbacksCount: 0, deleteDate: new DateTimeOffset(2019, 12, 14, 18, 00, 00, TimeSpan.Zero)),
+				new Song { DiscId = 1, ArtistId = 1, DeleteDate = new DateTimeOffset(2019, 12, 14, 18, 00, 00, TimeSpan.Zero), },
 			};
 
 			var songsRepositoryStub = new Mock<ISongsRepository>();
@@ -77,9 +76,8 @@ namespace MusicLibraryApi.Logic.Tests.Services
 
 			var songs = new[]
 			{
-				new Song("title1", "treeTitle1", trackNumber: 1, TimeSpan.Zero, discId: 1, artistId: 1, genreId: null, Rating.R1, bitRate: null, lastPlaybackTime: null, playbacksCount: 0),
-				new Song("title2", "treeTitle2", trackNumber: 2, TimeSpan.Zero, discId: 1, artistId: 2, genreId: null, Rating.R1, bitRate: null,
-					lastPlaybackTime: null, playbacksCount: 0, deleteDate: new DateTimeOffset(2019, 12, 14, 18, 00, 00, TimeSpan.Zero)),
+				new Song { DiscId = 1, ArtistId = 1, },
+				new Song { DiscId = 1, ArtistId = 2, DeleteDate = new DateTimeOffset(2019, 12, 14, 18, 00, 00, TimeSpan.Zero), },
 			};
 
 			var songsRepositoryStub = new Mock<ISongsRepository>();
@@ -106,8 +104,8 @@ namespace MusicLibraryApi.Logic.Tests.Services
 
 			var songs = new[]
 			{
-				new Song("title1", "treeTitle1", trackNumber: 1, TimeSpan.Zero, discId: 1, artistId: 1, genreId: null, Rating.R1, bitRate: null, lastPlaybackTime: null, playbacksCount: 0),
-				new Song("title2", "treeTitle2", trackNumber: 2, TimeSpan.Zero, discId: 1, artistId: 2, genreId: null, Rating.R1, bitRate: null, lastPlaybackTime: null, playbacksCount: 0),
+				new Song { DiscId = 1, ArtistId = 1, },
+				new Song { DiscId = 1, ArtistId = 2, },
 			};
 
 			var songsRepositoryStub = new Mock<ISongsRepository>();
@@ -134,8 +132,8 @@ namespace MusicLibraryApi.Logic.Tests.Services
 
 			var songs = new[]
 			{
-				new Song("title1", "treeTitle1", trackNumber: 1, TimeSpan.Zero, discId: 1, artistId: 1, genreId: null, Rating.R1, bitRate: null, lastPlaybackTime: null, playbacksCount: 0),
-				new Song("title2", "treeTitle2", trackNumber: 2, TimeSpan.Zero, discId: 2, artistId: 1, genreId: null, Rating.R1, bitRate: null, lastPlaybackTime: null, playbacksCount: 0),
+				new Song { DiscId = 1, ArtistId = 1, },
+				new Song { DiscId = 2, ArtistId = 1, },
 			};
 
 			var songsRepositoryStub = new Mock<ISongsRepository>();
@@ -162,9 +160,9 @@ namespace MusicLibraryApi.Logic.Tests.Services
 
 			var discs = new[]
 			{
-				new Disc(year: 2019, title: "title1", treeTitle: "treeTitle1", albumTitle: "albumTitle1", folderId: 1, albumId: null, albumOrder: null, deleteDate: null),
-				new Disc(year: 2018, title: "title2", treeTitle: "treeTitle2", albumTitle: "albumTitle2", folderId: 1, albumId: null, albumOrder: null, deleteDate: DateTimeOffset.FromUnixTimeSeconds(10)),
-				new Disc(year: 2018, title: "title3", treeTitle: "treeTitle3", albumTitle: "albumTitle3", folderId: 1, albumId: null, albumOrder: null, deleteDate: null),
+				new Disc(),
+				new Disc { DeleteDate = DateTimeOffset.FromUnixTimeSeconds(10), },
+				new Disc(),
 			};
 
 			var discsRepositoryStub = new Mock<IDiscsRepository>();
@@ -191,10 +189,9 @@ namespace MusicLibraryApi.Logic.Tests.Services
 
 			var songs = new[]
 			{
-				new Song("title1", "treeTitle1", trackNumber: 1, TimeSpan.Zero, discId: 1, artistId: 1, genreId: null, Rating.R1, bitRate: null, lastPlaybackTime: null, playbacksCount: 0),
-				new Song("title2", "treeTitle2", trackNumber: 2, TimeSpan.Zero, discId: 1, artistId: 2, genreId: null, Rating.R1, bitRate: null,
-					lastPlaybackTime: null, playbacksCount: 0, deleteDate: new DateTimeOffset(2019, 12, 14, 18, 00, 00, TimeSpan.Zero)),
-				new Song("title3", "treeTitle3", trackNumber: 1, TimeSpan.Zero, discId: 1, artistId: 1, genreId: null, Rating.R1, bitRate: null, lastPlaybackTime: null, playbacksCount: 0),
+				new Song(),
+				new Song { DeleteDate = new DateTimeOffset(2019, 12, 14, 18, 00, 00, TimeSpan.Zero), },
+				new Song(),
 			};
 
 			var songsRepositoryStub = new Mock<ISongsRepository>();
@@ -221,10 +218,9 @@ namespace MusicLibraryApi.Logic.Tests.Services
 
 			var songs = new[]
 			{
-				new Song("title1", "treeTitle1", trackNumber: 1, TimeSpan.FromSeconds(10), discId: 1, artistId: 1, genreId: null, Rating.R1, bitRate: null, lastPlaybackTime: null, playbacksCount: 0),
-				new Song("title2", "treeTitle2", trackNumber: 2, TimeSpan.FromSeconds(20), discId: 1, artistId: 2, genreId: null, Rating.R1, bitRate: null,
-					lastPlaybackTime: null, playbacksCount: 0, deleteDate: new DateTimeOffset(2019, 12, 14, 18, 00, 00, TimeSpan.Zero)),
-				new Song("title3", "treeTitle3", trackNumber: 1, TimeSpan.FromSeconds(30), discId: 1, artistId: 1, genreId: null, Rating.R1, bitRate: null, lastPlaybackTime: null, playbacksCount: 0),
+				new Song { Duration = TimeSpan.FromSeconds(10), },
+				new Song { Duration = TimeSpan.FromSeconds(20), DeleteDate = new DateTimeOffset(2019, 12, 14, 18, 00, 00, TimeSpan.Zero), },
+				new Song { Duration = TimeSpan.FromSeconds(30), },
 			};
 
 			var songsRepositoryStub = new Mock<ISongsRepository>();
@@ -251,12 +247,9 @@ namespace MusicLibraryApi.Logic.Tests.Services
 
 			var songs = new[]
 			{
-				new Song("title1", "treeTitle1", trackNumber: 1, TimeSpan.FromSeconds(10), discId: 1, artistId: 1, genreId: null, Rating.R1,
-					bitRate: null, lastPlaybackTime: null, playbacksCount: 1),
-				new Song("title2", "treeTitle2", trackNumber: 2, TimeSpan.FromSeconds(20), discId: 1, artistId: 2, genreId: null, Rating.R1,
-					bitRate: null, lastPlaybackTime: null, playbacksCount: 2, deleteDate: new DateTimeOffset(2019, 12, 14, 18, 00, 00, TimeSpan.Zero)),
-				new Song("title3", "treeTitle3", trackNumber: 1, TimeSpan.FromSeconds(30), discId: 1, artistId: 1, genreId: null, Rating.R1,
-					bitRate: null, lastPlaybackTime: null, playbacksCount: 3),
+				new Song { Duration = TimeSpan.FromSeconds(10), PlaybacksCount = 1, },
+				new Song { Duration = TimeSpan.FromSeconds(20), PlaybacksCount = 2, DeleteDate = new DateTimeOffset(2019, 12, 14, 18, 00, 00, TimeSpan.Zero), },
+				new Song { Duration = TimeSpan.FromSeconds(30), PlaybacksCount = 3, },
 			};
 
 			var songsRepositoryStub = new Mock<ISongsRepository>();
@@ -283,12 +276,9 @@ namespace MusicLibraryApi.Logic.Tests.Services
 
 			var songs = new[]
 			{
-				new Song("title1", "treeTitle1", trackNumber: 1, TimeSpan.FromSeconds(10), discId: 1, artistId: 1, genreId: null, Rating.R1,
-					bitRate: null, lastPlaybackTime: null, playbacksCount: 1),
-				new Song("title2", "treeTitle2", trackNumber: 2, TimeSpan.FromSeconds(20), discId: 1, artistId: 2, genreId: null, Rating.R1,
-					bitRate: null, lastPlaybackTime: null, playbacksCount: 2, deleteDate: new DateTimeOffset(2019, 12, 14, 18, 00, 00, TimeSpan.Zero)),
-				new Song("title3", "treeTitle3", trackNumber: 1, TimeSpan.FromSeconds(30), discId: 1, artistId: 1, genreId: null, Rating.R1,
-					bitRate: null, lastPlaybackTime: null, playbacksCount: 3),
+				new Song { PlaybacksCount = 1, },
+				new Song { PlaybacksCount = 2, DeleteDate = new DateTimeOffset(2019, 12, 14, 18, 00, 00, TimeSpan.Zero), },
+				new Song { PlaybacksCount = 3, },
 			};
 
 			var songsRepositoryStub = new Mock<ISongsRepository>();
@@ -315,12 +305,9 @@ namespace MusicLibraryApi.Logic.Tests.Services
 
 			var songs = new[]
 			{
-				new Song("title1", "treeTitle1", trackNumber: 1, TimeSpan.FromSeconds(10), discId: 1, artistId: 1, genreId: null, Rating.R1,
-					bitRate: null, lastPlaybackTime: null, playbacksCount: 0),
-				new Song("title2", "treeTitle2", trackNumber: 2, TimeSpan.FromSeconds(20), discId: 1, artistId: 2, genreId: null, Rating.R1,
-					bitRate: null, lastPlaybackTime: null, playbacksCount: 0, deleteDate: new DateTimeOffset(2019, 12, 14, 18, 00, 00, TimeSpan.Zero)),
-				new Song("title3", "treeTitle3", trackNumber: 1, TimeSpan.FromSeconds(30), discId: 1, artistId: 1, genreId: null, Rating.R1,
-					bitRate: null, lastPlaybackTime: null, playbacksCount: 0),
+				new Song { PlaybacksCount = 0, },
+				new Song { PlaybacksCount = 0, DeleteDate = new DateTimeOffset(2019, 12, 14, 18, 00, 00, TimeSpan.Zero), },
+				new Song { PlaybacksCount = 0, },
 			};
 
 			var songsRepositoryStub = new Mock<ISongsRepository>();
@@ -347,12 +334,9 @@ namespace MusicLibraryApi.Logic.Tests.Services
 
 			var songs = new[]
 			{
-				new Song("title1", "treeTitle1", trackNumber: 1, TimeSpan.FromSeconds(10), discId: 1, artistId: 1, genreId: null, Rating.R1,
-					bitRate: null, lastPlaybackTime: null, playbacksCount: 0),
-				new Song("title2", "treeTitle2", trackNumber: 2, TimeSpan.FromSeconds(20), discId: 1, artistId: 2, genreId: null, Rating.R1,
-					bitRate: null, lastPlaybackTime: null, playbacksCount: 5),
-				new Song("title3", "treeTitle3", trackNumber: 1, TimeSpan.FromSeconds(30), discId: 1, artistId: 1, genreId: null, Rating.R1,
-					bitRate: null, lastPlaybackTime: null, playbacksCount: 0),
+				new Song { PlaybacksCount = 0, },
+				new Song { PlaybacksCount = 5, },
+				new Song { PlaybacksCount = 0, },
 			};
 
 			var songsRepositoryStub = new Mock<ISongsRepository>();

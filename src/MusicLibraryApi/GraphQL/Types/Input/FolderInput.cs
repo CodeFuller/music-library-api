@@ -21,7 +21,11 @@ namespace MusicLibraryApi.GraphQL.Types.Input
 				throw new InvalidOperationException("The folder name is not set");
 			}
 
-			return new Folder(Name, ParentFolderId);
+			return new Folder
+			{
+				Name = Name,
+				ParentFolderId = ParentFolderId,
+			};
 		}
 	}
 }

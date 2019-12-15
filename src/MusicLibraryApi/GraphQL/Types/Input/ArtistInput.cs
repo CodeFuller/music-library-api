@@ -14,7 +14,10 @@ namespace MusicLibraryApi.GraphQL.Types.Input
 				throw new InvalidOperationException("Artist name is not set");
 			}
 
-			return new Artist(Name);
+			return new Artist
+			{
+				Name = Name,
+			};
 		}
 	}
 }

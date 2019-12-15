@@ -105,12 +105,12 @@ namespace MusicLibraryApi.IntegrationTests
 		 */
 		private static void SeedFoldersData(MusicLibraryDbContext context, IIdentityInsert identityInsert)
 		{
-			var folder2 = new Folder(2, "Russian", 1);
-			var folder3 = new Folder(3, "Foreign", 1);
-			var folder4 = new Folder(4, "Rammstein", 3);
-			var folder5 = new Folder(5, "Guano Apes", 1);
-			var folder6 = new Folder(6, "Some subfolder", 5);
-			var folder7 = new Folder(7, "Empty folder", 5);
+			var folder2 = new Folder { Id = 2, Name = "Russian", ParentFolderId = 1, };
+			var folder3 = new Folder { Id = 3, Name = "Foreign", ParentFolderId = 1, };
+			var folder4 = new Folder { Id = 4, Name = "Rammstein", ParentFolderId = 3, };
+			var folder5 = new Folder { Id = 5, Name = "Guano Apes", ParentFolderId = 1, };
+			var folder6 = new Folder { Id = 6, Name = "Some subfolder", ParentFolderId = 5, };
+			var folder7 = new Folder { Id = 7, Name = "Empty folder", ParentFolderId = 5, };
 
 			identityInsert.InitializeIdentityInsert(context, "Folders");
 
@@ -122,9 +122,9 @@ namespace MusicLibraryApi.IntegrationTests
 
 		private static void SeedGenresData(MusicLibraryDbContext context, IIdentityInsert identityInsert)
 		{
-			var genre1 = new Genre(1, "Russian Rock");
-			var genre2 = new Genre(2, "Nu Metal");
-			var genre3 = new Genre(3, "Alternative Rock");
+			var genre1 = new Genre { Id = 1, Name = "Russian Rock", };
+			var genre2 = new Genre { Id = 2, Name = "Nu Metal", };
+			var genre3 = new Genre { Id = 3, Name = "Alternative Rock", };
 
 			identityInsert.InitializeIdentityInsert(context, "Genres");
 
@@ -136,9 +136,9 @@ namespace MusicLibraryApi.IntegrationTests
 
 		private static void SeedArtistsData(MusicLibraryDbContext context, IIdentityInsert identityInsert)
 		{
-			var artist1 = new Artist(1, "Nautilus Pompilius");
-			var artist2 = new Artist(2, "AC/DC");
-			var artist3 = new Artist(3, "Кино");
+			var artist1 = new Artist { Id = 1, Name = "Nautilus Pompilius", };
+			var artist2 = new Artist { Id = 2, Name = "AC/DC", };
+			var artist3 = new Artist { Id = 3, Name = "Кино", };
 
 			identityInsert.InitializeIdentityInsert(context, "Artists");
 
@@ -150,13 +150,82 @@ namespace MusicLibraryApi.IntegrationTests
 
 		private static void SeedDiscsData(MusicLibraryDbContext context, IIdentityInsert identityInsert)
 		{
-			var disc1 = new Disc(1, 2001, "Platinum Hits (CD 2)", "2001 - Platinum Hits (CD 2)", "Platinum Hits", 1, "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", 2);
-			var disc2 = new Disc(2, 2001, "Platinum Hits (CD 1)", "2001 - Platinum Hits (CD 1)", "Platinum Hits", 1, "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", 1);
-			var disc3 = new Disc(3, 2000, "Don't Give Me Names", "2000 - Don't Give Me Names", "Don't Give Me Names", 5);
-			var disc4 = new Disc(4, null, "Rarities", "Rarities", String.Empty, 5);
-			var disc5 = new Disc(5, 1997, "Proud Like A God", "1997 - Proud Like A God", "Proud Like A God", 5);
-			var disc6 = new Disc(6, null, "Some deleted disc", "2007 - Some deleted disc", "Some deleted disc", 1, null, null, new DateTimeOffset(2019, 12, 03, 07, 56, 06, TimeSpan.FromHours(2)));
-			var disc7 = new Disc(7, 2006, "Lost (T)apes", "2006 - Lost (T)apes", "Lost (T)apes", 5, null, null, new DateTimeOffset(2019, 12, 03, 07, 57, 01, TimeSpan.FromHours(2)), "Deleted for a test");
+			var disc1 = new Disc
+			{
+				Id = 1,
+				Year = 2001,
+				Title = "Platinum Hits (CD 2)",
+				TreeTitle = "2001 - Platinum Hits (CD 2)",
+				AlbumTitle = "Platinum Hits",
+				FolderId = 1,
+				AlbumId = "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}",
+				AlbumOrder = 2,
+			};
+
+			var disc2 = new Disc
+			{
+				Id = 2,
+				Year = 2001,
+				Title = "Platinum Hits (CD 1)",
+				TreeTitle = "2001 - Platinum Hits (CD 1)",
+				AlbumTitle = "Platinum Hits",
+				FolderId = 1,
+				AlbumId = "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}",
+				AlbumOrder = 1,
+			};
+
+			var disc3 = new Disc
+			{
+				Id = 3,
+				Year = 2000,
+				Title = "Don't Give Me Names",
+				TreeTitle = "2000 - Don't Give Me Names",
+				AlbumTitle = "Don't Give Me Names",
+				FolderId = 5,
+			};
+
+			var disc4 = new Disc
+			{
+				Id = 4,
+				Year = null,
+				Title = "Rarities",
+				TreeTitle = "Rarities",
+				AlbumTitle = String.Empty,
+				FolderId = 5,
+			};
+
+			var disc5 = new Disc
+			{
+				Id = 5,
+				Year = 1997,
+				Title = "Proud Like A God",
+				TreeTitle = "1997 - Proud Like A God",
+				AlbumTitle = "Proud Like A God",
+				FolderId = 5,
+			};
+
+			var disc6 = new Disc
+			{
+				Id = 6,
+				Year = null,
+				Title = "Some deleted disc",
+				TreeTitle = "2007 - Some deleted disc",
+				AlbumTitle = "Some deleted disc",
+				FolderId = 1,
+				DeleteDate = new DateTimeOffset(2019, 12, 03, 07, 56, 06, TimeSpan.FromHours(2)),
+			};
+
+			var disc7 = new Disc
+			{
+				Id = 7,
+				Year = 2006,
+				Title = "Lost (T)apes",
+				TreeTitle = "2006 - Lost (T)apes",
+				AlbumTitle = "Lost (T)apes",
+				FolderId = 5,
+				DeleteDate = new DateTimeOffset(2019, 12, 03, 07, 57, 01, TimeSpan.FromHours(2)),
+				DeleteComment = "Deleted for a test",
+			};
 
 			identityInsert.InitializeIdentityInsert(context, "Discs");
 
@@ -168,17 +237,67 @@ namespace MusicLibraryApi.IntegrationTests
 
 		private static void SeedSongsData(MusicLibraryDbContext context, IIdentityInsert identityInsert)
 		{
-			var song1 = new Song(1, "Hell's Bells", "02 - Hell's Bells.mp3", 2, new TimeSpan(0, 5, 12), discId: 1, artistId: null, genreId: 2,
-				Rating.R4, 320000, new DateTimeOffset(2018, 11, 25, 08, 25, 17, TimeSpan.FromHours(2)), 2);
+			var song1 = new Song
+			{
+				Id = 1,
+				Title = "Hell's Bells",
+				TreeTitle = "02 - Hell's Bells.mp3",
+				TrackNumber = 2,
+				Duration = new TimeSpan(0, 5, 12),
+				DiscId = 1,
+				ArtistId = null,
+				GenreId = 2,
+				Rating = Rating.R4,
+				BitRate = 320000,
+				LastPlaybackTime = new DateTimeOffset(2018, 11, 25, 08, 25, 17, TimeSpan.FromHours(2)),
+				PlaybacksCount = 2,
+			};
 
-			var song2 = new Song(2, "Highway To Hell", "01 - Highway To Hell.mp3", 1, new TimeSpan(0, 3, 28), discId: 1, artistId: 2, genreId: 1,
-				Rating.R6, 320000, new DateTimeOffset(2018, 11, 25, 08, 20, 00, TimeSpan.FromHours(2)), 1);
+			var song2 = new Song
+			{
+				Id = 2,
+				Title = "Highway To Hell",
+				TreeTitle = "01 - Highway To Hell.mp3",
+				TrackNumber = 1,
+				Duration = new TimeSpan(0, 3, 28),
+				DiscId = 1,
+				ArtistId = 2,
+				GenreId = 1,
+				Rating = Rating.R6,
+				BitRate = 320000,
+				LastPlaybackTime = new DateTimeOffset(2018, 11, 25, 08, 20, 00, TimeSpan.FromHours(2)),
+				PlaybacksCount = 1,
+			};
 
-			var song3 = new Song(3, "Are You Ready?", "03 - Are You Ready?.mp3", null, new TimeSpan(0, 4, 09), discId: 2, artistId: 1, genreId: null,
-				null, null, null, 0);
+			var song3 = new Song
+			{
+				Id = 3,
+				Title = "Are You Ready?",
+				TreeTitle = "03 - Are You Ready?.mp3",
+				TrackNumber = null,
+				Duration = new TimeSpan(0, 4, 09),
+				DiscId = 2,
+				ArtistId = 1,
+				GenreId = null,
+			};
 
-			var song4 = new Song(4, "Some Deleted Song", "04 - Some Deleted Song.mp3", 4, new TimeSpan(0, 7, 57), discId: 1, artistId: 3, genreId: 2,
-				Rating.R6, 320000, new DateTimeOffset(2019, 12, 14, 17, 27, 04, TimeSpan.FromHours(2)), 1, new DateTimeOffset(2019, 12, 14, 17, 27, 05, TimeSpan.FromHours(2)), "Deleted for a test");
+			var song4 = new Song
+			{
+				Id = 4,
+				Title = "Some Deleted Song",
+				TreeTitle = "04 - Some Deleted Song.mp3",
+				TrackNumber = 4,
+				Duration = new TimeSpan(0, 7, 57),
+				DiscId = 1,
+				ArtistId = 3,
+				GenreId = 2,
+				Rating = Rating.R6,
+				BitRate = 320000,
+				LastPlaybackTime = new DateTimeOffset(2019, 12, 14, 17, 27, 04, TimeSpan.FromHours(2)),
+				PlaybacksCount = 1,
+				DeleteDate = new DateTimeOffset(2019, 12, 14, 17, 27, 05, TimeSpan.FromHours(2)),
+				DeleteComment = "Deleted for a test",
+			};
 
 			identityInsert.InitializeIdentityInsert(context, "Songs");
 
@@ -190,10 +309,10 @@ namespace MusicLibraryApi.IntegrationTests
 
 		private static void SeedPlaybacksData(MusicLibraryDbContext context, IIdentityInsert identityInsert)
 		{
-			var playback1 = new Playback(1, 1, new DateTimeOffset(2018, 11, 25, 08, 25, 17, TimeSpan.FromHours(2)));
-			var playback2 = new Playback(2, 2, new DateTimeOffset(2018, 11, 25, 08, 20, 00, TimeSpan.FromHours(2)));
-			var playback3 = new Playback(3, 1, new DateTimeOffset(2015, 10, 23, 15, 18, 43, TimeSpan.FromHours(2)));
-			var playback4 = new Playback(4, 4, new DateTimeOffset(2019, 12, 14, 17, 27, 04, TimeSpan.FromHours(2)));
+			var playback1 = new Playback { Id = 1, SongId = 1, PlaybackTime = new DateTimeOffset(2018, 11, 25, 08, 25, 17, TimeSpan.FromHours(2)), };
+			var playback2 = new Playback { Id = 2, SongId = 2, PlaybackTime = new DateTimeOffset(2018, 11, 25, 08, 20, 00, TimeSpan.FromHours(2)), };
+			var playback3 = new Playback { Id = 3, SongId = 1, PlaybackTime = new DateTimeOffset(2015, 10, 23, 15, 18, 43, TimeSpan.FromHours(2)), };
+			var playback4 = new Playback { Id = 4, SongId = 4, PlaybackTime = new DateTimeOffset(2019, 12, 14, 17, 27, 04, TimeSpan.FromHours(2)), };
 
 			identityInsert.InitializeIdentityInsert(context, "Playbacks");
 

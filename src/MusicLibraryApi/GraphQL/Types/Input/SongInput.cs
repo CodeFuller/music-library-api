@@ -53,8 +53,22 @@ namespace MusicLibraryApi.GraphQL.Types.Input
 				throw new InvalidOperationException("Song duration is not set");
 			}
 
-			return new Song(Title, TreeTitle, TrackNumber, Duration.Value, DiscId.Value, ArtistId,
-				GenreId, Rating, BitRate, LastPlaybackTime, PlaybacksCount ?? 0, DeleteDate, DeleteComment);
+			return new Song
+			{
+				Title = Title,
+				TreeTitle = TreeTitle,
+				TrackNumber = TrackNumber,
+				Duration = Duration.Value,
+				DiscId = DiscId.Value,
+				ArtistId = ArtistId,
+				GenreId = GenreId,
+				Rating = Rating,
+				BitRate = BitRate,
+				LastPlaybackTime = LastPlaybackTime,
+				PlaybacksCount = PlaybacksCount ?? 0,
+				DeleteDate = DeleteDate,
+				DeleteComment = DeleteComment,
+			};
 		}
 	}
 }

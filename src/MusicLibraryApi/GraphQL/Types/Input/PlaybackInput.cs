@@ -21,7 +21,11 @@ namespace MusicLibraryApi.GraphQL.Types.Input
 				throw new InvalidOperationException("Playback time is not set");
 			}
 
-			return new Playback(SongId.Value, PlaybackTime.Value);
+			return new Playback
+			{
+				SongId = SongId.Value,
+				PlaybackTime = PlaybackTime.Value,
+			};
 		}
 	}
 }

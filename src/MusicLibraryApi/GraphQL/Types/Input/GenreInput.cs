@@ -14,7 +14,10 @@ namespace MusicLibraryApi.GraphQL.Types.Input
 				throw new InvalidOperationException("Genre name is not set");
 			}
 
-			return new Genre(Name);
+			return new Genre
+			{
+				Name = Name,
+			};
 		}
 	}
 }
