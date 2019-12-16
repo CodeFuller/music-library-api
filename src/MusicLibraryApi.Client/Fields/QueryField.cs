@@ -4,13 +4,13 @@ namespace MusicLibraryApi.Client.Fields
 {
 	public class QueryField<TQuery>
 	{
-		public string Name { get; }
+		internal string Name { get; }
 
-		public virtual string QuerySelection => Name;
+		internal virtual string QuerySelection => Name;
 
-		public virtual string VariablesDefinition => String.Empty;
+		internal virtual string VariablesDefinition => String.Empty;
 
-		public QueryField(string name)
+		internal QueryField(string name)
 		{
 			if (String.IsNullOrWhiteSpace(name))
 			{

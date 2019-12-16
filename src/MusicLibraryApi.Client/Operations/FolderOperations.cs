@@ -11,7 +11,9 @@ using static System.FormattableString;
 
 namespace MusicLibraryApi.Client.Operations
 {
-	public class FolderOperations : BasicQuery, IFoldersQuery, IFoldersMutation
+#pragma warning disable CA1812 // Avoid uninstantiated internal classes
+	internal class FolderOperations : BasicQuery, IFoldersQuery, IFoldersMutation
+#pragma warning restore CA1812 // Avoid uninstantiated internal classes
 	{
 		public FolderOperations(IHttpClientFactory httpClientFactory, ILogger<FolderOperations> logger)
 			: base(httpClientFactory, logger)

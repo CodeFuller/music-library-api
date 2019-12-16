@@ -12,7 +12,9 @@ using static System.FormattableString;
 
 namespace MusicLibraryApi.Client.Operations
 {
-	public class SongOperations : BasicQuery, ISongsQuery, ISongsMutation
+#pragma warning disable CA1812 // Avoid uninstantiated internal classes
+	internal class SongOperations : BasicQuery, ISongsQuery, ISongsMutation
+#pragma warning restore CA1812 // Avoid uninstantiated internal classes
 	{
 		public SongOperations(IHttpClientFactory httpClientFactory, ILogger<SongOperations> logger)
 			: base(httpClientFactory, logger)

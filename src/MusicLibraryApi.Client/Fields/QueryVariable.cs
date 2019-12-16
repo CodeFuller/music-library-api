@@ -3,7 +3,7 @@ using static System.FormattableString;
 
 namespace MusicLibraryApi.Client.Fields
 {
-	public class QueryVariable
+	internal class QueryVariable
 	{
 		public string Type { get; }
 

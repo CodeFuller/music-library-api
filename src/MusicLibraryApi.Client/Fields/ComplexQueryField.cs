@@ -11,11 +11,11 @@ namespace MusicLibraryApi.Client.Fields
 
 		private readonly IReadOnlyCollection<QueryVariable> variables;
 
-		public override string QuerySelection => Invariant($"{Name}{BuildVariableArguments()} {{ {nestedFields.QuerySelection} }}");
+		internal override string QuerySelection => Invariant($"{Name}{BuildVariableArguments()} {{ {nestedFields.QuerySelection} }}");
 
-		public override string VariablesDefinition => BuildVariablesDefinition();
+		internal override string VariablesDefinition => BuildVariablesDefinition();
 
-		public ComplexQueryField(string name, QueryFieldSet<TNestedQuery> nestedFields, params QueryVariable[] variables)
+		internal ComplexQueryField(string name, QueryFieldSet<TNestedQuery> nestedFields, params QueryVariable[] variables)
 			: base(name)
 		{
 			if (!nestedFields.Any())

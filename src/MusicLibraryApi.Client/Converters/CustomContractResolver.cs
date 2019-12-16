@@ -5,7 +5,7 @@ using Newtonsoft.Json.Serialization;
 
 namespace MusicLibraryApi.Client.Converters
 {
-	public class CustomContractResolver : DefaultContractResolver
+	internal class CustomContractResolver : DefaultContractResolver
 	{
 		protected override JsonConverter ResolveContractConverter(Type objectType)
 		{

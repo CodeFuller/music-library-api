@@ -3,7 +3,7 @@
 namespace MusicLibraryApi.Client.GraphQL
 {
 	[DataContract]
-	public class GraphQLRequest
+	internal class GraphQLRequest
 	{
 		[DataMember(Name = "query")]
 		public string? Query { get; set; }

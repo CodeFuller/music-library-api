@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 namespace MusicLibraryApi.Client.Converters
 {
-	public class RatingConverter : JsonConverter
+	internal class RatingConverter : JsonConverter
 	{
 		private readonly Dictionary<string, Rating> stringToRatingMapping;
 		private readonly Dictionary<Rating, string> ratingToStringMapping;

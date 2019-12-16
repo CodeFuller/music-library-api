@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace MusicLibraryApi.Client.Converters
 {
-	public class TimespanSecondsConverter : JsonConverter
+	internal class TimespanSecondsConverter : JsonConverter
 	{
 		public override bool CanConvert(Type objectType)
 		{

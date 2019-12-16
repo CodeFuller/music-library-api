@@ -11,21 +11,21 @@ namespace MusicLibraryApi.Client.Fields
 	{
 		private readonly IReadOnlyCollection<QueryField<TQuery>> fields;
 
-		public string QuerySelection => String.Join(" ", fields.Select(f => f.QuerySelection));
+		internal string QuerySelection => String.Join(" ", fields.Select(f => f.QuerySelection));
 
-		public string VariablesDefinition => String.Join(", ", fields.Select(f => f.VariablesDefinition).Where(d => !String.IsNullOrEmpty(d)));
+		internal string VariablesDefinition => String.Join(", ", fields.Select(f => f.VariablesDefinition).Where(d => !String.IsNullOrEmpty(d)));
 
-		public QueryFieldSet(QueryField<TQuery> field)
+		internal QueryFieldSet(QueryField<TQuery> field)
 		{
 			fields = new List<QueryField<TQuery>> { field };
 		}
 
-		public QueryFieldSet(QueryField<TQuery> f1, QueryField<TQuery> f2)
+		internal QueryFieldSet(QueryField<TQuery> f1, QueryField<TQuery> f2)
 		{
 			fields = new List<QueryField<TQuery>> { f1, f2 };
 		}
 
-		public QueryFieldSet(QueryFieldSet<TQuery> set, QueryField<TQuery> field)
+		internal QueryFieldSet(QueryFieldSet<TQuery> set, QueryField<TQuery> field)
 		{
 			fields = new List<QueryField<TQuery>>(set.fields) { field };
 		}

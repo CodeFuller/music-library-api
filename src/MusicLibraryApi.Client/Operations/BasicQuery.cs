@@ -14,7 +14,7 @@ using Newtonsoft.Json.Linq;
 
 namespace MusicLibraryApi.Client.Operations
 {
-	public abstract class BasicQuery
+	internal abstract class BasicQuery
 	{
 		private const string GraphQLRelativeUri = "graphql";
 
