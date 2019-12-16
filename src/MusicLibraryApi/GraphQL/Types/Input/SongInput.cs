@@ -23,10 +23,6 @@ namespace MusicLibraryApi.GraphQL.Types.Input
 
 		public int? BitRate { get; set; }
 
-		public DateTimeOffset? LastPlaybackTime { get; set; }
-
-		public int? PlaybacksCount { get; set; }
-
 		public DateTimeOffset? DeleteDate { get; set; }
 
 		public string? DeleteComment { get; set; }
@@ -64,8 +60,6 @@ namespace MusicLibraryApi.GraphQL.Types.Input
 				GenreId = GenreId,
 				Rating = Rating,
 				BitRate = BitRate,
-				LastPlaybackTime = LastPlaybackTime,
-				PlaybacksCount = PlaybacksCount ?? 0,
 				DeleteDate = DeleteDate,
 				DeleteComment = DeleteComment,
 			};

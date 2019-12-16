@@ -18,8 +18,6 @@ namespace MusicLibraryApi.GraphQL.Types.Input
 			Field<RatingEnumType>("rating");
 			Field<IntGraphType>("bitRate");
 			Field<DateTimeOffsetGraphType>("lastPlaybackTime");
-			Field<IntGraphType>("playbacksCount");
-			Field<ListGraphType<NonNullGraphType<PlaybackInputType>>>("playbacks");
 			Field<DateTimeOffsetGraphType>("deleteDate");
 			Field<StringGraphType>("deleteComment");
 		}

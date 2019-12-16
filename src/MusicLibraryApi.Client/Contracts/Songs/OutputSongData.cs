@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using MusicLibraryApi.Client.Contracts.Artists;
 using MusicLibraryApi.Client.Contracts.Discs;
@@ -21,6 +22,12 @@ namespace MusicLibraryApi.Client.Contracts.Songs
 
 		[DataMember(Name = "genre")]
 		public OutputGenreData? Genre { get; set; }
+
+		[DataMember(Name = "lastPlaybackTime")]
+		public DateTimeOffset? LastPlaybackTime { get; set; }
+
+		[DataMember(Name = "playbacksCount")]
+		public int? PlaybacksCount { get; set; }
 
 		[DataMember(Name = "playbacks")]
 		public IReadOnlyCollection<OutputPlaybackData>? Playbacks { get; set; }

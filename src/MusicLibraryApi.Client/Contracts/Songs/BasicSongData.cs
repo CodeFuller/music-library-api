@@ -24,12 +24,6 @@ namespace MusicLibraryApi.Client.Contracts.Songs
 		[DataMember(Name = "bitRate")]
 		public int? BitRate { get; set; }
 
-		[DataMember(Name = "lastPlaybackTime")]
-		public DateTimeOffset? LastPlaybackTime { get; set; }
-
-		[DataMember(Name = "playbacksCount")]
-		public int? PlaybacksCount { get; set; }
-
 		[DataMember(Name = "deleteDate")]
 		public DateTimeOffset? DeleteDate { get; set; }
 
