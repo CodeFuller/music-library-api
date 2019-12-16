@@ -9,8 +9,10 @@ namespace MusicLibraryApi.Client
 {
 	public static class ServiceCollectionExtensions
 	{
-		public static IServiceCollection AddMusicLibraryApiClient(this IServiceCollection services)
+		public static IServiceCollection AddMusicLibraryApiClient(this IServiceCollection services, Action<ApiConnectionSettings> setupAction)
 		{
+			services.Configure<ApiConnectionSettings>(setupAction);
+
 			services.AddTransient<IGenresQuery, GenreOperations>();
 			services.AddTransient<IGenresMutation, GenreOperations>();
 			services.AddTransient<IArtistsQuery, ArtistOperations>();

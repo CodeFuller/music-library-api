@@ -41,7 +41,7 @@ namespace MusicLibraryApi.IntegrationTests
 
 			builder.ConfigureServices(services =>
 			{
-				services.AddMusicLibraryApiClient();
+				services.AddMusicLibraryApiClient(settings => { });
 				services.AddSingleton<IHttpClientFactory>(this);
 
 				appConfigurator.ConfigureServices(services);

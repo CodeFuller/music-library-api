@@ -1,4 +1,7 @@
-﻿**2.0.0** / 2019.12.16**
+﻿**3.0.0** / 2019.12.16**
+* Fixed client settings setup.
+
+**2.0.0** / 2019.12.16**
 * Removed playbacks fields from input song contract.
 
 **1.0.0** / 2019.12.16**
