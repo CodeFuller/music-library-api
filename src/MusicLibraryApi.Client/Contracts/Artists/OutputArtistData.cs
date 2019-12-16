@@ -8,16 +8,9 @@ namespace MusicLibraryApi.Client.Contracts.Artists
 	public class OutputArtistData : BasicArtistData
 	{
 		[DataMember(Name = "id")]
-		public int? Id { get; }
+		public int? Id { get; set; }
 
 		[DataMember(Name = "songs")]
-		public IReadOnlyCollection<OutputSongData>? Songs { get; }
-
-		public OutputArtistData(int? id = null, string? name = null, IReadOnlyCollection<OutputSongData>? songs = null)
-			: base(name)
-		{
-			Id = id;
-			Songs = songs;
-		}
+		public IReadOnlyCollection<OutputSongData>? Songs { get; set; }
 	}
 }

@@ -6,11 +6,6 @@ namespace MusicLibraryApi.Client.Contracts.Playbacks
 	public class AddPlaybackOutputData
 	{
 		[DataMember(Name = "newPlaybackId")]
-		public int? NewPlaybackId { get; }
-
-		public AddPlaybackOutputData(int? newPlaybackId)
-		{
-			NewPlaybackId = newPlaybackId;
-		}
+		public int? NewPlaybackId { get; set; }
 	}
 }

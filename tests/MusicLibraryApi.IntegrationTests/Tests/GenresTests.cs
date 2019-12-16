@@ -20,9 +20,26 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var expectedGenres = new[]
 			{
-				new OutputGenreData(3, "Alternative Rock", Array.Empty<OutputSongData>()),
-				new OutputGenreData(2, "Nu Metal", new[] { new OutputSongData(id: 1), }),
-				new OutputGenreData(1, "Russian Rock", new[] { new OutputSongData(id: 2), }),
+				new OutputGenreData
+				{
+					Id = 3,
+					Name = "Alternative Rock",
+					Songs = Array.Empty<OutputSongData>(),
+				},
+
+				new OutputGenreData
+				{
+					Id = 2,
+					Name = "Nu Metal",
+					Songs = new[] { new OutputSongData { Id = 1, }, },
+				},
+
+				new OutputGenreData
+				{
+					Id = 1,
+					Name = "Russian Rock",
+					Songs = new[] { new OutputSongData { Id = 2, }, },
+				},
 			};
 
 			var client = CreateClient<IGenresQuery>();
@@ -41,7 +58,12 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		{
 			// Arrange
 
-			var expectedGenre = new OutputGenreData(2, "Nu Metal", new[] { new OutputSongData(id: 1), });
+			var expectedGenre = new OutputGenreData
+			{
+				Id = 2,
+				Name = "Nu Metal",
+				Songs = new[] { new OutputSongData { Id = 1, }, },
+			};
 
 			var client = CreateClient<IGenresQuery>();
 
@@ -80,7 +102,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Act
 
-			var newGenreId = await client.CreateGenre(new InputGenreData("Gothic Metal"), CancellationToken.None);
+			var newGenreId = await client.CreateGenre(new InputGenreData { Name = "Gothic Metal", }, CancellationToken.None);
 
 			// Assert
 
@@ -90,10 +112,10 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var expectedGenres = new[]
 			{
-				new OutputGenreData(3, "Alternative Rock"),
-				new OutputGenreData(4, "Gothic Metal"),
-				new OutputGenreData(2, "Nu Metal"),
-				new OutputGenreData(1, "Russian Rock"),
+				new OutputGenreData { Id = 3, Name = "Alternative Rock", },
+				new OutputGenreData { Id = 4, Name = "Gothic Metal", },
+				new OutputGenreData { Id = 2, Name = "Nu Metal", },
+				new OutputGenreData { Id = 1, Name = "Russian Rock", },
 			};
 
 			var genresQuery = CreateClient<IGenresQuery>();
@@ -111,7 +133,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Act
 
-			var createGenreTask = client.CreateGenre(new InputGenreData("Nu Metal"), CancellationToken.None);
+			var createGenreTask = client.CreateGenre(new InputGenreData { Name = "Nu Metal", }, CancellationToken.None);
 
 			// Assert
 
@@ -122,9 +144,9 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var expectedGenres = new[]
 			{
-				new OutputGenreData(3, "Alternative Rock"),
-				new OutputGenreData(2, "Nu Metal"),
-				new OutputGenreData(1, "Russian Rock"),
+				new OutputGenreData { Id = 3, Name = "Alternative Rock", },
+				new OutputGenreData { Id = 2, Name = "Nu Metal", },
+				new OutputGenreData { Id = 1, Name = "Russian Rock", },
 			};
 
 			var genresQuery = CreateClient<IGenresQuery>();

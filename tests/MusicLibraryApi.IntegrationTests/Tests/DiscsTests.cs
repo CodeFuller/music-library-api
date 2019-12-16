@@ -23,22 +23,63 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var expectedDiscs = new[]
 			{
-				new OutputDiscData(id: 1, year: 2001, title: "Platinum Hits (CD 2)", treeTitle: "2001 - Platinum Hits (CD 2)",
-					albumTitle: "Platinum Hits", albumId: "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", albumOrder: 2, folder: new OutputFolderData(id: 1),
-					songs: new[] { new OutputSongData(id: 2), new OutputSongData(id: 1), }),
+				new OutputDiscData
+				{
+					Id = 1,
+					Year = 2001,
+					Title = "Platinum Hits (CD 2)",
+					TreeTitle = "2001 - Platinum Hits (CD 2)",
+					AlbumTitle = "Platinum Hits",
+					AlbumId = "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}",
+					AlbumOrder = 2,
+					Folder = new OutputFolderData { Id = 1, },
+					Songs = new[] { new OutputSongData { Id = 2, }, new OutputSongData { Id = 1, }, },
+				},
 
-				new OutputDiscData(id: 2, year: 2001, title: "Platinum Hits (CD 1)", treeTitle: "2001 - Platinum Hits (CD 1)",
-					albumTitle: "Platinum Hits", albumId: "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", albumOrder: 1, folder: new OutputFolderData(id: 1),
-					songs: new[] { new OutputSongData(id: 3), }),
+				new OutputDiscData
+				{
+					Id = 2,
+					Year = 2001,
+					Title = "Platinum Hits (CD 1)",
+					TreeTitle = "2001 - Platinum Hits (CD 1)",
+					AlbumTitle = "Platinum Hits",
+					AlbumId = "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}",
+					AlbumOrder = 1,
+					Folder = new OutputFolderData { Id = 1, },
+					Songs = new[] { new OutputSongData { Id = 3, }, },
+				},
 
-				new OutputDiscData(id: 3, year: 2000, title: "Don't Give Me Names", treeTitle: "2000 - Don't Give Me Names",
-					albumTitle: "Don't Give Me Names", folder: new OutputFolderData(id: 5),
-					songs: Array.Empty<OutputSongData>()),
+				new OutputDiscData
+				{
+					Id = 3,
+					Year = 2000,
+					Title = "Don't Give Me Names",
+					TreeTitle = "2000 - Don't Give Me Names",
+					AlbumTitle = "Don't Give Me Names",
+					Folder = new OutputFolderData { Id = 5, },
+					Songs = Array.Empty<OutputSongData>(),
+				},
 
-				new OutputDiscData(id: 4, title: "Rarities", treeTitle: "Rarities", albumTitle: String.Empty, folder: new OutputFolderData(id: 5), songs: Array.Empty<OutputSongData>()),
+				new OutputDiscData
+				{
+					Id = 4,
+					Title = "Rarities",
+					TreeTitle = "Rarities",
+					AlbumTitle = String.Empty,
+					Folder = new OutputFolderData { Id = 5, },
+					Songs = Array.Empty<OutputSongData>(),
+				},
 
-				new OutputDiscData(id: 5, year: 1997, "Proud Like A God", treeTitle: "1997 - Proud Like A God", albumTitle: "Proud Like A God",
-					folder: new OutputFolderData(id: 5), songs: Array.Empty<OutputSongData>()),
+				new OutputDiscData
+				{
+					Id = 5,
+					Year = 1997,
+					Title = "Proud Like A God",
+					TreeTitle = "1997 - Proud Like A God",
+					AlbumTitle = "Proud Like A God",
+					Folder = new OutputFolderData { Id = 5, },
+					Songs = Array.Empty<OutputSongData>(),
+				},
 			};
 
 			var client = CreateClient<IDiscsQuery>();
@@ -57,9 +98,18 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		{
 			// Arrange
 
-			var expectedDisc = new OutputDiscData(id: 1, year: 2001, title: "Platinum Hits (CD 2)", treeTitle: "2001 - Platinum Hits (CD 2)",
-				albumTitle: "Platinum Hits", albumId: "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", albumOrder: 2, folder: new OutputFolderData(id: 1),
-				songs: new[] { new OutputSongData(id: 2), new OutputSongData(id: 1), });
+			var expectedDisc = new OutputDiscData
+			{
+				Id = 1,
+				Year = 2001,
+				Title = "Platinum Hits (CD 2)",
+				TreeTitle = "2001 - Platinum Hits (CD 2)",
+				AlbumTitle = "Platinum Hits",
+				AlbumId = "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}",
+				AlbumOrder = 2,
+				Folder = new OutputFolderData { Id = 1, },
+				Songs = new[] { new OutputSongData { Id = 2, }, new OutputSongData { Id = 1, }, },
+			};
 
 			var client = CreateClient<IDiscsQuery>();
 
@@ -94,8 +144,18 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		{
 			// Arrange
 
-			var newDiscData = new InputDiscData(5, 1994, "Битва на мотоциклах (CD 2)", "1994 - Битва на мотоциклах (CD 2)",
-				"Битва на мотоциклах", "{C7BEC024-8979-4477-8247-419A476C1DFB}", 2, new DateTimeOffset(2019, 12, 10, 07, 20, 25, TimeSpan.FromHours(2)), "For a test");
+			var newDiscData = new InputDiscData
+			{
+				FolderId = 5,
+				Year = 1994,
+				Title = "Битва на мотоциклах (CD 2)",
+				TreeTitle = "1994 - Битва на мотоциклах (CD 2)",
+				AlbumTitle = "Битва на мотоциклах",
+				AlbumId = "{C7BEC024-8979-4477-8247-419A476C1DFB}",
+				AlbumOrder = 2,
+				DeleteDate = new DateTimeOffset(2019, 12, 10, 07, 20, 25, TimeSpan.FromHours(2)),
+				DeleteComment = "For a test",
+			};
 
 			var client = CreateClient<IDiscsMutation>();
 
@@ -109,9 +169,19 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Checking created disc data
 
-			var expectedDisc = new OutputDiscData(id: 8, year: 1994, title: "Битва на мотоциклах (CD 2)", treeTitle: "1994 - Битва на мотоциклах (CD 2)",
-				albumTitle: "Битва на мотоциклах", albumId: "{C7BEC024-8979-4477-8247-419A476C1DFB}", albumOrder: 2, folder: new OutputFolderData(id: 5),
-				deleteDate: new DateTimeOffset(2019, 12, 10, 07, 20, 25, TimeSpan.FromHours(2)), deleteComment: "For a test");
+			var expectedDisc = new OutputDiscData
+			{
+				Id = 8,
+				Year = 1994,
+				Title = "Битва на мотоциклах (CD 2)",
+				TreeTitle = "1994 - Битва на мотоциклах (CD 2)",
+				AlbumTitle = "Битва на мотоциклах",
+				AlbumId = "{C7BEC024-8979-4477-8247-419A476C1DFB}",
+				AlbumOrder = 2,
+				DeleteDate = new DateTimeOffset(2019, 12, 10, 07, 20, 25, TimeSpan.FromHours(2)),
+				DeleteComment = "For a test",
+				Folder = new OutputFolderData { Id = 5, },
+			};
 
 			var discsQuery = CreateClient<IDiscsQuery>();
 			var receivedDisc = await discsQuery.GetDisc(8, DiscFields.All + DiscFields.Folder(FolderFields.Id), CancellationToken.None);
@@ -124,7 +194,13 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		{
 			// Arrange
 
-			var newDiscData = new InputDiscData(5, null, "Best Russian", "Russian", String.Empty);
+			var newDiscData = new InputDiscData
+			{
+				FolderId = 5,
+				Title = "Best Russian",
+				TreeTitle = "Russian",
+				AlbumTitle = String.Empty,
+			};
 
 			var client = CreateClient<IDiscsMutation>();
 
@@ -138,7 +214,14 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Checking created disc data
 
-			var expectedDisc = new OutputDiscData(id: 8, title: "Best Russian", treeTitle: "Russian", albumTitle: String.Empty, folder: new OutputFolderData(id: 5));
+			var expectedDisc = new OutputDiscData
+			{
+				Id = 8,
+				Title = "Best Russian",
+				TreeTitle = "Russian",
+				AlbumTitle = String.Empty,
+				Folder = new OutputFolderData { Id = 5, },
+			};
 
 			var discsQuery = CreateClient<IDiscsQuery>();
 			var receivedDisc = await discsQuery.GetDisc(8, DiscFields.All + DiscFields.Folder(FolderFields.Id), CancellationToken.None);
@@ -151,7 +234,13 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		{
 			// Arrange
 
-			var newDiscData = new InputDiscData(12345, null, "Some New Disc (CD 1)", "1999 - Some New Disc (CD 1)", "Some New Disc");
+			var newDiscData = new InputDiscData
+			{
+				FolderId = 12345,
+				Title = "Some New Disc (CD 1)",
+				TreeTitle = "1999 - Some New Disc (CD 1)",
+				AlbumTitle = "Some New Disc",
+			};
 
 			var client = CreateClient<IDiscsMutation>();
 
@@ -168,11 +257,11 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var expectedDiscs = new[]
 			{
-				new OutputDiscData(id: 1),
-				new OutputDiscData(id: 2),
-				new OutputDiscData(id: 3),
-				new OutputDiscData(id: 4),
-				new OutputDiscData(id: 5),
+				new OutputDiscData { Id = 1, },
+				new OutputDiscData { Id = 2, },
+				new OutputDiscData { Id = 3, },
+				new OutputDiscData { Id = 4, },
+				new OutputDiscData { Id = 5, },
 			};
 
 			var discsQuery = CreateClient<IDiscsQuery>();

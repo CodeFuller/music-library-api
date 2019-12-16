@@ -20,9 +20,26 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var expectedArtists = new[]
 			{
-				new OutputArtistData(2, "AC/DC", new[] { new OutputSongData(id: 2), }),
-				new OutputArtistData(1, "Nautilus Pompilius", new[] { new OutputSongData(id: 3), }),
-				new OutputArtistData(3, "Кино", Array.Empty<OutputSongData>()),
+				new OutputArtistData
+				{
+					Id = 2,
+					Name = "AC/DC",
+					Songs = new[] { new OutputSongData { Id = 2, }, },
+				},
+
+				new OutputArtistData
+				{
+					Id = 1,
+					Name = "Nautilus Pompilius",
+					Songs = new[] { new OutputSongData { Id = 3, }, },
+				},
+
+				new OutputArtistData
+				{
+					Id = 3,
+					Name = "Кино",
+					Songs = Array.Empty<OutputSongData>(),
+				},
 			};
 
 			var client = CreateClient<IArtistsQuery>();
@@ -41,7 +58,12 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		{
 			// Arrange
 
-			var expectedArtist = new OutputArtistData(2, "AC/DC", new[] { new OutputSongData(id: 2), });
+			var expectedArtist = new OutputArtistData
+			{
+				Id = 2,
+				Name = "AC/DC",
+				Songs = new[] { new OutputSongData { Id = 2, }, },
+			};
 
 			var client = CreateClient<IArtistsQuery>();
 
@@ -80,7 +102,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Act
 
-			var newArtistId = await client.CreateArtist(new InputArtistData("Агата Кристи"), CancellationToken.None);
+			var newArtistId = await client.CreateArtist(new InputArtistData { Name = "Агата Кристи" }, CancellationToken.None);
 
 			// Assert
 
@@ -90,10 +112,10 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var expectedArtists = new[]
 			{
-				new OutputArtistData(2, "AC/DC"),
-				new OutputArtistData(1, "Nautilus Pompilius"),
-				new OutputArtistData(4, "Агата Кристи"),
-				new OutputArtistData(3, "Кино"),
+				new OutputArtistData { Id = 2, Name = "AC/DC", },
+				new OutputArtistData { Id = 1, Name = "Nautilus Pompilius", },
+				new OutputArtistData { Id = 4, Name = "Агата Кристи", },
+				new OutputArtistData { Id = 3, Name = "Кино", },
 			};
 
 			var artistsQuery = CreateClient<IArtistsQuery>();
@@ -111,7 +133,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Act
 
-			var createArtistTask = client.CreateArtist(new InputArtistData("AC/DC"), CancellationToken.None);
+			var createArtistTask = client.CreateArtist(new InputArtistData { Name = "AC/DC" }, CancellationToken.None);
 
 			// Assert
 
@@ -122,9 +144,9 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var expectedArtists = new[]
 			{
-				new OutputArtistData(2, "AC/DC"),
-				new OutputArtistData(1, "Nautilus Pompilius"),
-				new OutputArtistData(3, "Кино"),
+				new OutputArtistData { Id = 2, Name = "AC/DC", },
+				new OutputArtistData { Id = 1, Name = "Nautilus Pompilius", },
+				new OutputArtistData { Id = 3, Name = "Кино", },
 			};
 
 			var artistsQuery = CreateClient<IArtistsQuery>();

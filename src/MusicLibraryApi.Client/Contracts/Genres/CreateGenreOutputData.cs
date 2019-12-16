@@ -6,11 +6,6 @@ namespace MusicLibraryApi.Client.Contracts.Genres
 	public class CreateGenreOutputData
 	{
 		[DataMember(Name = "newGenreId")]
-		public int? NewGenreId { get; }
-
-		public CreateGenreOutputData(int? newGenreId)
-		{
-			NewGenreId = newGenreId;
-		}
+		public int? NewGenreId { get; set; }
 	}
 }

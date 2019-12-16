@@ -7,39 +7,27 @@ namespace MusicLibraryApi.Client.Contracts.Discs
 	public abstract class BasicDiscData
 	{
 		[DataMember(Name = "year")]
-		public int? Year { get; }
+		public int? Year { get; set; }
 
 		[DataMember(Name = "title")]
-		public string? Title { get; }
+		public string? Title { get; set; }
 
 		[DataMember(Name = "treeTitle")]
-		public string? TreeTitle { get; }
+		public string? TreeTitle { get; set; }
 
 		[DataMember(Name = "albumTitle")]
-		public string? AlbumTitle { get; }
+		public string? AlbumTitle { get; set; }
 
 		[DataMember(Name = "albumId")]
-		public string? AlbumId { get; }
+		public string? AlbumId { get; set; }
 
 		[DataMember(Name = "albumOrder")]
-		public int? AlbumOrder { get; }
+		public int? AlbumOrder { get; set; }
 
 		[DataMember(Name = "deleteDate")]
-		public DateTimeOffset? DeleteDate { get; }
+		public DateTimeOffset? DeleteDate { get; set; }
 
 		[DataMember(Name = "deleteComment")]
-		public string? DeleteComment { get; }
-
-		protected BasicDiscData(int? year, string? title, string? treeTitle, string? albumTitle, string? albumId, int? albumOrder, DateTimeOffset? deleteDate, string? deleteComment)
-		{
-			Year = year;
-			Title = title;
-			TreeTitle = treeTitle;
-			AlbumTitle = albumTitle;
-			AlbumId = albumId;
-			AlbumOrder = albumOrder;
-			DeleteDate = deleteDate;
-			DeleteComment = deleteComment;
-		}
+		public string? DeleteComment { get; set; }
 	}
 }

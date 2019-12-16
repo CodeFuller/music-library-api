@@ -6,11 +6,6 @@ namespace MusicLibraryApi.Client.Contracts.Folders
 	public abstract class BasicFolderData
 	{
 		[DataMember(Name = "name")]
-		public string? Name { get; }
-
-		protected BasicFolderData(string? name)
-		{
-			Name = name;
-		}
+		public string? Name { get; set; }
 	}
 }

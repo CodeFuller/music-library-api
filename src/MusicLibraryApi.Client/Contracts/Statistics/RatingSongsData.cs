@@ -10,11 +10,5 @@ namespace MusicLibraryApi.Client.Contracts.Statistics
 
 		[DataMember(Name = "songsNumber")]
 		public int? SongsNumber { get; set; }
-
-		public RatingSongsData(Rating? rating, int? songsNumber)
-		{
-			Rating = rating;
-			SongsNumber = songsNumber;
-		}
 	}
 }

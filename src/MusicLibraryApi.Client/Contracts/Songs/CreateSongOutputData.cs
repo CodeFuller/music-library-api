@@ -6,11 +6,6 @@ namespace MusicLibraryApi.Client.Contracts.Songs
 	public class CreateSongOutputData
 	{
 		[DataMember(Name = "newSongId")]
-		public int? NewSongId { get; }
-
-		public CreateSongOutputData(int? newSongId)
-		{
-			NewSongId = newSongId;
-		}
+		public int? NewSongId { get; set; }
 	}
 }

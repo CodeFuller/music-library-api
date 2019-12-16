@@ -6,11 +6,6 @@ namespace MusicLibraryApi.Client.Contracts.Discs
 	public class CreateDiscOutputData
 	{
 		[DataMember(Name = "newDiscId")]
-		public int? NewDiscId { get; }
-
-		public CreateDiscOutputData(int? newDiscId)
-		{
-			NewDiscId = newDiscId;
-		}
+		public int? NewDiscId { get; set; }
 	}
 }

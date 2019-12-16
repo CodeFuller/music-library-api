@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
 using MusicLibraryApi.Client.Contracts.Artists;
 using MusicLibraryApi.Client.Contracts.Discs;
@@ -12,30 +11,18 @@ namespace MusicLibraryApi.Client.Contracts.Songs
 	public class OutputSongData : BasicSongData
 	{
 		[DataMember(Name = "id")]
-		public int? Id { get; }
+		public int? Id { get; set; }
 
 		[DataMember(Name = "disc")]
-		public OutputDiscData? Disc { get; }
+		public OutputDiscData? Disc { get; set; }
 
 		[DataMember(Name = "artist")]
-		public OutputArtistData? Artist { get; }
+		public OutputArtistData? Artist { get; set; }
 
 		[DataMember(Name = "genre")]
-		public OutputGenreData? Genre { get; }
+		public OutputGenreData? Genre { get; set; }
 
 		[DataMember(Name = "playbacks")]
-		public IReadOnlyCollection<OutputPlaybackData>? Playbacks { get; }
-
-		public OutputSongData(int? id = null, string? title = null, string? treeTitle = null, short? trackNumber = null, TimeSpan? duration = null, OutputDiscData? disc = null,
-			OutputArtistData? artist = null, OutputGenreData? genre = null, Rating? rating = null, int? bitRate = null, DateTimeOffset? lastPlaybackTime = null,
-			int? playbacksCount = null, IReadOnlyCollection<OutputPlaybackData>? playbacks = null, DateTimeOffset? deleteDate = null, string? deleteComment = null)
-			: base(title, treeTitle, trackNumber, duration, rating, bitRate, lastPlaybackTime, playbacksCount, deleteDate, deleteComment)
-		{
-			Id = id;
-			Disc = disc;
-			Artist = artist;
-			Genre = genre;
-			Playbacks = playbacks;
-		}
+		public IReadOnlyCollection<OutputPlaybackData>? Playbacks { get; set; }
 	}
 }

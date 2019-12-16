@@ -6,11 +6,6 @@ namespace MusicLibraryApi.Client.Contracts.Artists
 	public abstract class BasicArtistData
 	{
 		[DataMember(Name = "name")]
-		public string? Name { get; }
-
-		protected BasicArtistData(string? name)
-		{
-			Name = name;
-		}
+		public string? Name { get; set; }
 	}
 }

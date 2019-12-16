@@ -22,10 +22,33 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var expectedPlaybacks = new[]
 			{
-				new OutputPlaybackData(id: 3, playbackTime: new DateTimeOffset(2015, 10, 23, 15, 18, 43, TimeSpan.FromHours(2)), song: new OutputSongData(id: 1)),
-				new OutputPlaybackData(id: 2, playbackTime: new DateTimeOffset(2018, 11, 25, 08, 20, 00, TimeSpan.FromHours(2)), song: new OutputSongData(id: 2)),
-				new OutputPlaybackData(id: 1, playbackTime: new DateTimeOffset(2018, 11, 25, 08, 25, 17, TimeSpan.FromHours(2)), song: new OutputSongData(id: 1)),
-				new OutputPlaybackData(id: 4, playbackTime: new DateTimeOffset(2019, 12, 14, 17, 27, 04, TimeSpan.FromHours(2)), song: new OutputSongData(id: 4)),
+				new OutputPlaybackData
+				{
+					Id = 3,
+					PlaybackTime = new DateTimeOffset(2015, 10, 23, 15, 18, 43, TimeSpan.FromHours(2)),
+					Song = new OutputSongData { Id = 1, },
+				},
+
+				new OutputPlaybackData
+				{
+					Id = 2,
+					PlaybackTime = new DateTimeOffset(2018, 11, 25, 08, 20, 00, TimeSpan.FromHours(2)),
+					Song = new OutputSongData { Id = 2, },
+				},
+
+				new OutputPlaybackData
+				{
+					Id = 1,
+					PlaybackTime = new DateTimeOffset(2018, 11, 25, 08, 25, 17, TimeSpan.FromHours(2)),
+					Song = new OutputSongData { Id = 1, },
+				},
+
+				new OutputPlaybackData
+				{
+					Id = 4,
+					PlaybackTime = new DateTimeOffset(2019, 12, 14, 17, 27, 04, TimeSpan.FromHours(2)),
+					Song = new OutputSongData { Id = 4, },
+				},
 			};
 
 			var client = CreateClient<IPlaybacksQuery>();
@@ -44,7 +67,12 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		{
 			// Arrange
 
-			var expectedPlayback = new OutputPlaybackData(id: 2, playbackTime: new DateTimeOffset(2018, 11, 25, 08, 20, 00, TimeSpan.FromHours(2)), song: new OutputSongData(id: 2));
+			var expectedPlayback = new OutputPlaybackData
+			{
+				Id = 2,
+				PlaybackTime = new DateTimeOffset(2018, 11, 25, 08, 20, 00, TimeSpan.FromHours(2)),
+				Song = new OutputSongData { Id = 2, },
+			};
 
 			var client = CreateClient<IPlaybacksQuery>();
 
@@ -79,7 +107,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		{
 			// Arrange
 
-			var newPlaybackData = new InputPlaybackData(3, new DateTimeOffset(2019, 12, 13, 07, 05, 42, TimeSpan.FromHours(2)));
+			var newPlaybackData = new InputPlaybackData { SongId = 3, PlaybackTime = new DateTimeOffset(2019, 12, 13, 07, 05, 42, TimeSpan.FromHours(2)), };
 
 			var client = CreateClient<IPlaybacksMutation>();
 
@@ -93,8 +121,15 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Checking created playback data
 
-			var expectedSong = new OutputSongData(lastPlaybackTime: new DateTimeOffset(2019, 12, 13, 07, 05, 42, TimeSpan.FromHours(2)), playbacksCount: 1,
-				playbacks: new[] { new OutputPlaybackData(id: 5, playbackTime: new DateTimeOffset(2019, 12, 13, 07, 05, 42, TimeSpan.FromHours(2))), });
+			var expectedSong = new OutputSongData
+			{
+				LastPlaybackTime = new DateTimeOffset(2019, 12, 13, 07, 05, 42, TimeSpan.FromHours(2)),
+				PlaybacksCount = 1,
+				Playbacks = new[]
+				{
+					new OutputPlaybackData { Id = 5, PlaybackTime = new DateTimeOffset(2019, 12, 13, 07, 05, 42, TimeSpan.FromHours(2)), },
+				},
+			};
 
 			var songsQuery = CreateClient<ISongsQuery>();
 			var requestedFields = SongFields.PlaybacksCount + SongFields.LastPlaybackTime + SongFields.PlaybacksCount + SongFields.Playbacks(PlaybackFields.Id + PlaybackFields.PlaybackTime);
@@ -108,7 +143,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		{
 			// Arrange
 
-			var newPlaybackData = new InputPlaybackData(1, new DateTimeOffset(2019, 12, 13, 07, 05, 42, TimeSpan.FromHours(2)));
+			var newPlaybackData = new InputPlaybackData { SongId = 1, PlaybackTime = new DateTimeOffset(2019, 12, 13, 07, 05, 42, TimeSpan.FromHours(2)), };
 
 			var client = CreateClient<IPlaybacksMutation>();
 
@@ -122,14 +157,17 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Checking created playback data
 
-			var expectedPlaybacks = new[]
+			var expectedSong = new OutputSongData
 			{
-				new OutputPlaybackData(id: 3, playbackTime: new DateTimeOffset(2015, 10, 23, 15, 18, 43, TimeSpan.FromHours(2))),
-				new OutputPlaybackData(id: 1, playbackTime: new DateTimeOffset(2018, 11, 25, 08, 25, 17, TimeSpan.FromHours(2))),
-				new OutputPlaybackData(id: 5, playbackTime: new DateTimeOffset(2019, 12, 13, 07, 05, 42, TimeSpan.FromHours(2))),
+				LastPlaybackTime = new DateTimeOffset(2019, 12, 13, 07, 05, 42, TimeSpan.FromHours(2)),
+				PlaybacksCount = 3,
+				Playbacks = new[]
+				{
+					new OutputPlaybackData { Id = 3, PlaybackTime = new DateTimeOffset(2015, 10, 23, 15, 18, 43, TimeSpan.FromHours(2)), },
+					new OutputPlaybackData { Id = 1, PlaybackTime = new DateTimeOffset(2018, 11, 25, 08, 25, 17, TimeSpan.FromHours(2)), },
+					new OutputPlaybackData { Id = 5, PlaybackTime = new DateTimeOffset(2019, 12, 13, 07, 05, 42, TimeSpan.FromHours(2)), },
+				},
 			};
-
-			var expectedSong = new OutputSongData(lastPlaybackTime: new DateTimeOffset(2019, 12, 13, 07, 05, 42, TimeSpan.FromHours(2)), playbacksCount: 3, playbacks: expectedPlaybacks);
 
 			var songsQuery = CreateClient<ISongsQuery>();
 			var requestedFields = SongFields.PlaybacksCount + SongFields.LastPlaybackTime + SongFields.PlaybacksCount + SongFields.Playbacks(PlaybackFields.Id + PlaybackFields.PlaybackTime);
@@ -143,7 +181,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		{
 			// Arrange
 
-			var newPlaybackData = new InputPlaybackData(12345, new DateTimeOffset(2019, 12, 13, 07, 05, 42, TimeSpan.FromHours(2)));
+			var newPlaybackData = new InputPlaybackData { SongId = 12345, PlaybackTime = new DateTimeOffset(2019, 12, 13, 07, 05, 42, TimeSpan.FromHours(2)), };
 
 			var client = CreateClient<IPlaybacksMutation>();
 
@@ -162,7 +200,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		{
 			// Arrange
 
-			var newPlaybackData = new InputPlaybackData(1, new DateTimeOffset(2018, 11, 25, 08, 18, 17, TimeSpan.FromHours(2)));
+			var newPlaybackData = new InputPlaybackData { SongId = 1, PlaybackTime = new DateTimeOffset(2018, 11, 25, 08, 18, 17, TimeSpan.FromHours(2)), };
 
 			var client = CreateClient<IPlaybacksMutation>();
 

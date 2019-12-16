@@ -22,18 +22,43 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var subfolders = new[]
 			{
-				new OutputFolderData(3, "Foreign"),
-				new OutputFolderData(5, "Guano Apes"),
-				new OutputFolderData(2, "Russian"),
+				new OutputFolderData { Id = 3, Name = "Foreign", },
+				new OutputFolderData { Id = 5, Name = "Guano Apes", },
+				new OutputFolderData { Id = 2, Name = "Russian", },
 			};
 
 			var discs = new[]
 			{
-				new OutputDiscData(id: 2, year: 2001, title: "Platinum Hits (CD 1)", treeTitle: "2001 - Platinum Hits (CD 1)", albumTitle: "Platinum Hits", albumId: "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", albumOrder: 1),
-				new OutputDiscData(id: 1, year: 2001, title: "Platinum Hits (CD 2)", treeTitle: "2001 - Platinum Hits (CD 2)", albumTitle: "Platinum Hits", albumId: "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}", albumOrder: 2),
+				new OutputDiscData
+				{
+					Id = 2,
+					Year = 2001,
+					Title = "Platinum Hits (CD 1)",
+					TreeTitle = "2001 - Platinum Hits (CD 1)",
+					AlbumTitle = "Platinum Hits",
+					AlbumId = "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}",
+					AlbumOrder = 1,
+				},
+
+				new OutputDiscData
+				{
+					Id = 1,
+					Year = 2001,
+					Title = "Platinum Hits (CD 2)",
+					TreeTitle = "2001 - Platinum Hits (CD 2)",
+					AlbumTitle = "Platinum Hits",
+					AlbumId = "{BA39AF8F-19D4-47C7-B3CA-E294CDB18D5A}",
+					AlbumOrder = 2,
+				},
 			};
 
-			var expectedFolder = new OutputFolderData(1, "<ROOT>", subfolders, discs);
+			var expectedFolder = new OutputFolderData
+			{
+				Id = 1,
+				Name = "<ROOT>",
+				Subfolders = subfolders,
+				Discs = discs,
+			};
 
 			var client = CreateClient<IFoldersQuery>();
 
@@ -53,18 +78,46 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var subfolders = new[]
 			{
-				new OutputFolderData(7, "Empty folder"),
-				new OutputFolderData(6, "Some subfolder"),
+				new OutputFolderData { Id = 7, Name = "Empty folder", },
+				new OutputFolderData { Id = 6, Name = "Some subfolder", },
 			};
 
 			var discs = new[]
 			{
-				new OutputDiscData(id: 5, year: 1997, title: "Proud Like A God", treeTitle: "1997 - Proud Like A God", albumTitle: "Proud Like A God"),
-				new OutputDiscData(id: 3, year: 2000, title: "Don't Give Me Names", treeTitle: "2000 - Don't Give Me Names", albumTitle: "Don't Give Me Names"),
-				new OutputDiscData(id: 4, title: "Rarities", treeTitle: "Rarities", albumTitle: String.Empty),
+				new OutputDiscData
+				{
+					Id = 5,
+					Year = 1997,
+					Title = "Proud Like A God",
+					TreeTitle = "1997 - Proud Like A God",
+					AlbumTitle = "Proud Like A God",
+				},
+
+				new OutputDiscData
+				{
+					Id = 3,
+					Year = 2000,
+					Title = "Don't Give Me Names",
+					TreeTitle = "2000 - Don't Give Me Names",
+					AlbumTitle = "Don't Give Me Names",
+				},
+
+				new OutputDiscData
+				{
+					Id = 4,
+					Title = "Rarities",
+					TreeTitle = "Rarities",
+					AlbumTitle = String.Empty,
+				},
 			};
 
-			var expectedFolder = new OutputFolderData(5, "Guano Apes", subfolders, discs);
+			var expectedFolder = new OutputFolderData
+			{
+				Id = 5,
+				Name = "Guano Apes",
+				Subfolders = subfolders,
+				Discs = discs,
+			};
 
 			var client = CreateClient<IFoldersQuery>();
 
@@ -82,27 +135,26 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		{
 			// Arrange
 
-			var subfolders = new[]
-			{
-				new OutputFolderData(7, "Empty folder"),
-				new OutputFolderData(6, "Some subfolder"),
-			};
-
 			var discs = new[]
 			{
-				new OutputDiscData(id: 5, year: 1997, title: "Proud Like A God", treeTitle: "1997 - Proud Like A God", albumTitle: "Proud Like A God"),
-				new OutputDiscData(id: 3, year: 2000, title: "Don't Give Me Names", treeTitle: "2000 - Don't Give Me Names", albumTitle: "Don't Give Me Names"),
-				new OutputDiscData(id: 7, year: 2006, title: "Lost (T)apes", treeTitle: "2006 - Lost (T)apes", albumTitle: "Lost (T)apes", deleteDate: new DateTimeOffset(2019, 12, 03, 07, 57, 01, TimeSpan.FromHours(2)), deleteComment: "Deleted for a test"),
-				new OutputDiscData(id: 4, title: "Rarities", treeTitle: "Rarities", albumTitle: String.Empty),
+				new OutputDiscData { Id = 5, },
+				new OutputDiscData { Id = 3, },
+				new OutputDiscData { Id = 7, },
+				new OutputDiscData { Id = 4, },
 			};
 
-			var expectedFolder = new OutputFolderData(5, "Guano Apes", subfolders, discs);
+			var expectedFolder = new OutputFolderData
+			{
+				Id = 5,
+				Name = "Guano Apes",
+				Discs = discs,
+			};
 
 			var client = CreateClient<IFoldersQuery>();
 
 			// Act
 
-			var receivedFolder = await client.GetFolder(5, RequestedFields, CancellationToken.None, true);
+			var receivedFolder = await client.GetFolder(5, FolderFields.All + FolderFields.Discs(DiscFields.Id), CancellationToken.None, true);
 
 			// Assert
 
@@ -131,7 +183,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		{
 			// Arrange
 
-			var folderData = new InputFolderData("Korn", 3);
+			var folderData = new InputFolderData { Name = "Korn", ParentFolderId = 3, };
 
 			var client = CreateClient<IFoldersMutation>();
 
@@ -147,8 +199,8 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var expectedFolders = new[]
 			{
-				new OutputFolderData(8, "Korn"),
-				new OutputFolderData(4, "Rammstein"),
+				new OutputFolderData { Id = 8, Name = "Korn", },
+				new OutputFolderData { Id = 4, Name = "Rammstein", },
 			};
 
 			var foldersClient = CreateClient<IFoldersQuery>();
@@ -167,7 +219,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		{
 			// Arrange
 
-			var folderData = new InputFolderData("Rammstein", 3);
+			var folderData = new InputFolderData { Name = "Rammstein", ParentFolderId = 3, };
 
 			var client = CreateClient<IFoldersMutation>();
 
@@ -184,7 +236,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var expectedFolders = new[]
 			{
-				new OutputFolderData(4, "Rammstein"),
+				new OutputFolderData { Id = 4, Name = "Rammstein", },
 			};
 
 			var foldersClient = CreateClient<IFoldersQuery>();
@@ -198,7 +250,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		{
 			// Arrange
 
-			var folderData = new InputFolderData("Guano Apes", 2);
+			var folderData = new InputFolderData { Name = "Guano Apes", ParentFolderId = 2, };
 
 			var client = CreateClient<IFoldersMutation>();
 
@@ -214,7 +266,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var expectedFolders = new[]
 			{
-				new OutputFolderData(8, "Guano Apes"),
+				new OutputFolderData { Id = 8, Name = "Guano Apes", },
 			};
 
 			var foldersClient = CreateClient<IFoldersQuery>();

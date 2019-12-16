@@ -8,16 +8,9 @@ namespace MusicLibraryApi.Client.Contracts.Genres
 	public class OutputGenreData : BasicGenreData
 	{
 		[DataMember(Name = "id")]
-		public int? Id { get; }
+		public int? Id { get; set; }
 
 		[DataMember(Name = "songs")]
-		public IReadOnlyCollection<OutputSongData>? Songs { get; }
-
-		public OutputGenreData(int? id = null, string? name = null, IReadOnlyCollection<OutputSongData>? songs = null)
-			: base(name)
-		{
-			Id = id;
-			Songs = songs;
-		}
+		public IReadOnlyCollection<OutputSongData>? Songs { get; set; }
 	}
 }

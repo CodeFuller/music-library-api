@@ -6,11 +6,6 @@ namespace MusicLibraryApi.Client.Contracts.Genres
 	public abstract class BasicGenreData
 	{
 		[DataMember(Name = "name")]
-		public string? Name { get; }
-
-		protected BasicGenreData(string? name)
-		{
-			Name = name;
-		}
+		public string? Name { get; set; }
 	}
 }

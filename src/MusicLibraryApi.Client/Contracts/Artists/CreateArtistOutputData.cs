@@ -6,11 +6,6 @@ namespace MusicLibraryApi.Client.Contracts.Artists
 	public class CreateArtistOutputData
 	{
 		[DataMember(Name = "newArtistId")]
-		public int? NewArtistId { get; }
-
-		public CreateArtistOutputData(int? newArtistId)
-		{
-			NewArtistId = newArtistId;
-		}
+		public int? NewArtistId { get; set; }
 	}
 }

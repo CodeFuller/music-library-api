@@ -7,11 +7,6 @@ namespace MusicLibraryApi.Client.Contracts.Playbacks
 	public abstract class BasicPlaybackData
 	{
 		[DataMember(Name = "playbackTime")]
-		public DateTimeOffset? PlaybackTime { get; }
-
-		protected BasicPlaybackData(DateTimeOffset? playbackTime)
-		{
-			PlaybackTime = playbackTime;
-		}
+		public DateTimeOffset? PlaybackTime { get; set; }
 	}
 }

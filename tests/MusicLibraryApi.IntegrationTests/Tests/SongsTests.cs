@@ -27,19 +27,50 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var expectedSongs = new[]
 			{
-				new OutputSongData(id: 1, title: "Hell's Bells", treeTitle: "02 - Hell's Bells.mp3", trackNumber: 2, duration: new TimeSpan(0, 5, 12),
-					disc: new OutputDiscData(id: 1), artist: null, genre: new OutputGenreData(id: 2), rating: Rating.R4, bitRate: 320000,
-					lastPlaybackTime: new DateTimeOffset(2018, 11, 25, 08, 25, 17, TimeSpan.FromHours(2)), playbacksCount: 2,
-					playbacks: new[] { new OutputPlaybackData(id: 3), new OutputPlaybackData(id: 1), }),
+				new OutputSongData
+				{
+					Id = 1,
+					Title = "Hell's Bells",
+					TreeTitle = "02 - Hell's Bells.mp3",
+					TrackNumber = 2,
+					Duration = new TimeSpan(0, 5, 12),
+					Disc = new OutputDiscData { Id = 1, },
+					Genre = new OutputGenreData { Id = 2, },
+					Rating = Rating.R4,
+					BitRate = 320000,
+					LastPlaybackTime = new DateTimeOffset(2018, 11, 25, 08, 25, 17, TimeSpan.FromHours(2)),
+					PlaybacksCount = 2,
+					Playbacks = new[] { new OutputPlaybackData { Id = 3, }, new OutputPlaybackData { Id = 1, }, },
+				},
 
-				new OutputSongData(id: 2, title: "Highway To Hell", treeTitle: "01 - Highway To Hell.mp3", trackNumber: 1, duration: new TimeSpan(0, 3, 28),
-					disc: new OutputDiscData(id: 1), artist: new OutputArtistData(id: 2), genre: new OutputGenreData(id: 1), rating: Rating.R6, bitRate: 320000,
-					lastPlaybackTime: new DateTimeOffset(2018, 11, 25, 08, 20, 00, TimeSpan.FromHours(2)), playbacksCount: 1,
-					playbacks: new[] { new OutputPlaybackData(id: 2) }),
+				new OutputSongData
+				{
+					Id = 2,
+					Title = "Highway To Hell",
+					TreeTitle = "01 - Highway To Hell.mp3",
+					TrackNumber = 1,
+					Duration = new TimeSpan(0, 3, 28),
+					Disc = new OutputDiscData { Id = 1, },
+					Artist = new OutputArtistData { Id = 2, },
+					Genre = new OutputGenreData { Id = 1, },
+					Rating = Rating.R6,
+					BitRate = 320000,
+					LastPlaybackTime = new DateTimeOffset(2018, 11, 25, 08, 20, 00, TimeSpan.FromHours(2)),
+					PlaybacksCount = 1,
+					Playbacks = new[] { new OutputPlaybackData { Id = 2, } },
+				},
 
-				new OutputSongData(id: 3, title: "Are You Ready?", treeTitle: "03 - Are You Ready?.mp3", duration: new TimeSpan(0, 4, 09),
-					disc: new OutputDiscData(id: 2), artist: new OutputArtistData(id: 1), genre: null, playbacksCount: 0,
-					playbacks: Array.Empty<OutputPlaybackData>()),
+				new OutputSongData
+				{
+					Id = 3,
+					Title = "Are You Ready?",
+					TreeTitle = "03 - Are You Ready?.mp3",
+					Duration = new TimeSpan(0, 4, 09),
+					Disc = new OutputDiscData { Id = 2, },
+					Artist = new OutputArtistData { Id = 1, },
+					PlaybacksCount = 0,
+					Playbacks = Array.Empty<OutputPlaybackData>(),
+				},
 			};
 
 			var client = CreateClient<ISongsQuery>();
@@ -58,9 +89,22 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		{
 			// Arrange
 
-			var expectedSong = new OutputSongData(id: 2, title: "Highway To Hell", treeTitle: "01 - Highway To Hell.mp3", trackNumber: 1, duration: new TimeSpan(0, 3, 28),
-				disc: new OutputDiscData(id: 1), artist: new OutputArtistData(id: 2), genre: new OutputGenreData(id: 1), rating: Rating.R6, bitRate: 320000,
-				lastPlaybackTime: new DateTimeOffset(2018, 11, 25, 08, 20, 00, TimeSpan.FromHours(2)), playbacksCount: 1, playbacks: new[] { new OutputPlaybackData(id: 2) });
+			var expectedSong = new OutputSongData
+			{
+				Id = 2,
+				Title = "Highway To Hell",
+				TreeTitle = "01 - Highway To Hell.mp3",
+				TrackNumber = 1,
+				Duration = new TimeSpan(0, 3, 28),
+				Disc = new OutputDiscData { Id = 1, },
+				Artist = new OutputArtistData { Id = 2, },
+				Genre = new OutputGenreData { Id = 1, },
+				Rating = Rating.R6,
+				BitRate = 320000,
+				LastPlaybackTime = new DateTimeOffset(2018, 11, 25, 08, 20, 00, TimeSpan.FromHours(2)),
+				PlaybacksCount = 1,
+				Playbacks = new[] { new OutputPlaybackData { Id = 2, } },
+			};
 
 			var client = CreateClient<ISongsQuery>();
 
@@ -95,8 +139,22 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		{
 			// Arrange
 
-			var newSongData = new InputSongData(1, 2, 3, "Hail Caesar", "04 - Hail Caesar.mp3", 4, new TimeSpan(0, 5, 13), Rating.R4, 320000,
-				new DateTimeOffset(2018, 11, 25, 08, 35, 28, TimeSpan.FromHours(2)), 4, new DateTimeOffset(2019, 12, 10, 07, 20, 25, TimeSpan.FromHours(2)), "For a test");
+			var newSongData = new InputSongData
+			{
+				DiscId = 1,
+				ArtistId = 2,
+				GenreId = 3,
+				Title = "Hail Caesar",
+				TreeTitle = "04 - Hail Caesar.mp3",
+				TrackNumber = 4,
+				Duration = new TimeSpan(0, 5, 13),
+				Rating = Rating.R4,
+				BitRate = 320000,
+				LastPlaybackTime = new DateTimeOffset(2018, 11, 25, 08, 35, 28, TimeSpan.FromHours(2)),
+				PlaybacksCount = 4,
+				DeleteDate = new DateTimeOffset(2019, 12, 10, 07, 20, 25, TimeSpan.FromHours(2)),
+				DeleteComment = "For a test",
+			};
 
 			var client = CreateClient<ISongsMutation>();
 
@@ -110,10 +168,24 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Checking created song data
 
-			var expectedSong = new OutputSongData(id: 5, title: "Hail Caesar", treeTitle: "04 - Hail Caesar.mp3", trackNumber: 4, duration: new TimeSpan(0, 5, 13),
-				disc: new OutputDiscData(id: 1), artist: new OutputArtistData(id: 2), genre: new OutputGenreData(id: 3), rating: Rating.R4, bitRate: 320000,
-				lastPlaybackTime: new DateTimeOffset(2018, 11, 25, 08, 35, 28, TimeSpan.FromHours(2)), playbacksCount: 4, playbacks: Array.Empty<OutputPlaybackData>(),
-				deleteDate: new DateTimeOffset(2019, 12, 10, 07, 20, 25, TimeSpan.FromHours(2)), deleteComment: "For a test");
+			var expectedSong = new OutputSongData
+			{
+				Id = 5,
+				Title = "Hail Caesar",
+				TreeTitle = "04 - Hail Caesar.mp3",
+				TrackNumber = 4,
+				Duration = new TimeSpan(0, 5, 13),
+				Disc = new OutputDiscData { Id = 1, },
+				Artist = new OutputArtistData { Id = 2 },
+				Genre = new OutputGenreData { Id = 3, },
+				Rating = Rating.R4,
+				BitRate = 320000,
+				LastPlaybackTime = new DateTimeOffset(2018, 11, 25, 08, 35, 28, TimeSpan.FromHours(2)),
+				PlaybacksCount = 4,
+				Playbacks = Array.Empty<OutputPlaybackData>(),
+				DeleteDate = new DateTimeOffset(2019, 12, 10, 07, 20, 25, TimeSpan.FromHours(2)),
+				DeleteComment = "For a test",
+			};
 
 			var songsQuery = CreateClient<ISongsQuery>();
 			var receivedSong = await songsQuery.GetSong(5, RequestedFields, CancellationToken.None);
@@ -126,7 +198,13 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		{
 			// Arrange
 
-			var newSongData = new InputSongData(1, null, null, "Hail Caesar", "04 - Hail Caesar.mp3", null, new TimeSpan(0, 5, 13), null, null);
+			var newSongData = new InputSongData
+			{
+				DiscId = 1,
+				Title = "Hail Caesar",
+				TreeTitle = "04 - Hail Caesar.mp3",
+				Duration = new TimeSpan(0, 5, 13),
+			};
 
 			var client = CreateClient<ISongsMutation>();
 
@@ -140,9 +218,16 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Checking created song data
 
-			var expectedSong = new OutputSongData(id: 5, title: "Hail Caesar", treeTitle: "04 - Hail Caesar.mp3", trackNumber: null, duration: new TimeSpan(0, 5, 13),
-				disc: new OutputDiscData(id: 1), artist: null, genre: null, rating: null, bitRate: null,
-				lastPlaybackTime: null, playbacksCount: 0, playbacks: Array.Empty<OutputPlaybackData>());
+			var expectedSong = new OutputSongData
+			{
+				Id = 5,
+				Title = "Hail Caesar",
+				TreeTitle = "04 - Hail Caesar.mp3",
+				Duration = new TimeSpan(0, 5, 13),
+				Disc = new OutputDiscData { Id = 1, },
+				PlaybacksCount = 0,
+				Playbacks = Array.Empty<OutputPlaybackData>(),
+			};
 
 			var songsQuery = CreateClient<ISongsQuery>();
 			var receivedSong = await songsQuery.GetSong(5, RequestedFields, CancellationToken.None);
@@ -155,7 +240,13 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		{
 			// Arrange
 
-			var newSongData = new InputSongData(12345, null, null, "Hail Caesar", "04 - Hail Caesar.mp3", null, new TimeSpan(0, 5, 13), null, null);
+			var newSongData = new InputSongData
+			{
+				DiscId = 12345,
+				Title = "Hail Caesar",
+				TreeTitle = "04 - Hail Caesar.mp3",
+				Duration = new TimeSpan(0, 5, 13),
+			};
 
 			var client = CreateClient<ISongsMutation>();
 
@@ -172,9 +263,9 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var expectedSongs = new[]
 			{
-				new OutputSongData(id: 1),
-				new OutputSongData(id: 2),
-				new OutputSongData(id: 3),
+				new OutputSongData { Id = 1, },
+				new OutputSongData { Id = 2, },
+				new OutputSongData { Id = 3, },
 			};
 
 			var songsQuery = CreateClient<ISongsQuery>();
@@ -188,7 +279,14 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		{
 			// Arrange
 
-			var newSongData = new InputSongData(1, 12345, null, "Hail Caesar", "04 - Hail Caesar.mp3", null, new TimeSpan(0, 5, 13), null, null);
+			var newSongData = new InputSongData
+			{
+				DiscId = 1,
+				ArtistId = 12345,
+				Title = "Hail Caesar",
+				TreeTitle = "04 - Hail Caesar.mp3",
+				Duration = new TimeSpan(0, 5, 13),
+			};
 
 			var client = CreateClient<ISongsMutation>();
 
@@ -205,9 +303,9 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var expectedSongs = new[]
 			{
-				new OutputSongData(id: 1),
-				new OutputSongData(id: 2),
-				new OutputSongData(id: 3),
+				new OutputSongData { Id = 1, },
+				new OutputSongData { Id = 2, },
+				new OutputSongData { Id = 3, },
 			};
 
 			var songsQuery = CreateClient<ISongsQuery>();
@@ -221,7 +319,14 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		{
 			// Arrange
 
-			var newSongData = new InputSongData(1, null, 12345, "Hail Caesar", "04 - Hail Caesar.mp3", null, new TimeSpan(0, 5, 13), null, null);
+			var newSongData = new InputSongData
+			{
+				DiscId = 1,
+				GenreId = 12345,
+				Title = "Hail Caesar",
+				TreeTitle = "04 - Hail Caesar.mp3",
+				Duration = new TimeSpan(0, 5, 13),
+			};
 
 			var client = CreateClient<ISongsMutation>();
 
@@ -238,9 +343,9 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var expectedSongs = new[]
 			{
-				new OutputSongData(id: 1),
-				new OutputSongData(id: 2),
-				new OutputSongData(id: 3),
+				new OutputSongData { Id = 1, },
+				new OutputSongData { Id = 2, },
+				new OutputSongData { Id = 3, },
 			};
 
 			var songsQuery = CreateClient<ISongsQuery>();

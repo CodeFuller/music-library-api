@@ -33,20 +33,5 @@ namespace MusicLibraryApi.Client.Contracts.Statistics
 
 		[DataMember(Name = "songsRatings")]
 		public IReadOnlyCollection<RatingSongsData>? SongsRatings { get; set; }
-
-		public OutputStatisticsData(int? artistsNumber = null, int? discArtistsNumber = null, int? discsNumber = null,
-			int? songsNumber = null, TimeSpan? songsDuration = null, TimeSpan? playbacksDuration = null,
-			int? playbacksNumber = null, int? unheardSongsNumber = null, IReadOnlyCollection<RatingSongsData>? songsRatings = null)
-		{
-			ArtistsNumber = artistsNumber;
-			DiscArtistsNumber = discArtistsNumber;
-			DiscsNumber = discsNumber;
-			SongsNumber = songsNumber;
-			SongsDuration = songsDuration;
-			PlaybacksDuration = playbacksDuration;
-			PlaybacksNumber = playbacksNumber;
-			UnheardSongsNumber = unheardSongsNumber;
-			SongsRatings = songsRatings;
-		}
 	}
 }

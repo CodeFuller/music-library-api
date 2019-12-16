@@ -1,5 +1,4 @@
-﻿using System;
-using System.Runtime.Serialization;
+﻿using System.Runtime.Serialization;
 using MusicLibraryApi.Client.Contracts.Songs;
 
 namespace MusicLibraryApi.Client.Contracts.Playbacks
@@ -8,16 +7,9 @@ namespace MusicLibraryApi.Client.Contracts.Playbacks
 	public class OutputPlaybackData : BasicPlaybackData
 	{
 		[DataMember(Name = "id")]
-		public int? Id { get; }
+		public int? Id { get; set; }
 
 		[DataMember(Name = "song")]
-		public OutputSongData? Song { get; }
-
-		public OutputPlaybackData(int? id = null, DateTimeOffset? playbackTime = null, OutputSongData? song = null)
-			: base(playbackTime)
-		{
-			Id = id;
-			Song = song;
-		}
+		public OutputSongData? Song { get; set; }
 	}
 }

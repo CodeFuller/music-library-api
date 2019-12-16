@@ -8,20 +8,12 @@ namespace MusicLibraryApi.Client.Contracts.Folders
 	public class OutputFolderData : BasicFolderData
 	{
 		[DataMember(Name = "id")]
-		public int? Id { get; }
+		public int? Id { get; set; }
 
 		[DataMember(Name = "subfolders")]
-		public IReadOnlyCollection<OutputFolderData>? Subfolders { get; }
+		public IReadOnlyCollection<OutputFolderData>? Subfolders { get; set; }
 
 		[DataMember(Name = "discs")]
-		public IReadOnlyCollection<OutputDiscData>? Discs { get; }
-
-		public OutputFolderData(int? id = null, string? name = null, IReadOnlyCollection<OutputFolderData>? subfolders = null, IReadOnlyCollection<OutputDiscData>? discs = null)
-			: base(name)
-		{
-			Id = id;
-			Subfolders = subfolders;
-			Discs = discs;
-		}
+		public IReadOnlyCollection<OutputDiscData>? Discs { get; set; }
 	}
 }
