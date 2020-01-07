@@ -4,6 +4,7 @@ using GraphQL;
 using GraphQL.Server;
 using GraphQL.Server.Internal;
 using GraphQL.Server.Ui.Playground;
+using GraphQL.Types;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
@@ -43,7 +44,7 @@ namespace MusicLibraryApi
 				throw new InvalidOperationException("Database connection string is not set");
 			}
 
-			services.AddLogic();
+			services.AddLogic(Configuration);
 			services.AddDal(connectionString);
 
 			services.AddScoped<MusicLibraryQuery>();
@@ -55,6 +56,10 @@ namespace MusicLibraryApi
 			services.AddGraphQL(options => { options.ExposeExceptions = false; })
 				.AddDataLoader()
 				.AddGraphTypes(ServiceLifetime.Scoped);
+
+			services.AddScoped<ULongGraphType>();
+
+			services.AddGraphQLUpload();
 
 			services.AddTransient<IGraphQLExecuter<MusicLibrarySchema>, CustomGraphQLExecuter>();
 
@@ -73,6 +78,7 @@ namespace MusicLibraryApi
 
 			loggerFactory.LoadLoggingConfiguration(Configuration);
 
+			app.UseGraphQLUpload<MusicLibrarySchema>();
 			app.UseGraphQL<MusicLibrarySchema>();
 			app.UseGraphQLPlayground(new GraphQLPlaygroundOptions());
 

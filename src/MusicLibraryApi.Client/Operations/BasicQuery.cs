@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Formatting;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -9,8 +11,10 @@ using MusicLibraryApi.Client.Converters;
 using MusicLibraryApi.Client.Exceptions;
 using MusicLibraryApi.Client.Fields;
 using MusicLibraryApi.Client.GraphQL;
+using MusicLibraryApi.Client.Internal;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 
 namespace MusicLibraryApi.Client.Operations
 {
@@ -22,8 +26,9 @@ namespace MusicLibraryApi.Client.Operations
 
 		private readonly IHttpClientFactory httpClientFactory;
 
-		private readonly JsonMediaTypeFormatter formatter;
+		private readonly IContractResolver contractResolver = new CustomContractResolver();
 		private readonly JsonSerializer jsonSerializer;
+		private readonly JsonMediaTypeFormatter formatter;
 
 		protected ILogger<BasicQuery> Logger { get; }
 
@@ -31,8 +36,6 @@ namespace MusicLibraryApi.Client.Operations
 		{
 			this.httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
 			this.Logger = logger ?? throw new ArgumentNullException(nameof(logger));
-
-			var contractResolver = new CustomContractResolver();
 
 			this.jsonSerializer = new JsonSerializer
 			{
@@ -62,8 +65,36 @@ namespace MusicLibraryApi.Client.Operations
 		{
 			Logger.LogDebug("Executing query {QueryName} ...", queryName);
 
+			using var jsonContent = new StringContent(SerializePayload(request), Encoding.UTF8, "application/json");
+
+			return await ProcessRequest<TData>(queryName, jsonContent, cancellationToken);
+		}
+
+		protected async Task<TData> ExecuteRequestWithUpload<TData>(string queryName, GraphQLRequest request, IDictionary<string, FileUpload> uploadedFiles, CancellationToken cancellationToken)
+			where TData : class
+		{
+			Logger.LogDebug("Executing query with upload {QueryName} ...", queryName);
+
+			using var content = new MultipartFormDataContent();
+
+			var filesMap = uploadedFiles.Keys.ToDictionary(k => k, key => new[] { $"variables.{key}", });
+			content.Add(new StringContent(JsonConvert.SerializeObject(filesMap)), "map");
+
+			content.Add(new StringContent(SerializePayload(request)), "operations");
+
+			foreach (var file in uploadedFiles)
+			{
+				var fileUpload = file.Value;
+				content.Add(new StreamContent(fileUpload.Stream), $"\"{file.Key}\"", $"\"{fileUpload.FileName}\"");
+			}
+
+			return await ProcessRequest<TData>(queryName, content, cancellationToken);
+		}
+
+		private async Task<TData> ProcessRequest<TData>(string queryName, HttpContent content, CancellationToken cancellationToken)
+		{
 			using var httpClient = httpClientFactory.CreateClient(HttpClientName);
-			var httpResponse = await httpClient.PostAsync(GraphQLRelativeUri, request, formatter, cancellationToken);
+			var httpResponse = await httpClient.PostAsync(GraphQLRelativeUri, content, cancellationToken);
 
 			if (!httpResponse.IsSuccessStatusCode)
 			{
@@ -106,6 +137,16 @@ namespace MusicLibraryApi.Client.Operations
 			}
 
 			return dataToken.ToObject<TData>(jsonSerializer);
+		}
+
+		private string SerializePayload<T>(T payload)
+		{
+			var serializerSettings = new JsonSerializerSettings
+			{
+				ContractResolver = contractResolver,
+			};
+
+			return JsonConvert.SerializeObject(payload, serializerSettings);
 		}
 	}
 }

@@ -52,6 +52,7 @@ namespace MusicLibraryApi.IntegrationTests.DataCheckers
 				yield return FieldChecker(s => s.Genre, GenresChecker, nameof(OutputSongData.Genre));
 				yield return FieldChecker(s => s.Rating, nameof(OutputSongData.Rating));
 				yield return FieldChecker(s => s.BitRate, nameof(OutputSongData.BitRate));
+				yield return FieldChecker(s => s.Size, nameof(OutputSongData.Size));
 				yield return FieldChecker(s => s.LastPlaybackTime, nameof(OutputSongData.LastPlaybackTime));
 				yield return FieldChecker(s => s.PlaybacksCount, nameof(OutputSongData.PlaybacksCount));
 				yield return FieldChecker(s => s.Playbacks, PlaybacksChecker, nameof(OutputSongData.Playbacks));

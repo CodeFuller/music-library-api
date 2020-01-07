@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
-    <Version>2.0.0</Version>
+    <Version>3.0.0</Version>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
@@ -10,6 +10,7 @@
     <PackageReference Include="CF.Library.Logging" Version="2.2.4" />
     <PackageReference Include="GraphQL.Server.Transports.AspNetCore" Version="3.4.0" />
     <PackageReference Include="GraphQL.Server.Ui.Playground" Version="3.4.0" />
+    <PackageReference Include="GraphQL.Upload.AspNetCore" Version="0.4.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.0.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.7" PrivateAssets="all" />
     <!-- This package is required for the Entity Framework Core Tools (dotnet ef migrations) to work. -->

@@ -31,6 +31,10 @@ namespace MusicLibraryApi.Abstractions.Models
 
 		public int? BitRate { get; set; }
 
+		public long? Size { get; set; }
+
+		public uint? Checksum { get; set; }
+
 		public DateTimeOffset? LastPlaybackTime { get; set; }
 
 		public int PlaybacksCount { get; set; }

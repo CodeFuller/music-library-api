@@ -29,6 +29,7 @@ namespace MusicLibraryApi.Logic.Services
 
 		public async Task<int> CreateDisc(Disc disc, CancellationToken cancellationToken)
 		{
+			// TBD: Need to create storage folder for disc
 			try
 			{
 				await repository.AddDisc(disc, cancellationToken);

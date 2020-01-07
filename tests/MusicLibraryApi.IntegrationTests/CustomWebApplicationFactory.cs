@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -19,6 +20,10 @@ namespace MusicLibraryApi.IntegrationTests
 	{
 		private readonly IWebApplicationConfigurator appConfigurator;
 
+		private string? TestDataPath { get; set; }
+
+		public string? FileSystemStorageRoot { get; private set; }
+
 		public CustomWebApplicationFactory(IWebApplicationConfigurator appConfigurator)
 		{
 			this.appConfigurator = appConfigurator ?? throw new ArgumentNullException(nameof(appConfigurator));
@@ -33,10 +38,14 @@ namespace MusicLibraryApi.IntegrationTests
 			builder.ConfigureAppConfiguration((context, configBuilder) =>
 			{
 				var currAssembly = Assembly.GetExecutingAssembly().Location;
-				var currDirectory = Path.GetDirectoryName(currAssembly);
-				var configFile = Path.Combine(currDirectory ?? String.Empty, "TestRunSettings.json");
+				var currDirectory = Path.GetDirectoryName(currAssembly) ?? throw new InvalidOperationException("Failed to get current directory");
+				var configFile = Path.Combine(currDirectory, "TestRunSettings.json");
 
-				configBuilder.AddJsonFile(configFile, optional: false);
+				FileSystemStorageRoot = Path.Combine(Path.GetTempPath(), "MusicLibraryApi.IT", Path.GetRandomFileName());
+				TestDataPath = Path.Combine(currDirectory, "TestData");
+
+				configBuilder.AddJsonFile(configFile, optional: false)
+					.AddInMemoryCollection(new[] { new KeyValuePair<string, string>("fileSystemStorage:root", FileSystemStorageRoot) });
 			});
 
 			builder.ConfigureServices(services =>
@@ -62,17 +71,9 @@ namespace MusicLibraryApi.IntegrationTests
 
 			using var context = servicesProvider.GetRequiredService<MusicLibraryDbContext>();
 
-			var identityInsert = new PostgreSqlIdentityInsert();
+			DeleteDatabaseData(context);
 
-			// Deleting any existing data.
-			// This should be done before resetting current identity value.
-			context.Songs.RemoveRange(context.Songs);
-			context.Discs.RemoveRange(context.Discs);
-			context.Folders.RemoveRange(context.Folders.Where(f => f.Id != FoldersRepository.RootFolderId));
-			context.Artists.RemoveRange(context.Artists);
-			context.Genres.RemoveRange(context.Genres);
-			context.Playbacks.RemoveRange(context.Playbacks);
-			context.SaveChanges();
+			var identityInsert = new PostgreSqlIdentityInsert();
 
 			SeedFoldersData(context, identityInsert);
 			SeedGenresData(context, identityInsert);
@@ -80,6 +81,33 @@ namespace MusicLibraryApi.IntegrationTests
 			SeedDiscsData(context, identityInsert);
 			SeedSongsData(context, identityInsert);
 			SeedPlaybacksData(context, identityInsert);
+
+			SeedStorageData();
+		}
+
+		public void CleanData()
+		{
+			DeleteStorageData();
+
+			using var serviceScope = Services.CreateScope();
+			var servicesProvider = serviceScope.ServiceProvider;
+
+			using var context = servicesProvider.GetRequiredService<MusicLibraryDbContext>();
+
+			DeleteDatabaseData(context);
+		}
+
+		private static void DeleteDatabaseData(MusicLibraryDbContext context)
+		{
+			// Deleting any existing data.
+			// This should be done before resetting current identity value.
+			context.Playbacks.RemoveRange(context.Playbacks);
+			context.Songs.RemoveRange(context.Songs);
+			context.Discs.RemoveRange(context.Discs);
+			context.Folders.RemoveRange(context.Folders.Where(f => f.Id != FoldersRepository.RootFolderId));
+			context.Artists.RemoveRange(context.Artists);
+			context.Genres.RemoveRange(context.Genres);
+			context.SaveChanges();
 		}
 
 		/*
@@ -99,7 +127,7 @@ namespace MusicLibraryApi.IntegrationTests
 		 *		Disc "2001 - Platinum Hits (CD 1)" (Disc id: 2)
 		 *		Disc "2001 - Platinum Hits (CD 2)" (Disc id: 1)
 		 *			Song "01 - Highway To Hell.mp3" (Song id: 2)
-		 *			Song "02 - Hell's Bells.mp33" (Song id: 1)
+		 *			Song "02 - Hell's Bells.mp3" (Song id: 1)
 		 *			Song "03 - Are You Ready?.mp3" (Song id: 3)
 		 *		Disc "Some deleted disc" (Disc id: 6, deleted)
 		 */
@@ -249,6 +277,8 @@ namespace MusicLibraryApi.IntegrationTests
 				GenreId = 2,
 				Rating = Rating.R4,
 				BitRate = 320000,
+				Size = 1243,
+				Checksum = 0x82c04f79,
 				LastPlaybackTime = new DateTimeOffset(2018, 11, 25, 08, 25, 17, TimeSpan.FromHours(2)),
 				PlaybacksCount = 2,
 			};
@@ -265,6 +295,8 @@ namespace MusicLibraryApi.IntegrationTests
 				GenreId = 1,
 				Rating = Rating.R6,
 				BitRate = 320000,
+				Size = 946,
+				Checksum = 0x2d39e8f7,
 				LastPlaybackTime = new DateTimeOffset(2018, 11, 25, 08, 20, 00, TimeSpan.FromHours(2)),
 				PlaybacksCount = 1,
 			};
@@ -279,6 +311,8 @@ namespace MusicLibraryApi.IntegrationTests
 				DiscId = 2,
 				ArtistId = 1,
 				GenreId = null,
+				Size = 673,
+				Checksum = 0x8ee21503,
 			};
 
 			var song4 = new Song
@@ -320,6 +354,70 @@ namespace MusicLibraryApi.IntegrationTests
 			context.SaveChanges();
 
 			identityInsert.FinalizeIdentityInsert(context, "Playbacks", 5);
+		}
+
+		private void SeedStorageData()
+		{
+			DeleteStorageData();
+
+			CreateStorageDirectory(String.Empty);
+			CreateStorageDirectory("2001 - Platinum Hits (CD 1)");
+			CreateStorageDirectory("2001 - Platinum Hits (CD 2)");
+			CreateStorageDirectory("Foreign");
+			CreateStorageDirectory("Foreign/Rammstein");
+			CreateStorageDirectory("Guano Apes");
+			CreateStorageDirectory("Guano Apes/Empty folder");
+			CreateStorageDirectory("Guano Apes/Some subfolder");
+			CreateStorageDirectory("Russian");
+
+			CopyStorageFile("01 - Highway To Hell.mp3", "2001 - Platinum Hits (CD 2)");
+			CopyStorageFile("02 - Hell's Bells.mp3", "2001 - Platinum Hits (CD 2)");
+			CopyStorageFile("03 - Are You Ready.mp3", "2001 - Platinum Hits (CD 2)");
+		}
+
+		private void DeleteStorageData()
+		{
+			if (!Directory.Exists(FileSystemStorageRoot))
+			{
+				return;
+			}
+
+			// We cannot call Directory.Delete(FileSystemStorageRoot, true), because the directory contains read-only files.
+			var directory = new DirectoryInfo(FileSystemStorageRoot);
+
+			foreach (var info in directory.GetFileSystemInfos("*", SearchOption.AllDirectories))
+			{
+				info.Attributes = FileAttributes.Normal;
+			}
+
+			directory.Delete(true);
+		}
+
+		private void CreateStorageDirectory(string relativePath)
+		{
+			if (FileSystemStorageRoot == null)
+			{
+				throw new InvalidOperationException($"{nameof(FileSystemStorageRoot)} is not set");
+			}
+
+			Directory.CreateDirectory(Path.Combine(FileSystemStorageRoot, relativePath));
+		}
+
+		private void CopyStorageFile(string sourceFileName, string targetDirectoryPath)
+		{
+			if (FileSystemStorageRoot == null)
+			{
+				throw new InvalidOperationException($"{nameof(FileSystemStorageRoot)} is not set");
+			}
+
+			if (TestDataPath == null)
+			{
+				throw new InvalidOperationException($"{nameof(TestDataPath)} is not set");
+			}
+
+			var sourceFilePath = Path.Combine(TestDataPath, sourceFileName);
+			var targetFilePath = Path.Combine(FileSystemStorageRoot, targetDirectoryPath, sourceFileName);
+			File.Copy(sourceFilePath, targetFilePath);
 		}
 	}
 }

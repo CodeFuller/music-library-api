@@ -23,6 +23,9 @@ namespace MusicLibraryApi.Client.Contracts.Songs
 		[DataMember(Name = "genre")]
 		public OutputGenreData? Genre { get; set; }
 
+		[DataMember(Name = "size")]
+		public long? Size { get; set; }
+
 		[DataMember(Name = "lastPlaybackTime")]
 		public DateTimeOffset? LastPlaybackTime { get; set; }
 

@@ -44,6 +44,7 @@ namespace MusicLibraryApi.GraphQL.Types
 			});
 			Field<RatingEnumType>("rating");
 			Field(x => x.BitRate, nullable: true);
+			Field<NonNullGraphType<ULongGraphType>>("size", resolve: context => context.Source.Size);
 			Field(x => x.LastPlaybackTime, nullable: true);
 			Field(x => x.PlaybacksCount);
 			Field<NonNullGraphType<ListGraphType<NonNullGraphType<PlaybackType>>>>(

@@ -22,6 +22,8 @@ namespace MusicLibraryApi.Client.Fields
 
 		public static QueryField<OutputSongData> BitRate { get; } = new QueryField<OutputSongData>("bitRate");
 
+		public static QueryField<OutputSongData> Size { get; } = new QueryField<OutputSongData>("size");
+
 		public static QueryField<OutputSongData> LastPlaybackTime { get; } = new QueryField<OutputSongData>("lastPlaybackTime");
 
 		public static QueryField<OutputSongData> PlaybacksCount { get; } = new QueryField<OutputSongData>("playbacksCount");
@@ -50,6 +52,6 @@ namespace MusicLibraryApi.Client.Fields
 
 		public static QueryField<OutputSongData> DeleteComment { get; } = new QueryField<OutputSongData>("deleteComment");
 
-		public static QueryFieldSet<OutputSongData> All { get; } = Id + Title + TreeTitle + TrackNumber + Duration + Rating + BitRate + LastPlaybackTime + PlaybacksCount + DeleteDate + DeleteComment;
+		public static QueryFieldSet<OutputSongData> All { get; } = Id + Title + TreeTitle + TrackNumber + Duration + Rating + BitRate + Size + LastPlaybackTime + PlaybacksCount + DeleteDate + DeleteComment;
 	}
 }

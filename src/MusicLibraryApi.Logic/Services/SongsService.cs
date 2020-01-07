@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ using MusicLibraryApi.Abstractions.Exceptions;
 using MusicLibraryApi.Abstractions.Interfaces;
 using MusicLibraryApi.Abstractions.Models;
 using MusicLibraryApi.Logic.Extensions;
+using MusicLibraryApi.Logic.Interfaces;
 
 namespace MusicLibraryApi.Logic.Services
 {
@@ -17,23 +19,40 @@ namespace MusicLibraryApi.Logic.Services
 
 		private readonly ISongsRepository repository;
 
+		private readonly IStorageService storageService;
+
 		private readonly ILogger<SongsService> logger;
 
-		public SongsService(IUnitOfWork unitOfWork, ILogger<SongsService> logger)
+		public SongsService(IUnitOfWork unitOfWork, IStorageService storageService, ILogger<SongsService> logger)
 		{
 			this.unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
+			this.storageService = storageService ?? throw new ArgumentNullException(nameof(storageService));
 			this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
 			this.repository = unitOfWork.SongsRepository;
 		}
 
-		public async Task<int> CreateSong(Song song, CancellationToken cancellationToken)
+		public async Task<int> CreateSong(Song song, Stream contentStream, CancellationToken cancellationToken)
 		{
+			// The storage changes should be made before saving song in DB, because StoreSong() enrhiches song with content info.
+			await storageService.StoreSong(song, contentStream, cancellationToken);
+
+			// TBD: Rollback storage changes on error
+			return await AddSongToRepository(song, cancellationToken);
+		}
+
+		public Task<int> CreateDeletedSong(Song song, CancellationToken cancellationToken)
+		{
+			return AddSongToRepository(song, cancellationToken);
+		}
+
+		private async Task<int> AddSongToRepository(Song song, CancellationToken cancellationToken)
+		{
+			await repository.AddSong(song, cancellationToken);
+
 			try
 			{
-				await repository.AddSong(song, cancellationToken);
 				await unitOfWork.Commit(cancellationToken);
-
 				return song.Id;
 			}
 			catch (DiscNotFoundException e)
@@ -56,14 +75,14 @@ namespace MusicLibraryApi.Logic.Services
 
 			// There is no meaningful sorting for all songs. We sort them by id here mostly for steady IT baselines.
 			return songs
-				.Where(d => !d.IsDeleted)
-				.OrderBy(d => d.Id).ToList();
+				.Where(s => !s.IsDeleted)
+				.OrderBy(s => s.Id).ToList();
 		}
 
 		public async Task<IDictionary<int, Song>> GetSongs(IEnumerable<int> songIds, CancellationToken cancellationToken)
 		{
 			var songs = await repository.GetSongs(songIds, cancellationToken);
-			return songs.ToDictionary(g => g.Id);
+			return songs.ToDictionary(s => s.Id);
 		}
 
 		public async Task<Song> GetSong(int songId, CancellationToken cancellationToken)

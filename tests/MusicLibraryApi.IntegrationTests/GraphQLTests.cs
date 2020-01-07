@@ -61,6 +61,12 @@ namespace MusicLibraryApi.IntegrationTests
 			WebApplicationFactory.SeedData();
 		}
 
+		[TestCleanup]
+		public void Cleanup()
+		{
+			WebApplicationFactory.CleanData();
+		}
+
 		protected TClient CreateClient<TClient>()
 		{
 			return WebApplicationFactory.Services.GetRequiredService<TClient>();

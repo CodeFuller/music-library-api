@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Npgsql;
 
 namespace MusicLibraryApi.Dal.EfCore
@@ -14,16 +13,6 @@ namespace MusicLibraryApi.Dal.EfCore
 		public static bool IsForeignKeyViolationException(this DbUpdateException exception, out string? constraintName)
 		{
 			return IsPostgresException(exception, PostgresErrors.ForeignKeyViolation, out constraintName);
-		}
-
-		public static bool IsForeignKeyViolationException(this DbUpdateException exception, string constraintName)
-		{
-			if (!IsPostgresException(exception, PostgresErrors.ForeignKeyViolation, out var violatedConstraintName))
-			{
-				return false;
-			}
-
-			return String.Equals(violatedConstraintName, constraintName, StringComparison.Ordinal);
 		}
 
 		private static bool IsPostgresException(DbUpdateException exception, string code, out string? constraintName)

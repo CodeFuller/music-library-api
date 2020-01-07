@@ -1,4 +1,6 @@
 ﻿using GraphQL.Types;
+using GraphQL.Upload.AspNetCore;
+using Microsoft.AspNetCore.Http;
 using MusicLibraryApi.GraphQL.Types.Input;
 using MusicLibraryApi.GraphQL.Types.Output;
 using MusicLibraryApi.Interfaces;
@@ -64,13 +66,30 @@ namespace MusicLibraryApi.GraphQL
 			FieldAsync<NonNullGraphType<CreateSongResultType>>(
 				"createSong",
 				arguments: new QueryArguments(
+					new QueryArgument<NonNullGraphType<SongInputType>> { Name = "song" },
+					new QueryArgument<UploadGraphType> { Name = "songFile" }),
+				resolve: async context =>
+				{
+					var songInput = context.GetArgument<SongInput>("song");
+					var song = songInput.ToModel();
+
+					var file = context.GetArgument<IFormFile>("songFile");
+					await using var contentStream = file.OpenReadStream();
+
+					var newSongId = await serviceAccessor.SongsService.CreateSong(song, contentStream, context.CancellationToken);
+					return new CreateSongResult(newSongId);
+				});
+
+			FieldAsync<NonNullGraphType<CreateSongResultType>>(
+				"createDeletedSong",
+				arguments: new QueryArguments(
 					new QueryArgument<NonNullGraphType<SongInputType>> { Name = "song" }),
 				resolve: async context =>
 				{
 					var songInput = context.GetArgument<SongInput>("song");
 					var song = songInput.ToModel();
 
-					var newSongId = await serviceAccessor.SongsService.CreateSong(song, context.CancellationToken);
+					var newSongId = await serviceAccessor.SongsService.CreateDeletedSong(song, context.CancellationToken);
 					return new CreateSongResult(newSongId);
 				});
 

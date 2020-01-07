@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -38,6 +39,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 					Genre = new OutputGenreData { Id = 2, },
 					Rating = Rating.R4,
 					BitRate = 320000,
+					Size = 1243,
 					LastPlaybackTime = new DateTimeOffset(2018, 11, 25, 08, 25, 17, TimeSpan.FromHours(2)),
 					PlaybacksCount = 2,
 					Playbacks = new[] { new OutputPlaybackData { Id = 3, }, new OutputPlaybackData { Id = 1, }, },
@@ -55,6 +57,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 					Genre = new OutputGenreData { Id = 1, },
 					Rating = Rating.R6,
 					BitRate = 320000,
+					Size = 946,
 					LastPlaybackTime = new DateTimeOffset(2018, 11, 25, 08, 20, 00, TimeSpan.FromHours(2)),
 					PlaybacksCount = 1,
 					Playbacks = new[] { new OutputPlaybackData { Id = 2, } },
@@ -68,6 +71,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 					Duration = new TimeSpan(0, 4, 09),
 					Disc = new OutputDiscData { Id = 2, },
 					Artist = new OutputArtistData { Id = 1, },
+					Size = 673,
 					PlaybacksCount = 0,
 					Playbacks = Array.Empty<OutputPlaybackData>(),
 				},
@@ -101,6 +105,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 				Genre = new OutputGenreData { Id = 1, },
 				Rating = Rating.R6,
 				BitRate = 320000,
+				Size = 946,
 				LastPlaybackTime = new DateTimeOffset(2018, 11, 25, 08, 20, 00, TimeSpan.FromHours(2)),
 				PlaybacksCount = 1,
 				Playbacks = new[] { new OutputPlaybackData { Id = 2, } },
@@ -135,7 +140,110 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		}
 
 		[TestMethod]
-		public async Task CreateSongMutation_OptionalDataFilled_CreatesSongSuccessfully()
+		public async Task CreateSongMutation_ActiveSongWithOptionalDataFilled_CreatesSongSuccessfully()
+		{
+			// Arrange
+
+			var newSongData = new InputSongData
+			{
+				DiscId = 1,
+				ArtistId = 2,
+				GenreId = 3,
+				Title = "Hail Caesar",
+				TreeTitle = "04 - Hail Caesar.mp3",
+				TrackNumber = 4,
+				Duration = new TimeSpan(0, 5, 13),
+				Rating = Rating.R4,
+				BitRate = 320000,
+			};
+
+			var client = CreateClient<ISongsMutation>();
+
+			await using var contentStream = new MemoryStream(new byte[] { 0x01, 0x02, 0x03, });
+
+			// Act
+
+			var newSongId = await client.CreateSong(newSongData, contentStream, CancellationToken.None);
+
+			// Assert
+
+			Assert.AreEqual(5, newSongId);
+
+			// Checking created song data
+
+			var expectedSong = new OutputSongData
+			{
+				Id = 5,
+				Title = "Hail Caesar",
+				TreeTitle = "04 - Hail Caesar.mp3",
+				TrackNumber = 4,
+				Duration = new TimeSpan(0, 5, 13),
+				Disc = new OutputDiscData { Id = 1, },
+				Artist = new OutputArtistData { Id = 2 },
+				Genre = new OutputGenreData { Id = 3, },
+				Rating = Rating.R4,
+				BitRate = 320000,
+				Size = 3,
+				LastPlaybackTime = null,
+				PlaybacksCount = 0,
+				Playbacks = Array.Empty<OutputPlaybackData>(),
+			};
+
+			var songsQuery = CreateClient<ISongsQuery>();
+			var receivedSong = await songsQuery.GetSong(5, RequestedFields, CancellationToken.None);
+
+			AssertData(expectedSong, receivedSong);
+			AssertSongContent("2001 - Platinum Hits (CD 2)/04 - Hail Caesar.mp3", new byte[] { 0x01, 0x02, 0x03, });
+		}
+
+		[TestMethod]
+		public async Task CreateSongMutation_ActiveSongWithOptionalDataMissing_CreatesSongSuccessfully()
+		{
+			// Arrange
+
+			var newSongData = new InputSongData
+			{
+				DiscId = 1,
+				Title = "Hail Caesar",
+				TreeTitle = "04 - Hail Caesar.mp3",
+				Duration = new TimeSpan(0, 5, 13),
+			};
+
+			var client = CreateClient<ISongsMutation>();
+
+			await using var contentStream = new MemoryStream(new byte[] { 0x01, 0x02, 0x03, });
+
+			// Act
+
+			var newSongId = await client.CreateSong(newSongData, contentStream, CancellationToken.None);
+
+			// Assert
+
+			Assert.AreEqual(5, newSongId);
+
+			// Checking created song data
+
+			var expectedSong = new OutputSongData
+			{
+				Id = 5,
+				Title = "Hail Caesar",
+				TreeTitle = "04 - Hail Caesar.mp3",
+				Duration = new TimeSpan(0, 5, 13),
+				Size = 3,
+				Disc = new OutputDiscData { Id = 1, },
+				PlaybacksCount = 0,
+				Playbacks = Array.Empty<OutputPlaybackData>(),
+			};
+
+			var songsQuery = CreateClient<ISongsQuery>();
+			var receivedSong = await songsQuery.GetSong(5, RequestedFields, CancellationToken.None);
+
+			AssertData(expectedSong, receivedSong);
+			AssertSongContent("2001 - Platinum Hits (CD 2)/04 - Hail Caesar.mp3", new byte[] { 0x01, 0x02, 0x03, });
+		}
+
+		[TestMethod]
+		public async Task CreateSongMutation_DeletedSong_CreatesSongSuccessfully()
 		{
 			// Arrange
 
@@ -158,7 +266,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Act
 
-			var newSongId = await client.CreateSong(newSongData, CancellationToken.None);
+			var newSongId = await client.CreateDeletedSong(newSongData, CancellationToken.None);
 
 			// Assert
 
@@ -192,48 +300,6 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		}
 
 		[TestMethod]
-		public async Task CreateSongMutation_OptionalDataMissing_CreatesSongSuccessfully()
-		{
-			// Arrange
-
-			var newSongData = new InputSongData
-			{
-				DiscId = 1,
-				Title = "Hail Caesar",
-				TreeTitle = "04 - Hail Caesar.mp3",
-				Duration = new TimeSpan(0, 5, 13),
-			};
-
-			var client = CreateClient<ISongsMutation>();
-
-			// Act
-
-			var newSongId = await client.CreateSong(newSongData, CancellationToken.None);
-
-			// Assert
-
-			Assert.AreEqual(5, newSongId);
-
-			// Checking created song data
-
-			var expectedSong = new OutputSongData
-			{
-				Id = 5,
-				Title = "Hail Caesar",
-				TreeTitle = "04 - Hail Caesar.mp3",
-				Duration = new TimeSpan(0, 5, 13),
-				Disc = new OutputDiscData { Id = 1, },
-				PlaybacksCount = 0,
-				Playbacks = Array.Empty<OutputPlaybackData>(),
-			};
-
-			var songsQuery = CreateClient<ISongsQuery>();
-			var receivedSong = await songsQuery.GetSong(5, RequestedFields, CancellationToken.None);
-
-			AssertData(expectedSong, receivedSong);
-		}
-
-		[TestMethod]
 		public async Task CreateSongMutation_ForUnknownDisc_ReturnsError()
 		{
 			// Arrange
@@ -250,7 +316,8 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Act
 
-			var createSongTask = client.CreateSong(newSongData, CancellationToken.None);
+			await using var songContent = new MemoryStream();
+			var createSongTask = client.CreateSong(newSongData, songContent, CancellationToken.None);
 
 			// Assert
 
@@ -290,7 +357,8 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Act
 
-			var createSongTask = client.CreateSong(newSongData, CancellationToken.None);
+			await using var songContent = new MemoryStream();
+			var createSongTask = client.CreateSong(newSongData, songContent, CancellationToken.None);
 
 			// Assert
 
@@ -330,7 +398,8 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Act
 
-			var createSongTask = client.CreateSong(newSongData, CancellationToken.None);
+			await using var songContent = new MemoryStream();
+			var createSongTask = client.CreateSong(newSongData, songContent, CancellationToken.None);
 
 			// Assert
 
@@ -350,6 +419,21 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			var receivedSongs = await songsQuery.GetSongs(SongFields.Id, CancellationToken.None);
 
 			AssertData(expectedSongs, receivedSongs);
+		}
+
+		private void AssertSongContent(string relativeContentPath, byte[] expectedContent)
+		{
+			if (WebApplicationFactory.FileSystemStorageRoot == null)
+			{
+				throw new InvalidOperationException($"{nameof(WebApplicationFactory.FileSystemStorageRoot)} is not set");
+			}
+
+			var contentPath = Path.Combine(WebApplicationFactory.FileSystemStorageRoot, relativeContentPath);
+			var content = File.ReadAllBytes(contentPath);
+			CollectionAssert.AreEqual(expectedContent, content);
+
+			var fileInfo = new FileInfo(contentPath);
+			Assert.IsTrue(fileInfo.IsReadOnly);
 		}
 	}
 }

@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,6 +10,7 @@ using MusicLibraryApi.Client.Exceptions;
 using MusicLibraryApi.Client.Fields;
 using MusicLibraryApi.Client.GraphQL;
 using MusicLibraryApi.Client.Interfaces;
+using MusicLibraryApi.Client.Internal;
 using static System.FormattableString;
 
 namespace MusicLibraryApi.Client.Operations
@@ -44,12 +47,51 @@ namespace MusicLibraryApi.Client.Operations
 			return await ExecuteRequest<OutputSongData>("song", request, cancellationToken);
 		}
 
-		public async Task<int> CreateSong(InputSongData songData, CancellationToken cancellationToken)
+		public async Task<int> CreateSong(InputSongData songData, Stream songContent, CancellationToken cancellationToken)
 		{
 			Logger.LogInformation("Creating new song {SongTreeTitle} ...", songData.TreeTitle);
 
+			var query = Invariant($@"mutation ($song: SongInput!, $songFile: Upload!) {{
+										createSong(song: $song, songFile: $songFile) {{ newSongId }}
+									}}");
+
+			var uploadedFiles = new Dictionary<string, FileUpload>
+			{
+				{ "songFile", new FileUpload(songContent, songData.TreeTitle ?? String.Empty) },
+			};
+
+			var request = new GraphQLRequest
+			{
+				Query = query,
+				Variables = new
+				{
+					song = songData,
+
+					// songFile (from mutation definition) -> songFile (in below map)
+					songFile = "songFile",
+				},
+			};
+
+			var data = await ExecuteRequestWithUpload<CreateSongOutputData>("createSong", request, uploadedFiles, cancellationToken);
+
+			var newSongId = data.NewSongId;
+
+			if (newSongId == null)
+			{
+				throw new GraphQLRequestFailedException($"Response does not contain id of created song {songData.TreeTitle}");
+			}
+
+			Logger.LogInformation("Created new song {SongTreeTitle} with id of {SongId}", songData.TreeTitle, newSongId);
+
+			return newSongId.Value;
+		}
+
+		public async Task<int> CreateDeletedSong(InputSongData songData, CancellationToken cancellationToken)
+		{
+			Logger.LogInformation("Creating new (deleted) song {SongTreeTitle} ...", songData.TreeTitle);
+
 			var query = Invariant($@"mutation ($song: SongInput!) {{
-										createSong(song: $song) {{ newSongId }}
+										createDeletedSong(song: $song) {{ newSongId }}
 									}}");
 
 			var request = new GraphQLRequest
@@ -61,16 +103,16 @@ namespace MusicLibraryApi.Client.Operations
 				},
 			};
 
-			var data = await ExecuteRequest<CreateSongOutputData>("createSong", request, cancellationToken);
+			var data = await ExecuteRequest<CreateSongOutputData>("createDeletedSong", request, cancellationToken);
 
 			var newSongId = data.NewSongId;
 
 			if (newSongId == null)
 			{
-				throw new GraphQLRequestFailedException($"Response does not contain id of created song {songData.TreeTitle}");
+				throw new GraphQLRequestFailedException($"Response does not contain id of created (deleted) song {songData.TreeTitle}");
 			}
 
-			Logger.LogInformation("Created new song {SongTreeTitle} with id of {SongId}", songData.TreeTitle, newSongId);
+			Logger.LogInformation("Created new (deleted) song {SongTreeTitle} with id of {SongId}", songData.TreeTitle, newSongId);
 
 			return newSongId.Value;
 		}

@@ -8,6 +8,7 @@ using MusicLibraryApi.Abstractions.Exceptions;
 using MusicLibraryApi.Abstractions.Interfaces;
 using MusicLibraryApi.Abstractions.Models;
 using MusicLibraryApi.Logic.Extensions;
+using MusicLibraryApi.Logic.Interfaces;
 using static System.FormattableString;
 
 namespace MusicLibraryApi.Logic.Services
@@ -18,11 +19,14 @@ namespace MusicLibraryApi.Logic.Services
 
 		private readonly IFoldersRepository repository;
 
+		private readonly IStorageService storageService;
+
 		private readonly ILogger<FoldersService> logger;
 
-		public FoldersService(IUnitOfWork unitOfWork, ILogger<FoldersService> logger)
+		public FoldersService(IUnitOfWork unitOfWork, IStorageService storageService, ILogger<FoldersService> logger)
 		{
 			this.unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
+			this.storageService = storageService ?? throw new ArgumentNullException(nameof(storageService));
 			this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
 			this.repository = unitOfWork.FoldersRepository;
@@ -30,6 +34,11 @@ namespace MusicLibraryApi.Logic.Services
 
 		public async Task<int> CreateFolder(Folder folder, CancellationToken cancellationToken)
 		{
+			// TBD: Cover by IT.
+			// Creating folder in the storage.
+			await storageService.CreateFolder(folder, cancellationToken);
+
+			// Creating folder in the repository.
 			try
 			{
 				await repository.AddFolder(folder, cancellationToken);

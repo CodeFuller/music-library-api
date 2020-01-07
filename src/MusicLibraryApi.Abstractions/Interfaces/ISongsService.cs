@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,7 +9,9 @@ namespace MusicLibraryApi.Abstractions.Interfaces
 {
 	public interface ISongsService
 	{
-		Task<int> CreateSong(Song song, CancellationToken cancellationToken);
+		Task<int> CreateSong(Song song, Stream contentStream, CancellationToken cancellationToken);
+
+		Task<int> CreateDeletedSong(Song song, CancellationToken cancellationToken);
 
 		Task<IReadOnlyCollection<Song>> GetAllSongs(CancellationToken cancellationToken);
 
