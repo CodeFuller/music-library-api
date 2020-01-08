@@ -34,13 +34,19 @@ namespace MusicLibraryApi.Logic.Services
 
 		public async Task<int> CreateFolder(Folder folder, CancellationToken cancellationToken)
 		{
-			// TBD: Cover by IT.
-			// Creating folder in the storage.
-			await storageService.CreateFolder(folder, cancellationToken);
-
-			// Creating folder in the repository.
 			try
 			{
+				// Creating folder in the storage.
+				await storageService.CreateFolder(folder, cancellationToken);
+			}
+			catch (FolderNotFoundException e)
+			{
+				throw e.Handle(folder.ParentFolderId, logger);
+			}
+
+			try
+			{
+				// Creating folder in the repository.
 				await repository.AddFolder(folder, cancellationToken);
 				await unitOfWork.Commit(cancellationToken);
 

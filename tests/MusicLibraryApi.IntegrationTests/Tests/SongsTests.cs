@@ -420,20 +420,5 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			AssertData(expectedSongs, receivedSongs);
 		}
-
-		private void AssertSongContent(string relativeContentPath, byte[] expectedContent)
-		{
-			if (WebApplicationFactory.FileSystemStorageRoot == null)
-			{
-				throw new InvalidOperationException($"{nameof(WebApplicationFactory.FileSystemStorageRoot)} is not set");
-			}
-
-			var contentPath = Path.Combine(WebApplicationFactory.FileSystemStorageRoot, relativeContentPath);
-			var content = File.ReadAllBytes(contentPath);
-			CollectionAssert.AreEqual(expectedContent, content);
-
-			var fileInfo = new FileInfo(contentPath);
-			Assert.IsTrue(fileInfo.IsReadOnly);
-		}
 	}
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -187,6 +188,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			var receivedDisc = await discsQuery.GetDisc(8, DiscFields.All + DiscFields.Folder(FolderFields.Id), CancellationToken.None);
 
 			AssertData(expectedDisc, receivedDisc);
+			Assert.IsTrue(Directory.Exists(GetFullContentPath("Guano Apes/1994 - Битва на мотоциклах (CD 2)")));
 		}
 
 		[TestMethod]
@@ -227,6 +229,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			var receivedDisc = await discsQuery.GetDisc(8, DiscFields.All + DiscFields.Folder(FolderFields.Id), CancellationToken.None);
 
 			AssertData(expectedDisc, receivedDisc);
+			Assert.IsTrue(Directory.Exists(GetFullContentPath("Guano Apes/Russian")));
 		}
 
 		[TestMethod]

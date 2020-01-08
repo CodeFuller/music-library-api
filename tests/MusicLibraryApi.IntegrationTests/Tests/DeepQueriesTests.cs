@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -247,6 +248,50 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			// Assert
 
 			AssertData(expectedPlayback, receivedPlayback);
+		}
+
+		[TestMethod]
+		public async Task CreateDeepSongContent_CreatesContentCorrectly()
+		{
+			// Arrange
+
+			var foldersClient = CreateClient<IFoldersMutation>();
+			var discsClient = CreateClient<IDiscsMutation>();
+			var songsClient = CreateClient<ISongsMutation>();
+
+			// Act
+
+			// Creating folder.
+			var folderData = new InputFolderData { Name = "Some Folder", ParentFolderId = 6, };
+			var folderId = await foldersClient.CreateFolder(folderData, CancellationToken.None);
+			Assert.AreEqual(8, folderId);
+
+			// Creating disc.
+			var discData = new InputDiscData
+			{
+				FolderId = 8,
+				Title = "Some Disc Title",
+				TreeTitle = "Some Disc TreeTitle",
+				AlbumTitle = "Some Disc AlbumTitle",
+			};
+			var discId = await discsClient.CreateDisc(discData, CancellationToken.None);
+			Assert.AreEqual(8, discId);
+
+			// Creating song.
+			var songData = new InputSongData
+			{
+				DiscId = 8,
+				Title = "Some Song Title",
+				TreeTitle = "Some Song TreeTitle.mp3",
+				Duration = new TimeSpan(0, 5, 13),
+			};
+
+			await using var contentStream = new MemoryStream(new byte[] { 0x01, 0x02, 0x03, });
+			await songsClient.CreateSong(songData, contentStream, CancellationToken.None);
+
+			// Assert
+
+			AssertSongContent("Guano Apes/Some subfolder/Some Folder/Some Disc TreeTitle/Some Song TreeTitle.mp3", new byte[] { 0x01, 0x02, 0x03, });
 		}
 	}
 }

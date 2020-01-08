@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -153,6 +154,27 @@ namespace MusicLibraryApi.IntegrationTests
 
 		public virtual void ConfigureServices(IServiceCollection services)
 		{
+		}
+
+		protected string GetFullContentPath(string relativeContentPath)
+		{
+			if (WebApplicationFactory.FileSystemStorageRoot == null)
+			{
+				throw new InvalidOperationException($"{nameof(WebApplicationFactory.FileSystemStorageRoot)} is not set");
+			}
+
+			return Path.Combine(WebApplicationFactory.FileSystemStorageRoot, relativeContentPath);
+		}
+
+		protected void AssertSongContent(string relativeContentPath, byte[] expectedContent)
+		{
+			var fullContentPath = GetFullContentPath(relativeContentPath);
+
+			var content = File.ReadAllBytes(fullContentPath);
+			CollectionAssert.AreEqual(expectedContent, content);
+
+			var fileInfo = new FileInfo(fullContentPath);
+			Assert.IsTrue(fileInfo.IsReadOnly);
 		}
 	}
 }

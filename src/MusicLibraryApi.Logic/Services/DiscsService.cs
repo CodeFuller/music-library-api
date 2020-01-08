@@ -8,6 +8,7 @@ using MusicLibraryApi.Abstractions.Exceptions;
 using MusicLibraryApi.Abstractions.Interfaces;
 using MusicLibraryApi.Abstractions.Models;
 using MusicLibraryApi.Logic.Extensions;
+using MusicLibraryApi.Logic.Interfaces;
 
 namespace MusicLibraryApi.Logic.Services
 {
@@ -17,11 +18,14 @@ namespace MusicLibraryApi.Logic.Services
 
 		private readonly IDiscsRepository repository;
 
+		private readonly IStorageService storageService;
+
 		private readonly ILogger<DiscsService> logger;
 
-		public DiscsService(IUnitOfWork unitOfWork, ILogger<DiscsService> logger)
+		public DiscsService(IUnitOfWork unitOfWork, IStorageService storageService, ILogger<DiscsService> logger)
 		{
 			this.unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
+			this.storageService = storageService ?? throw new ArgumentNullException(nameof(storageService));
 			this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
 			this.repository = unitOfWork.DiscsRepository;
@@ -29,9 +33,12 @@ namespace MusicLibraryApi.Logic.Services
 
 		public async Task<int> CreateDisc(Disc disc, CancellationToken cancellationToken)
 		{
-			// TBD: Need to create storage folder for disc
 			try
 			{
+				// Creating disc in the storage.
+				await storageService.CreateDisc(disc, cancellationToken);
+
+				// Creating disc in the repository.
 				await repository.AddDisc(disc, cancellationToken);
 				await unitOfWork.Commit(cancellationToken);
 

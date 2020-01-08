@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -212,6 +213,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			// Assert
 
 			AssertData(expectedFolders, receivedFolder.Subfolders);
+			Assert.IsTrue(Directory.Exists(GetFullContentPath("Foreign/Korn")));
 		}
 
 		[TestMethod]
@@ -278,6 +280,25 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			// Assert
 
 			AssertData(expectedFolders, receivedFolder.Subfolders);
+		}
+
+		[TestMethod]
+		public async Task CreateFolder_IfParentFolderDoesNotExist_ReturnsError()
+		{
+			// Arrange
+
+			var folderData = new InputFolderData { Name = "Some New Folder", ParentFolderId = 12345, };
+
+			var client = CreateClient<IFoldersMutation>();
+
+			// Act
+
+			var createFolderTask = client.CreateFolder(folderData, CancellationToken.None);
+
+			// Assert
+
+			var exception = await Assert.ThrowsExceptionAsync<GraphQLRequestFailedException>(() => createFolderTask);
+			Assert.AreEqual("The folder with id of '12345' does not exist", exception.Message);
 		}
 	}
 }

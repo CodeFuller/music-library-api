@@ -30,7 +30,7 @@ namespace MusicLibraryApi.Logic.Services
 			this.checksumCalculator = checksumCalculator ?? throw new ArgumentNullException(nameof(checksumCalculator));
 		}
 
-		public async Task<string> CreateFolder(Folder folder, CancellationToken cancellationToken)
+		public async Task CreateFolder(Folder folder, CancellationToken cancellationToken)
 		{
 			if (folder.ParentFolderId == null)
 			{
@@ -41,8 +41,14 @@ namespace MusicLibraryApi.Logic.Services
 			var folderPath = CombinePathParts(parentFolderPathParts.Concat(new[] { folder.Name }));
 
 			await contentStorage.CreateFolder(folderPath, cancellationToken);
+		}
 
-			return folderPath;
+		public async Task CreateDisc(Disc disc, CancellationToken cancellationToken)
+		{
+			var discPathParts = await GetDiscPathParts(disc, cancellationToken);
+			var folderPath = CombinePathParts(discPathParts);
+
+			await contentStorage.CreateFolder(folderPath, cancellationToken);
 		}
 
 		public async Task StoreSong(Song song, Stream contentStream, CancellationToken cancellationToken)
@@ -50,8 +56,8 @@ namespace MusicLibraryApi.Logic.Services
 			var discsRepository = unitOfWork.DiscsRepository;
 			var disc = await discsRepository.GetDisc(song.DiscId, cancellationToken);
 
-			var discFolderPathParts = await GetFolderPathParts(disc.FolderId, cancellationToken);
-			var songPathParts = discFolderPathParts.Concat(new[] { disc.TreeTitle, song.TreeTitle });
+			var discPathParts = await GetDiscPathParts(disc, cancellationToken);
+			var songPathParts = discPathParts.Concat(new[] { song.TreeTitle });
 			var songPath = CombinePathParts(songPathParts);
 
 			var content = await ReadContent(contentStream, cancellationToken);
@@ -60,6 +66,12 @@ namespace MusicLibraryApi.Logic.Services
 			// Enriching the song with content info
 			song.Size = content.LongLength;
 			song.Checksum = await checksumCalculator.CalculateChecksum(content, cancellationToken);
+		}
+
+		private async Task<IEnumerable<string>> GetDiscPathParts(Disc disc, CancellationToken cancellationToken)
+		{
+			var parentFolderPathParts = await GetFolderPathParts(disc.FolderId, cancellationToken);
+			return parentFolderPathParts.Concat(new[] { disc.TreeTitle });
 		}
 
 		private async Task<IReadOnlyCollection<string>> GetFolderPathParts(int folderId, CancellationToken cancellationToken)

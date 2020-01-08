@@ -7,7 +7,9 @@ namespace MusicLibraryApi.Logic.Interfaces
 {
 	public interface IStorageService
 	{
-		Task<string> CreateFolder(Folder folder, CancellationToken cancellationToken);
+		Task CreateFolder(Folder folder, CancellationToken cancellationToken);
+
+		Task CreateDisc(Disc disc, CancellationToken cancellationToken);
 
 		Task StoreSong(Song song, Stream contentStream, CancellationToken cancellationToken);
 	}
