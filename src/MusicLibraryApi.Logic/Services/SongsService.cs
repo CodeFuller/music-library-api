@@ -34,8 +34,15 @@ namespace MusicLibraryApi.Logic.Services
 
 		public async Task<int> CreateSong(Song song, Stream contentStream, CancellationToken cancellationToken)
 		{
-			// The storage changes should be made before saving song in DB, because StoreSong() enrhiches song with content info.
-			await storageService.StoreSong(song, contentStream, cancellationToken);
+			try
+			{
+				// The storage changes should be made before saving song in DB, because StoreSong() enriches song with content info.
+				await storageService.StoreSong(song, contentStream, cancellationToken);
+			}
+			catch (DiscNotFoundException e)
+			{
+				throw e.Handle(song.DiscId, logger);
+			}
 
 			// TBD: Rollback storage changes on error
 			return await AddSongToRepository(song, cancellationToken);

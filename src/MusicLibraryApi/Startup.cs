@@ -2,7 +2,6 @@ using System;
 using CF.Library.Logging;
 using GraphQL;
 using GraphQL.Server;
-using GraphQL.Server.Internal;
 using GraphQL.Server.Ui.Playground;
 using GraphQL.Types;
 using Microsoft.AspNetCore.Builder;
@@ -61,7 +60,10 @@ namespace MusicLibraryApi
 
 			services.AddGraphQLUpload();
 
-			services.AddTransient<IGraphQLExecuter<MusicLibrarySchema>, CustomGraphQLExecuter>();
+			// We use custom implementation of IDocumentExecuter to apply error-handling middleware.
+			// We cannot apply middleware via IGraphQLExecuter from the GraphQL.Server.Transports.AspNetCore package,
+			// because package GraphQL.Upload.AspNetCore invokes IDocumentExecuter directly for requests with multipart/form-data content.
+			services.AddSingleton<IDocumentExecuter>(sp => new CustomDocumentExecuter(new DocumentExecuter(), sp.GetRequiredService<ILogger<CustomDocumentExecuter>>()));
 
 			// Fix for the error "Synchronous operations are disallowed. Call ReadAsync or set AllowSynchronousIO to true instead."
 			// See https://stackoverflow.com/questions/55052319/net-core-3-preview-synchronous-operations-are-disallowed
@@ -81,9 +83,6 @@ namespace MusicLibraryApi
 			app.UseGraphQLUpload<MusicLibrarySchema>();
 			app.UseGraphQL<MusicLibrarySchema>();
 			app.UseGraphQLPlayground(new GraphQLPlaygroundOptions());
-
-			var sp = app.ApplicationServices;
-			ErrorHandlingMiddleware.Logger = sp?.GetService<ILogger>();
 		}
 	}
 }

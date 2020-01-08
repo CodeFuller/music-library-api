@@ -11,11 +11,14 @@ namespace MusicLibraryApi.GraphQL
 {
 	public class ErrorHandlingMiddleware
 	{
-		public static ILogger? Logger { get; set; }
+		private readonly ILogger logger;
 
-#pragma warning disable CA1822 // Mark members as static - GraphQL.NET requires that Resolve() is an instance method.
+		public ErrorHandlingMiddleware(ILogger logger)
+		{
+			this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+		}
+
 		public async Task<object> Resolve(ResolveFieldContext context, FieldMiddlewareDelegate next)
-#pragma warning restore CA1822 // Mark members as static
 		{
 			try
 			{
@@ -27,7 +30,7 @@ namespace MusicLibraryApi.GraphQL
 			}
 			catch (Exception e) when (!(e is ExecutionError))
 			{
-				Logger?.LogError(e, "Caught unhandled exception when processing the field {FieldName}", context.FieldName);
+				logger?.LogError(e, "Caught unhandled exception when processing the field {FieldName}", context.FieldName);
 				throw new ExecutionError(Invariant($"Caught unhandled exception when processing the field '{context.FieldName}'"));
 			}
 		}
