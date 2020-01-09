@@ -18,15 +18,15 @@ namespace MusicLibraryApi.IntegrationTests
 {
 	public class CustomWebApplicationFactory : WebApplicationFactory<Startup>, IHttpClientFactory
 	{
-		private readonly IWebApplicationConfigurator appConfigurator;
+		private readonly Action<IServiceCollection> configureServicesAction;
 
 		private string? TestDataPath { get; set; }
 
 		public string? FileSystemStorageRoot { get; private set; }
 
-		public CustomWebApplicationFactory(IWebApplicationConfigurator appConfigurator)
+		public CustomWebApplicationFactory(Action<IServiceCollection> configureServices)
 		{
-			this.appConfigurator = appConfigurator ?? throw new ArgumentNullException(nameof(appConfigurator));
+			this.configureServicesAction = configureServices ?? throw new ArgumentNullException(nameof(configureServices));
 
 			// Fix for the error "Synchronous operations are disallowed. Call ReadAsync or set AllowSynchronousIO to true instead."
 			// See https://stackoverflow.com/questions/55052319/net-core-3-preview-synchronous-operations-are-disallowed
@@ -53,7 +53,7 @@ namespace MusicLibraryApi.IntegrationTests
 				services.AddMusicLibraryApiClient(settings => { });
 				services.AddSingleton<IHttpClientFactory>(this);
 
-				appConfigurator.ConfigureServices(services);
+				configureServicesAction(services);
 			});
 		}
 
@@ -360,9 +360,8 @@ namespace MusicLibraryApi.IntegrationTests
 		{
 			DeleteStorageData();
 
+			// Creating storage directories for the folders.
 			CreateStorageDirectory(String.Empty);
-			CreateStorageDirectory("2001 - Platinum Hits (CD 1)");
-			CreateStorageDirectory("2001 - Platinum Hits (CD 2)");
 			CreateStorageDirectory("Foreign");
 			CreateStorageDirectory("Foreign/Rammstein");
 			CreateStorageDirectory("Guano Apes");
@@ -370,6 +369,14 @@ namespace MusicLibraryApi.IntegrationTests
 			CreateStorageDirectory("Guano Apes/Some subfolder");
 			CreateStorageDirectory("Russian");
 
+			// Creating storage directories for the discs.
+			CreateStorageDirectory("Guano Apes/1997 - Proud Like A God");
+			CreateStorageDirectory("Guano Apes/2000 - Don't Give Me Names");
+			CreateStorageDirectory("Guano Apes/Rarities");
+			CreateStorageDirectory("2001 - Platinum Hits (CD 2)");
+			CreateStorageDirectory("2001 - Platinum Hits (CD 2)");
+
+			// Creating storage files for the songs.
 			CopyStorageFile("01 - Highway To Hell.mp3", "2001 - Platinum Hits (CD 2)");
 			CopyStorageFile("02 - Hell's Bells.mp3", "2001 - Platinum Hits (CD 2)");
 			CopyStorageFile("03 - Are You Ready.mp3", "2001 - Platinum Hits (CD 2)");

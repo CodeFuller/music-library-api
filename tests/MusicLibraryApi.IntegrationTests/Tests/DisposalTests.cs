@@ -52,23 +52,15 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			}
 		}
 
-		public override void ConfigureServices(IServiceCollection services)
-		{
-			base.ConfigureServices(services);
-
-			services.AddTransient<IUnitOfWork>(sp => unitOfWorkMock);
-		}
-
 		// This test was added after a defect when all instances of MusicLibraryDbContext were disposed only on application exit.
 		// There is no easy way to mock MusicLibraryDbContext and verify it's disposal.
 		// That's why we verify dispose of UnitOfWork instance. That's effectively the same since instances are disposed by DI container.
-		// The test verifies dispose()
 		[TestMethod]
 		public async Task DbContext_AfterRequest_IsDisposed()
 		{
 			// Arrange
 
-			var client = CreateClient<IGenresQuery>();
+			var client = CreateClient<IGenresQuery>(services => services.AddTransient<IUnitOfWork>(sp => unitOfWorkMock));
 
 			unitOfWorkMock.Disposed = false;
 

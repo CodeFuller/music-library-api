@@ -2,12 +2,18 @@
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
+using MusicLibraryApi.Abstractions.Exceptions;
+using MusicLibraryApi.Abstractions.Interfaces;
+using MusicLibraryApi.Abstractions.Models;
 using MusicLibraryApi.Client.Contracts.Discs;
 using MusicLibraryApi.Client.Contracts.Folders;
 using MusicLibraryApi.Client.Exceptions;
 using MusicLibraryApi.Client.Fields;
 using MusicLibraryApi.Client.Interfaces;
+using MusicLibraryApi.Logic.Interfaces;
 
 namespace MusicLibraryApi.IntegrationTests.Tests
 {
@@ -217,7 +223,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		}
 
 		[TestMethod]
-		public async Task CreateFolder_IfFolderAlreadyExists_ReturnsError()
+		public async Task CreateFolderMutation_IfFolderAlreadyExists_ReturnsError()
 		{
 			// Arrange
 
@@ -245,6 +251,71 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			var receivedFolder = await foldersClient.GetFolder(3, FolderFields.Subfolders(FolderFields.Id + FolderFields.Name), CancellationToken.None);
 
 			AssertData(expectedFolders, receivedFolder.Subfolders);
+		}
+
+		[TestMethod]
+		public async Task CreateFolderMutation_CreationOfFolderInStorageFails_DoesNotCreateFolderInRepository()
+		{
+			// Arrange
+
+			var folderData = new InputFolderData { Name = "Korn", ParentFolderId = 3, };
+
+			var storageServiceStub = new Mock<IStorageService>();
+			storageServiceStub.Setup(x => x.CreateFolder(It.IsAny<Folder>(), It.IsAny<CancellationToken>()))
+				.Throws(new ServiceOperationFailedException("Exception from IStorageService.CreateFolder()"));
+
+			var client = CreateClient<IFoldersMutation>(services => services.AddSingleton<IStorageService>(storageServiceStub.Object));
+
+			// Act
+
+			var exception = await Assert.ThrowsExceptionAsync<GraphQLRequestFailedException>(() => client.CreateFolder(folderData, CancellationToken.None));
+			Assert.AreEqual("Exception from IStorageService.CreateFolder()", exception.Message);
+
+			// Assert
+
+			// Checking that no folders were created in the repository.
+
+			var expectedFolders = new[]
+			{
+				new OutputFolderData { Id = 4, Name = "Rammstein", },
+			};
+
+			var foldersClient = CreateClient<IFoldersQuery>();
+			var receivedFolder = await foldersClient.GetFolder(3, FolderFields.Subfolders(FolderFields.Id + FolderFields.Name), CancellationToken.None);
+
+			AssertData(expectedFolders, receivedFolder.Subfolders);
+		}
+
+		[TestMethod]
+		public async Task CreateFolderMutation_CreationOfFolderInRepositoryFails_DoesNotCreateFolderInStorage()
+		{
+			// Arrange
+
+			var folderData = new InputFolderData { Name = "Korn", ParentFolderId = 3, };
+
+			var foldersRepositoryStub = new Mock<IFoldersRepository>();
+			foldersRepositoryStub.Setup(x => x.GetFolder(3, It.IsAny<CancellationToken>())).ReturnsAsync(new Folder { Id = 3, ParentFolderId = 1, Name = "Foreign", });
+			foldersRepositoryStub.Setup(x => x.GetFolder(1, It.IsAny<CancellationToken>())).ReturnsAsync(new Folder { Id = 1, ParentFolderId = null, Name = "<ROOT>", });
+
+			var unitOfWorkStub = new Mock<IUnitOfWork>();
+			unitOfWorkStub.Setup(x => x.Commit(It.IsAny<CancellationToken>()))
+				.Throws(new ServiceOperationFailedException("Exception from IUnitOfWork.Commit()"));
+			unitOfWorkStub.Setup(x => x.FoldersRepository).Returns(foldersRepositoryStub.Object);
+
+			var client = CreateClient<IFoldersMutation>(services => services.AddSingleton<IUnitOfWork>(unitOfWorkStub.Object));
+
+			// Act
+
+			var exception = await Assert.ThrowsExceptionAsync<GraphQLRequestFailedException>(() => client.CreateFolder(folderData, CancellationToken.None));
+			Assert.AreEqual("Exception from IUnitOfWork.Commit()", exception.Message);
+
+			// Assert
+
+			// Sanity check, that we build paths correctly.
+			Assert.IsTrue(Directory.Exists(GetFullContentPath("Foreign/Rammstein")));
+
+			// Checking that no folders were created in the storage.
+			Assert.IsFalse(Directory.Exists(GetFullContentPath("Foreign/Korn")));
 		}
 
 		[TestMethod]

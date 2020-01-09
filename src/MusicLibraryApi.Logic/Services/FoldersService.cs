@@ -52,10 +52,31 @@ namespace MusicLibraryApi.Logic.Services
 
 				return folder.Id;
 			}
-			catch (DuplicateKeyException e)
+			catch (Exception e)
 			{
-				logger.LogError(e, "Folder {FolderName} already exists", folder.Name);
-				throw new ServiceOperationFailedException(Invariant($"Folder '{folder.Name}' already exists"), e);
+				await RollbackFolderCreation(folder, cancellationToken);
+
+				if (e is DuplicateKeyException)
+				{
+					logger.LogError(e, "Folder {FolderName} already exists", folder.Name);
+					throw new ServiceOperationFailedException(Invariant($"Folder '{folder.Name}' already exists"), e);
+				}
+
+				throw;
+			}
+		}
+
+		private async Task RollbackFolderCreation(Folder folder, CancellationToken cancellationToken)
+		{
+			try
+			{
+				await storageService.RollbackFolderCreation(folder, cancellationToken);
+			}
+#pragma warning disable CA1031 // Do not catch general exception types - All exceptions are caught for rollback to throw initial exception thrown by Commit().
+			catch (Exception rollbackException)
+#pragma warning restore CA1031 // Do not catch general exception types
+			{
+				logger.LogError(rollbackException, "Failed to rollback folder {FolderName} created in the storage", folder.Name);
 			}
 		}
 

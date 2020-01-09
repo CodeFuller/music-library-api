@@ -22,7 +22,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 						}",
 			};
 
-			var client = WebApplicationFactory.CreateClient();
+			var client = CreateClient();
 
 			// Act
 

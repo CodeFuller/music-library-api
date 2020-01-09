@@ -32,14 +32,7 @@ namespace MusicLibraryApi.Logic.Services
 
 		public async Task CreateFolder(Folder folder, CancellationToken cancellationToken)
 		{
-			if (folder.ParentFolderId == null)
-			{
-				throw new InvalidOperationException("Parent folder id is not set");
-			}
-
-			var parentFolderPathParts = await GetFolderPathParts(folder.ParentFolderId.Value, cancellationToken);
-			var folderPath = CombinePathParts(parentFolderPathParts.Concat(new[] { folder.Name }));
-
+			var folderPath = await GetFolderPath(folder, cancellationToken);
 			await contentStorage.CreateFolder(folderPath, cancellationToken);
 		}
 
@@ -66,6 +59,23 @@ namespace MusicLibraryApi.Logic.Services
 			// Enriching the song with content info
 			song.Size = content.LongLength;
 			song.Checksum = await checksumCalculator.CalculateChecksum(content, cancellationToken);
+		}
+
+		public async Task RollbackFolderCreation(Folder folder, CancellationToken cancellationToken)
+		{
+			var folderPath = await GetFolderPath(folder, cancellationToken);
+			await contentStorage.DeleteEmptyFolder(folderPath, cancellationToken);
+		}
+
+		private async Task<string> GetFolderPath(Folder folder, CancellationToken cancellationToken)
+		{
+			if (folder.ParentFolderId == null)
+			{
+				throw new InvalidOperationException("Parent folder id is not set");
+			}
+
+			var parentFolderPathParts = await GetFolderPathParts(folder.ParentFolderId.Value, cancellationToken);
+			return CombinePathParts(parentFolderPathParts.Concat(new[] { folder.Name }));
 		}
 
 		private async Task<IEnumerable<string>> GetDiscPathParts(Disc disc, CancellationToken cancellationToken)

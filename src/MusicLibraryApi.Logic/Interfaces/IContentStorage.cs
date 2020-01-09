@@ -5,8 +5,10 @@ namespace MusicLibraryApi.Logic.Interfaces
 {
 	internal interface IContentStorage
 	{
-		Task CreateFolder(string folderPath, CancellationToken cancellationToken);
+		Task CreateFolder(string path, CancellationToken cancellationToken);
 
-		Task StoreContent(string contentPath, byte[] content, CancellationToken cancellationToken);
+		Task DeleteEmptyFolder(string path, CancellationToken cancellationToken);
+
+		Task StoreContent(string path, byte[] content, CancellationToken cancellationToken);
 	}
 }

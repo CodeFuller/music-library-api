@@ -41,13 +41,6 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			}
 		}
 
-		public override void ConfigureServices(IServiceCollection services)
-		{
-			base.ConfigureServices(services);
-
-			services.AddSingleton<IInterceptor>(countingCommandInterceptor);
-		}
-
 		[TestMethod]
 		public async Task GraphQl_ForNestedQueries_UsesDataLoaderWithBatching()
 		{
@@ -55,7 +48,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var requestedFields = FolderFields.Name + FolderFields.Discs(DiscFields.Songs(SongFields.Id + SongFields.Artist(ArtistFields.Id + ArtistFields.Name)));
 
-			var client = CreateClient<IFoldersQuery>();
+			var client = CreateClient<IFoldersQuery>(services => services.AddSingleton<IInterceptor>(countingCommandInterceptor));
 
 			countingCommandInterceptor.Clear();
 

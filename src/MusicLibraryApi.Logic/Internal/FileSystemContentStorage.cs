@@ -38,6 +38,14 @@ namespace MusicLibraryApi.Logic.Internal
 			return Task.CompletedTask;
 		}
 
+		public Task DeleteEmptyFolder(string path, CancellationToken cancellationToken)
+		{
+			var fullPath = GetFullPath(path);
+			Directory.Delete(fullPath);
+
+			return Task.CompletedTask;
+		}
+
 		public async Task StoreContent(string path, byte[] content, CancellationToken cancellationToken)
 		{
 			var fullPath = GetFullPath(path);

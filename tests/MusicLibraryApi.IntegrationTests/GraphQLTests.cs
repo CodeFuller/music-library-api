@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MusicLibraryApi.Client.Contracts.Artists;
@@ -12,13 +13,12 @@ using MusicLibraryApi.Client.Contracts.Playbacks;
 using MusicLibraryApi.Client.Contracts.Songs;
 using MusicLibraryApi.Client.Contracts.Statistics;
 using MusicLibraryApi.IntegrationTests.DataCheckers;
-using MusicLibraryApi.IntegrationTests.Utility;
 
 namespace MusicLibraryApi.IntegrationTests
 {
-	public abstract class GraphQLTests : IWebApplicationConfigurator, IDisposable
+	public abstract class GraphQLTests : IDisposable
 	{
-		protected CustomWebApplicationFactory WebApplicationFactory { get; }
+		private CustomWebApplicationFactory? WebApplicationFactory { get; set; }
 
 		private readonly FolderDataChecker foldersChecker;
 
@@ -38,8 +38,6 @@ namespace MusicLibraryApi.IntegrationTests
 
 		protected GraphQLTests()
 		{
-			WebApplicationFactory = new CustomWebApplicationFactory(this);
-
 			songsChecker = new SongDataChecker();
 			artistsChecker = new ArtistDataChecker(songsChecker);
 			genresChecker = new GenreDataChecker(songsChecker);
@@ -56,21 +54,38 @@ namespace MusicLibraryApi.IntegrationTests
 			discsChecker.FoldersChecker = foldersChecker;
 		}
 
-		[TestInitialize]
-		public void Initialize()
-		{
-			WebApplicationFactory.SeedData();
-		}
-
 		[TestCleanup]
 		public void Cleanup()
 		{
-			WebApplicationFactory.CleanData();
+			if (WebApplicationFactory != null)
+			{
+				WebApplicationFactory.CleanData();
+				WebApplicationFactory = null;
+			}
 		}
 
-		protected TClient CreateClient<TClient>()
+		private CustomWebApplicationFactory InitializeWebApplicationFactory(Action<IServiceCollection> configureServices)
 		{
-			return WebApplicationFactory.Services.GetRequiredService<TClient>();
+			if (WebApplicationFactory == null)
+			{
+				WebApplicationFactory = new CustomWebApplicationFactory(configureServices);
+				WebApplicationFactory.SeedData();
+			}
+
+			return WebApplicationFactory;
+		}
+
+		protected TClient CreateClient<TClient>(Action<IServiceCollection>? configureServices = null)
+		{
+			configureServices ??= services => { };
+			return InitializeWebApplicationFactory(configureServices)
+				.Services.GetRequiredService<TClient>();
+		}
+
+		protected HttpClient CreateClient()
+		{
+			return InitializeWebApplicationFactory(services => { })
+				.CreateClient();
 		}
 
 		protected void AssertData(OutputFolderData? expected, OutputFolderData? actual)
@@ -152,12 +167,13 @@ namespace MusicLibraryApi.IntegrationTests
 			GC.SuppressFinalize(this);
 		}
 
-		public virtual void ConfigureServices(IServiceCollection services)
-		{
-		}
-
 		protected string GetFullContentPath(string relativeContentPath)
 		{
+			if (WebApplicationFactory == null)
+			{
+				throw new InvalidOperationException($"{nameof(WebApplicationFactory)} is not set");
+			}
+
 			if (WebApplicationFactory.FileSystemStorageRoot == null)
 			{
 				throw new InvalidOperationException($"{nameof(WebApplicationFactory.FileSystemStorageRoot)} is not set");
