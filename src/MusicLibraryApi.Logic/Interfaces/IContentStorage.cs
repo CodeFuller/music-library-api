@@ -1,16 +1,17 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MusicLibraryApi.Logic.Interfaces
 {
 	internal interface IContentStorage
 	{
-		Task CreateFolder(string path, CancellationToken cancellationToken);
+		Task CreateFolder(IEnumerable<string> pathParts, CancellationToken cancellationToken);
 
-		Task DeleteEmptyFolder(string path, CancellationToken cancellationToken);
+		Task DeleteEmptyFolder(IEnumerable<string> pathParts, CancellationToken cancellationToken);
 
-		Task StoreContent(string path, byte[] content, CancellationToken cancellationToken);
+		Task StoreContent(IEnumerable<string> pathParts, byte[] content, CancellationToken cancellationToken);
 
-		Task DeleteContent(string path, CancellationToken cancellationToken);
+		Task DeleteContent(IEnumerable<string> pathParts, CancellationToken cancellationToken);
 	}
 }

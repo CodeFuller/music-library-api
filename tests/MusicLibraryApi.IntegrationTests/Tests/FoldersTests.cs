@@ -186,7 +186,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		}
 
 		[TestMethod]
-		public async Task CreateFolder_ForCorrectInput_CreatesFolderSuccessfully()
+		public async Task CreateFolderMutation_ForCorrectInput_CreatesFolderSuccessfully()
 		{
 			// Arrange
 
@@ -319,7 +319,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		}
 
 		[TestMethod]
-		public async Task CreateFolder_IfFolderExistsUnderAnotherParent_CreatesFolderSuccessfully()
+		public async Task CreateFolderMutation_IfFolderExistsUnderAnotherParent_CreatesFolderSuccessfully()
 		{
 			// Arrange
 
@@ -354,7 +354,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		}
 
 		[TestMethod]
-		public async Task CreateFolder_IfParentFolderDoesNotExist_ReturnsError()
+		public async Task CreateFolderMutation_IfParentFolderDoesNotExist_ReturnsError()
 		{
 			// Arrange
 

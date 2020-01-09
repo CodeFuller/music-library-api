@@ -26,6 +26,7 @@ namespace MusicLibraryApi.Logic.Extensions
 
 			services.AddSingleton<IChecksumCalculator, Crc32Calculator>();
 			services.AddTransient<IContentStorage, FileSystemContentStorage>();
+			services.AddSingleton<IFileSystemFacade, FileSystemFacade>();
 
 			return services;
 		}

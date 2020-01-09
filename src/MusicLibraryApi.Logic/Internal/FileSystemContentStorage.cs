@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
@@ -12,17 +14,21 @@ namespace MusicLibraryApi.Logic.Internal
 	internal class FileSystemContentStorage : IContentStorage
 #pragma warning restore CA1812 // Avoid uninstantiated internal classes
 	{
+		private readonly IFileSystemFacade fileSystemFacade;
+
 		private readonly string rootPath;
 
-		public FileSystemContentStorage(IOptions<FileSystemStorageSettings> options)
+		public FileSystemContentStorage(IFileSystemFacade fileSystemFacade, IOptions<FileSystemStorageSettings> options)
 		{
+			this.fileSystemFacade = fileSystemFacade ?? throw new ArgumentNullException(nameof(fileSystemFacade));
+
 			var settings = options?.Value ?? throw new ArgumentNullException(nameof(options));
 			if (String.IsNullOrWhiteSpace(settings.Root))
 			{
 				throw new InvalidOperationException("The root path of file system storage is not set");
 			}
 
-			if (!Directory.Exists(settings.Root))
+			if (!fileSystemFacade.DirectoryExists(settings.Root))
 			{
 				throw new InvalidOperationException($"The root path of file system storage does not exist: '{settings.Root}'");
 			}
@@ -30,49 +36,64 @@ namespace MusicLibraryApi.Logic.Internal
 			rootPath = settings.Root;
 		}
 
-		public Task CreateFolder(string path, CancellationToken cancellationToken)
+		public Task CreateFolder(IEnumerable<string> pathParts, CancellationToken cancellationToken)
 		{
-			var fullPath = GetFullPath(path);
-			Directory.CreateDirectory(fullPath);
+			var fullPath = GetFullPath(pathParts);
+			fileSystemFacade.CreateDirectory(fullPath);
 
 			return Task.CompletedTask;
 		}
 
-		public Task DeleteEmptyFolder(string path, CancellationToken cancellationToken)
+		public Task DeleteEmptyFolder(IEnumerable<string> pathParts, CancellationToken cancellationToken)
 		{
-			var fullPath = GetFullPath(path);
-			Directory.Delete(fullPath);
+			var fullPath = GetFullPath(pathParts);
+			fileSystemFacade.DeleteDirectory(fullPath);
 
 			return Task.CompletedTask;
 		}
 
-		public async Task StoreContent(string path, byte[] content, CancellationToken cancellationToken)
+		public async Task StoreContent(IEnumerable<string> pathParts, byte[] content, CancellationToken cancellationToken)
 		{
-			var fullPath = GetFullPath(path);
+			var fullPath = GetFullPath(pathParts);
 
-			await using var fileStream = File.Open(fullPath, FileMode.CreateNew);
+			await using var fileStream = fileSystemFacade.OpenFile(fullPath, FileMode.CreateNew);
 			await using var contentStream = new MemoryStream(content);
 			await contentStream.CopyToAsync(fileStream, cancellationToken);
 
-			File.SetAttributes(fullPath, FileAttributes.ReadOnly);
+			fileSystemFacade.SetReadOnlyAttribute(fullPath);
 		}
 
-		public Task DeleteContent(string path, CancellationToken cancellationToken)
+		public Task DeleteContent(IEnumerable<string> pathParts, CancellationToken cancellationToken)
 		{
-			var fullPath = GetFullPath(path);
-			_ = new FileInfo(fullPath)
-			{
-				IsReadOnly = false,
-			};
+			var fullPath = GetFullPath(pathParts);
 
-			File.Delete(fullPath);
+			fileSystemFacade.ClearReadOnlyAttribute(fullPath);
+			fileSystemFacade.DeleteFile(fullPath);
 
 			return Task.CompletedTask;
 		}
 
-		private string GetFullPath(string path)
+		private string GetFullPath(IEnumerable<string> pathParts)
 		{
-			return Path.Combine(rootPath, path);
+			var relativePath = CombinePathParts(pathParts);
+			return Path.Combine(rootPath, relativePath);
+		}
+
+		private static string CombinePathParts(IEnumerable<string> parts)
+		{
+			// We skip the first root folder.
+			return parts
+				.Skip(1)
+				.Select(SafePathName)
+				.Aggregate((currPath, currPart) => currPath.Length == 0 ? currPart : Path.Combine(currPath, currPart));
+		}
+
+		private static string SafePathName(string name)
+		{
+			var invalidFileNameChars = Path.GetInvalidFileNameChars();
+			var split = name.Split(invalidFileNameChars, StringSplitOptions.RemoveEmptyEntries);
+
+			return split.Any() ? String.Join(String.Empty, split) : "_";
 		}
 	}
 }
