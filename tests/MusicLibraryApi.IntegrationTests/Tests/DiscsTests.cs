@@ -2,13 +2,19 @@
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
+using MusicLibraryApi.Abstractions.Exceptions;
+using MusicLibraryApi.Abstractions.Interfaces;
+using MusicLibraryApi.Abstractions.Models;
 using MusicLibraryApi.Client.Contracts.Discs;
 using MusicLibraryApi.Client.Contracts.Folders;
 using MusicLibraryApi.Client.Contracts.Songs;
 using MusicLibraryApi.Client.Exceptions;
 using MusicLibraryApi.Client.Fields;
 using MusicLibraryApi.Client.Interfaces;
+using MusicLibraryApi.Logic.Interfaces;
 
 namespace MusicLibraryApi.IntegrationTests.Tests
 {
@@ -271,6 +277,90 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			var receivedDiscs = await discsQuery.GetDiscs(DiscFields.Id, CancellationToken.None);
 
 			AssertData(expectedDiscs, receivedDiscs);
+		}
+
+		[TestMethod]
+		public async Task CreateDiscMutation_CreationOfDiscInStorageFails_DoesNotCreateDiscInRepository()
+		{
+			// Arrange
+
+			var newDiscData = new InputDiscData
+			{
+				FolderId = 5,
+				Title = "Some New Disc (CD 1)",
+				TreeTitle = "1999 - Some New Disc (CD 1)",
+				AlbumTitle = "Some New Disc",
+			};
+
+			var storageServiceStub = new Mock<IStorageService>();
+			storageServiceStub.Setup(x => x.CreateDisc(It.IsAny<Disc>(), It.IsAny<CancellationToken>()))
+				.Throws(new ServiceOperationFailedException("Exception from IStorageService.CreateDisc()"));
+
+			var client = CreateClient<IDiscsMutation>(services => services.AddSingleton<IStorageService>(storageServiceStub.Object));
+
+			// Act
+
+			var exception = await Assert.ThrowsExceptionAsync<GraphQLRequestFailedException>(() => client.CreateDisc(newDiscData, CancellationToken.None));
+			Assert.AreEqual("Exception from IStorageService.CreateDisc()", exception.Message);
+
+			// Arrange
+
+			// Checking that no folders were created in the repository.
+
+			var expectedDiscs = new[]
+			{
+				new OutputDiscData { Id = 1, },
+				new OutputDiscData { Id = 2, },
+				new OutputDiscData { Id = 3, },
+				new OutputDiscData { Id = 4, },
+				new OutputDiscData { Id = 5, },
+			};
+
+			var discsQuery = CreateClient<IDiscsQuery>();
+			var receivedDiscs = await discsQuery.GetDiscs(DiscFields.Id, CancellationToken.None);
+
+			AssertData(expectedDiscs, receivedDiscs);
+		}
+
+		[TestMethod]
+		public async Task CreateDiscMutation_CreationOfDiscInRepositoryFails_DoesNotCreateDiscInStorage()
+		{
+			// Arrange
+
+			var newDiscData = new InputDiscData
+			{
+				FolderId = 5,
+				Title = "Some New Disc (CD 1)",
+				TreeTitle = "1999 - Some New Disc (CD 1)",
+				AlbumTitle = "Some New Disc",
+			};
+
+			var foldersRepositoryStub = new Mock<IFoldersRepository>();
+			foldersRepositoryStub.Setup(x => x.GetFolder(5, It.IsAny<CancellationToken>())).ReturnsAsync(new Folder { Id = 5, ParentFolderId = 1, Name = "Guano Apes", });
+			foldersRepositoryStub.Setup(x => x.GetFolder(1, It.IsAny<CancellationToken>())).ReturnsAsync(new Folder { Id = 1, ParentFolderId = null, Name = "<ROOT>", });
+
+			var discsRepositoryStub = new Mock<IDiscsRepository>();
+
+			var unitOfWorkStub = new Mock<IUnitOfWork>();
+			unitOfWorkStub.Setup(x => x.Commit(It.IsAny<CancellationToken>()))
+				.Throws(new ServiceOperationFailedException("Exception from IUnitOfWork.Commit()"));
+			unitOfWorkStub.Setup(x => x.FoldersRepository).Returns(foldersRepositoryStub.Object);
+			unitOfWorkStub.Setup(x => x.DiscsRepository).Returns(discsRepositoryStub.Object);
+
+			var client = CreateClient<IDiscsMutation>(services => services.AddSingleton<IUnitOfWork>(unitOfWorkStub.Object));
+
+			// Act
+
+			var exception = await Assert.ThrowsExceptionAsync<GraphQLRequestFailedException>(() => client.CreateDisc(newDiscData, CancellationToken.None));
+			Assert.AreEqual("Exception from IUnitOfWork.Commit()", exception.Message);
+
+			// Arrange
+
+			// Sanity check, that we build paths correctly.
+			Assert.IsTrue(Directory.Exists(GetFullContentPath("Guano Apes/1997 - Proud Like A God")));
+
+			// Checking that no folders were created in the storage.
+			Assert.IsFalse(Directory.Exists(GetFullContentPath("Guano Apes/1999 - Some New Disc (CD 1)")));
 		}
 	}
 }

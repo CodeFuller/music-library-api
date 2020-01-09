@@ -38,10 +38,8 @@ namespace MusicLibraryApi.Logic.Services
 
 		public async Task CreateDisc(Disc disc, CancellationToken cancellationToken)
 		{
-			var discPathParts = await GetDiscPathParts(disc, cancellationToken);
-			var folderPath = CombinePathParts(discPathParts);
-
-			await contentStorage.CreateFolder(folderPath, cancellationToken);
+			var discFolderPath = await GetDiscFolderPath(disc, cancellationToken);
+			await contentStorage.CreateFolder(discFolderPath, cancellationToken);
 		}
 
 		public async Task StoreSong(Song song, Stream contentStream, CancellationToken cancellationToken)
@@ -67,6 +65,12 @@ namespace MusicLibraryApi.Logic.Services
 			await contentStorage.DeleteEmptyFolder(folderPath, cancellationToken);
 		}
 
+		public async Task RollbackDiscCreation(Disc disc, CancellationToken cancellationToken)
+		{
+			var discFolderPath = await GetDiscFolderPath(disc, cancellationToken);
+			await contentStorage.DeleteEmptyFolder(discFolderPath, cancellationToken);
+		}
+
 		private async Task<string> GetFolderPath(Folder folder, CancellationToken cancellationToken)
 		{
 			if (folder.ParentFolderId == null)
@@ -76,6 +80,12 @@ namespace MusicLibraryApi.Logic.Services
 
 			var parentFolderPathParts = await GetFolderPathParts(folder.ParentFolderId.Value, cancellationToken);
 			return CombinePathParts(parentFolderPathParts.Concat(new[] { folder.Name }));
+		}
+
+		private async Task<string> GetDiscFolderPath(Disc disc, CancellationToken cancellationToken)
+		{
+			var discPathParts = await GetDiscPathParts(disc, cancellationToken);
+			return CombinePathParts(discPathParts);
 		}
 
 		private async Task<IEnumerable<string>> GetDiscPathParts(Disc disc, CancellationToken cancellationToken)

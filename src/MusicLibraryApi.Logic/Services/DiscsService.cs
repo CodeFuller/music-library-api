@@ -37,16 +37,44 @@ namespace MusicLibraryApi.Logic.Services
 			{
 				// Creating disc in the storage.
 				await storageService.CreateDisc(disc, cancellationToken);
+			}
+			catch (FolderNotFoundException e)
+			{
+				throw e.Handle(disc.FolderId, logger);
+			}
 
+			try
+			{
 				// Creating disc in the repository.
 				await repository.AddDisc(disc, cancellationToken);
 				await unitOfWork.Commit(cancellationToken);
 
 				return disc.Id;
 			}
-			catch (FolderNotFoundException e)
+			catch (Exception e)
 			{
-				throw e.Handle(disc.FolderId, logger);
+				await RollbackDiscCreation(disc, cancellationToken);
+
+				if (e is FolderNotFoundException folderNotFoundException)
+				{
+					throw folderNotFoundException.Handle(disc.FolderId, logger);
+				}
+
+				throw;
+			}
+		}
+
+		private async Task RollbackDiscCreation(Disc disc, CancellationToken cancellationToken)
+		{
+			try
+			{
+				await storageService.RollbackDiscCreation(disc, cancellationToken);
+			}
+#pragma warning disable CA1031 // Do not catch general exception types - All exceptions are caught for rollback to throw initial exception thrown by Commit().
+			catch (Exception rollbackException)
+#pragma warning restore CA1031 // Do not catch general exception types
+			{
+				logger.LogError(rollbackException, "Failed to rollback disc {DiscTitle} created in the storage", disc.Title);
 			}
 		}
 
