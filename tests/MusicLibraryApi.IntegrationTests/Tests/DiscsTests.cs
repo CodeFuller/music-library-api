@@ -262,7 +262,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			var exception = await Assert.ThrowsExceptionAsync<GraphQLRequestFailedException>(() => createDiscTask);
 			Assert.AreEqual("The folder with id of '12345' does not exist", exception.Message);
 
-			// Checking that no disc was created
+			// Checking that no discs were created.
 
 			var expectedDiscs = new[]
 			{
@@ -339,13 +339,11 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			foldersRepositoryStub.Setup(x => x.GetFolder(5, It.IsAny<CancellationToken>())).ReturnsAsync(new Folder { Id = 5, ParentFolderId = 1, Name = "Guano Apes", });
 			foldersRepositoryStub.Setup(x => x.GetFolder(1, It.IsAny<CancellationToken>())).ReturnsAsync(new Folder { Id = 1, ParentFolderId = null, Name = "<ROOT>", });
 
-			var discsRepositoryStub = new Mock<IDiscsRepository>();
-
 			var unitOfWorkStub = new Mock<IUnitOfWork>();
 			unitOfWorkStub.Setup(x => x.Commit(It.IsAny<CancellationToken>()))
 				.Throws(new ServiceOperationFailedException("Exception from IUnitOfWork.Commit()"));
 			unitOfWorkStub.Setup(x => x.FoldersRepository).Returns(foldersRepositoryStub.Object);
-			unitOfWorkStub.Setup(x => x.DiscsRepository).Returns(discsRepositoryStub.Object);
+			unitOfWorkStub.Setup(x => x.DiscsRepository).Returns(Mock.Of<IDiscsRepository>());
 
 			var client = CreateClient<IDiscsMutation>(services => services.AddSingleton<IUnitOfWork>(unitOfWorkStub.Object));
 

@@ -57,6 +57,19 @@ namespace MusicLibraryApi.Logic.Internal
 			File.SetAttributes(fullPath, FileAttributes.ReadOnly);
 		}
 
+		public Task DeleteContent(string path, CancellationToken cancellationToken)
+		{
+			var fullPath = GetFullPath(path);
+			_ = new FileInfo(fullPath)
+			{
+				IsReadOnly = false,
+			};
+
+			File.Delete(fullPath);
+
+			return Task.CompletedTask;
+		}
+
 		private string GetFullPath(string path)
 		{
 			return Path.Combine(rootPath, path);

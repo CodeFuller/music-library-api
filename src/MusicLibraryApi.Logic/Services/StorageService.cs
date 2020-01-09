@@ -44,15 +44,9 @@ namespace MusicLibraryApi.Logic.Services
 
 		public async Task StoreSong(Song song, Stream contentStream, CancellationToken cancellationToken)
 		{
-			var discsRepository = unitOfWork.DiscsRepository;
-			var disc = await discsRepository.GetDisc(song.DiscId, cancellationToken);
-
-			var discPathParts = await GetDiscPathParts(disc, cancellationToken);
-			var songPathParts = discPathParts.Concat(new[] { song.TreeTitle });
-			var songPath = CombinePathParts(songPathParts);
-
+			var songFilePath = await GetSongFilePath(song, cancellationToken);
 			var content = await ReadContent(contentStream, cancellationToken);
-			await contentStorage.StoreContent(songPath, content, cancellationToken);
+			await contentStorage.StoreContent(songFilePath, content, cancellationToken);
 
 			// Enriching the song with content info
 			song.Size = content.LongLength;
@@ -71,6 +65,12 @@ namespace MusicLibraryApi.Logic.Services
 			await contentStorage.DeleteEmptyFolder(discFolderPath, cancellationToken);
 		}
 
+		public async Task RollbackSongCreation(Song song, CancellationToken cancellationToken)
+		{
+			var songFilePath = await GetSongFilePath(song, cancellationToken);
+			await contentStorage.DeleteContent(songFilePath, cancellationToken);
+		}
+
 		private async Task<string> GetFolderPath(Folder folder, CancellationToken cancellationToken)
 		{
 			if (folder.ParentFolderId == null)
@@ -86,6 +86,16 @@ namespace MusicLibraryApi.Logic.Services
 		{
 			var discPathParts = await GetDiscPathParts(disc, cancellationToken);
 			return CombinePathParts(discPathParts);
+		}
+
+		private async Task<string> GetSongFilePath(Song song, CancellationToken cancellationToken)
+		{
+			var discsRepository = unitOfWork.DiscsRepository;
+			var disc = await discsRepository.GetDisc(song.DiscId, cancellationToken);
+
+			var discPathParts = await GetDiscPathParts(disc, cancellationToken);
+			var songPathParts = discPathParts.Concat(new[] { song.TreeTitle });
+			return CombinePathParts(songPathParts);
 		}
 
 		private async Task<IEnumerable<string>> GetDiscPathParts(Disc disc, CancellationToken cancellationToken)

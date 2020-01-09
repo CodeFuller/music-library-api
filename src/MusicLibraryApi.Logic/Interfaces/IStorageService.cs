@@ -16,5 +16,7 @@ namespace MusicLibraryApi.Logic.Interfaces
 		Task RollbackFolderCreation(Folder folder, CancellationToken cancellationToken);
 
 		Task RollbackDiscCreation(Disc disc, CancellationToken cancellationToken);
+
+		Task RollbackSongCreation(Song song, CancellationToken cancellationToken);
 	}
 }

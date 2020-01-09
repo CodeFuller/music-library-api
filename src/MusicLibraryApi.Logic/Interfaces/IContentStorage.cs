@@ -10,5 +10,7 @@ namespace MusicLibraryApi.Logic.Interfaces
 		Task DeleteEmptyFolder(string path, CancellationToken cancellationToken);
 
 		Task StoreContent(string path, byte[] content, CancellationToken cancellationToken);
+
+		Task DeleteContent(string path, CancellationToken cancellationToken);
 	}
 }

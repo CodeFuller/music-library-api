@@ -44,8 +44,30 @@ namespace MusicLibraryApi.Logic.Services
 				throw e.Handle(song.DiscId, logger);
 			}
 
-			// TBD: Rollback storage changes on error
-			return await AddSongToRepository(song, cancellationToken);
+			try
+			{
+				return await AddSongToRepository(song, cancellationToken);
+			}
+			catch (Exception)
+			{
+				await RollbackSongCreation(song, cancellationToken);
+
+				throw;
+			}
+		}
+
+		private async Task RollbackSongCreation(Song song, CancellationToken cancellationToken)
+		{
+			try
+			{
+				await storageService.RollbackSongCreation(song, cancellationToken);
+			}
+#pragma warning disable CA1031 // Do not catch general exception types - All exceptions are caught for rollback to throw initial exception thrown by Commit().
+			catch (Exception rollbackException)
+#pragma warning restore CA1031 // Do not catch general exception types
+			{
+				logger.LogError(rollbackException, "Failed to rollback song {SongTitle} created in the storage", song.Title);
+			}
 		}
 
 		public Task<int> CreateDeletedSong(Song song, CancellationToken cancellationToken)

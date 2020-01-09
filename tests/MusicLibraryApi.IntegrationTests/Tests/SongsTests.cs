@@ -2,8 +2,11 @@
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MusicLibraryApi.Client.Contracts;
+using Moq;
+using MusicLibraryApi.Abstractions.Exceptions;
+using MusicLibraryApi.Abstractions.Models;
 using MusicLibraryApi.Client.Contracts.Artists;
 using MusicLibraryApi.Client.Contracts.Discs;
 using MusicLibraryApi.Client.Contracts.Genres;
@@ -12,6 +15,8 @@ using MusicLibraryApi.Client.Contracts.Songs;
 using MusicLibraryApi.Client.Exceptions;
 using MusicLibraryApi.Client.Fields;
 using MusicLibraryApi.Client.Interfaces;
+using MusicLibraryApi.Logic.Interfaces;
+using Rating = MusicLibraryApi.Client.Contracts.Rating;
 
 namespace MusicLibraryApi.IntegrationTests.Tests
 {
@@ -324,7 +329,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			var exception = await Assert.ThrowsExceptionAsync<GraphQLRequestFailedException>(() => createSongTask);
 			Assert.AreEqual("The disc with id of '12345' does not exist", exception.Message);
 
-			// Checking that no song was created
+			// Checking that no songs were created.
 
 			var expectedSongs = new[]
 			{
@@ -365,7 +370,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			var exception = await Assert.ThrowsExceptionAsync<GraphQLRequestFailedException>(() => createSongTask);
 			Assert.AreEqual("The artist with id of '12345' does not exist", exception.Message);
 
-			// Checking that no song was created
+			// Checking that no songs were created.
 
 			var expectedSongs = new[]
 			{
@@ -406,7 +411,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			var exception = await Assert.ThrowsExceptionAsync<GraphQLRequestFailedException>(() => createSongTask);
 			Assert.AreEqual("The genre with id of '12345' does not exist", exception.Message);
 
-			// Checking that no song was created
+			// Checking that no songs were created.
 
 			var expectedSongs = new[]
 			{
@@ -419,6 +424,80 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			var receivedSongs = await songsQuery.GetSongs(SongFields.Id, CancellationToken.None);
 
 			AssertData(expectedSongs, receivedSongs);
+		}
+
+		[TestMethod]
+		public async Task CreateSongMutation_CreationOfSongInStorageFails_DoesNotCreateSongInRepository()
+		{
+			// Arrange
+
+			var newSongData = new InputSongData
+			{
+				DiscId = 1,
+				GenreId = 1,
+				Title = "Hail Caesar",
+				TreeTitle = "04 - Hail Caesar.mp3",
+				Duration = new TimeSpan(0, 5, 13),
+			};
+
+			var storageServiceStub = new Mock<IStorageService>();
+			storageServiceStub.Setup(x => x.StoreSong(It.IsAny<Song>(), It.IsAny<Stream>(), It.IsAny<CancellationToken>()))
+				.Throws(new ServiceOperationFailedException("Exception from IStorageService.StoreSong()"));
+
+			var client = CreateClient<ISongsMutation>(services => services.AddSingleton<IStorageService>(storageServiceStub.Object));
+
+			// Act
+
+			await using var songContent = new MemoryStream();
+			var exception = await Assert.ThrowsExceptionAsync<GraphQLRequestFailedException>(() => client.CreateSong(newSongData, songContent, CancellationToken.None));
+			Assert.AreEqual("Exception from IStorageService.StoreSong()", exception.Message);
+
+			// Assert
+
+			// Checking that no songs were created.
+
+			var expectedSongs = new[]
+			{
+				new OutputSongData { Id = 1, },
+				new OutputSongData { Id = 2, },
+				new OutputSongData { Id = 3, },
+			};
+
+			var songsQuery = CreateClient<ISongsQuery>();
+			var receivedSongs = await songsQuery.GetSongs(SongFields.Id, CancellationToken.None);
+
+			AssertData(expectedSongs, receivedSongs);
+		}
+
+		[TestMethod]
+		public async Task CreateSongMutation_CreationOfSongInRepositoryFails_DoesNotCreateSongInStorage()
+		{
+			// Arrange
+
+			var newSongData = new InputSongData
+			{
+				DiscId = 1,
+				GenreId = 12345,
+				Title = "Hail Caesar",
+				TreeTitle = "04 - Hail Caesar.mp3",
+				Duration = new TimeSpan(0, 5, 13),
+			};
+
+			var client = CreateClient<ISongsMutation>();
+
+			// Act
+
+			await using var songContent = new MemoryStream();
+			var exception = await Assert.ThrowsExceptionAsync<GraphQLRequestFailedException>(() => client.CreateSong(newSongData, songContent, CancellationToken.None));
+			Assert.AreEqual("The genre with id of '12345' does not exist", exception.Message);
+
+			// Assert
+
+			// Sanity check, that we build paths correctly.
+			Assert.IsTrue(File.Exists(GetFullContentPath("2001 - Platinum Hits (CD 2)/01 - Highway To Hell.mp3")));
+
+			// Checking that no folders were created in the storage.
+			Assert.IsFalse(File.Exists(GetFullContentPath("2001 - Platinum Hits (CD 2)/04 - Hail Caesar.mp3")));
 		}
 	}
 }
