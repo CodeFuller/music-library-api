@@ -46,13 +46,10 @@ namespace MusicLibraryApi.Tagger
 
 		private static void FillTag(Song song, Disc disc, Artist? artist, Genre? genre, Tag tag)
 		{
-			tag.Title = song.Title;
-
-			if (song.TrackNumber.HasValue)
-			{
-				tag.Track = (uint)song.TrackNumber;
-			}
-
+			// Frankly, the tag fields are written to the file in the order they are set on the Tag object.
+			// This does not matter for the functional aspect.
+			// However, the files will differ in binary content. Checksum will also differ.
+			// That is why it's better not to change the order without the need.
 			if (artist != null)
 			{
 				tag.Performers = new[] { artist.Name };
@@ -69,6 +66,13 @@ namespace MusicLibraryApi.Tagger
 			{
 				tag.Genres = new[] { genre.Name };
 			}
+
+			if (song.TrackNumber.HasValue)
+			{
+				tag.Track = (uint)song.TrackNumber;
+			}
+
+			tag.Title = song.Title;
 		}
 	}
 }

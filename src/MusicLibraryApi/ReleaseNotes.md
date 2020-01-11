@@ -1,4 +1,7 @@
-﻿**3.0.1** / 2020.01.11**
+﻿**3.0.2** / 2020.01.11**
+* Restored original MP3 tag fields order.
+
+**3.0.1** / 2020.01.11**
 * Removed creation of storage folder for deleted disc.
 
 **3.0.0** / 2020.01.07**
