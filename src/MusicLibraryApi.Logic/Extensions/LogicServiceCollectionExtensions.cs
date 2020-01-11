@@ -5,6 +5,7 @@ using MusicLibraryApi.Logic.Interfaces;
 using MusicLibraryApi.Logic.Internal;
 using MusicLibraryApi.Logic.Services;
 using MusicLibraryApi.Logic.Settings;
+using MusicLibraryApi.Tagger;
 
 namespace MusicLibraryApi.Logic.Extensions
 {
@@ -27,6 +28,8 @@ namespace MusicLibraryApi.Logic.Extensions
 			services.AddSingleton<IChecksumCalculator, Crc32Calculator>();
 			services.AddTransient<IContentStorage, FileSystemContentStorage>();
 			services.AddSingleton<IFileSystemFacade, FileSystemFacade>();
+
+			services.AddTagger();
 
 			return services;
 		}

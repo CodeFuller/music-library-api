@@ -12,6 +12,7 @@ using MusicLibraryApi.Client.Contracts.Playbacks;
 using MusicLibraryApi.Client.Contracts.Songs;
 using MusicLibraryApi.Client.Fields;
 using MusicLibraryApi.Client.Interfaces;
+using MusicLibraryApi.IntegrationTests.Utility;
 
 namespace MusicLibraryApi.IntegrationTests.Tests
 {
@@ -286,12 +287,12 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 				Duration = new TimeSpan(0, 5, 13),
 			};
 
-			await using var contentStream = new MemoryStream(new byte[] { 0x01, 0x02, 0x03, });
-			await songsClient.CreateSong(songData, contentStream, CancellationToken.None);
+			await using var songContent = File.OpenRead(Paths.GetTestDataFilePath("Input Song With Filled ID3v2.3 tag.mp3"));
+			await songsClient.CreateSong(songData, songContent, CancellationToken.None);
 
 			// Assert
 
-			AssertSongContent("Guano Apes/Some subfolder/Some Folder/Some Disc TreeTitle/Some Song TreeTitle.mp3", new byte[] { 0x01, 0x02, 0x03, });
+			AssertSongContent("Guano Apes/Some subfolder/Some Folder/Some Disc TreeTitle/Some Song TreeTitle.mp3", 405504);
 		}
 	}
 }

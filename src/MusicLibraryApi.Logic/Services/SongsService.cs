@@ -43,6 +43,14 @@ namespace MusicLibraryApi.Logic.Services
 			{
 				throw e.Handle(song.DiscId, logger);
 			}
+			catch (ArtistNotFoundException e)
+			{
+				throw e.Handle(song.ArtistId, logger);
+			}
+			catch (GenreNotFoundException e)
+			{
+				throw e.Handle(song.GenreId, logger);
+			}
 
 			try
 			{

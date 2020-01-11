@@ -18,12 +18,15 @@ namespace MusicLibraryApi.Logic.Internal
 
 		private readonly IContentStorage contentStorage;
 
+		private readonly ISongTagger songTagger;
+
 		private readonly IChecksumCalculator checksumCalculator;
 
-		public StorageService(IUnitOfWork unitOfWork, IContentStorage contentStorage, IChecksumCalculator checksumCalculator)
+		public StorageService(IUnitOfWork unitOfWork, IContentStorage contentStorage, ISongTagger songTagger, IChecksumCalculator checksumCalculator)
 		{
 			this.unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
 			this.contentStorage = contentStorage ?? throw new ArgumentNullException(nameof(contentStorage));
+			this.songTagger = songTagger ?? throw new ArgumentNullException(nameof(songTagger));
 			this.checksumCalculator = checksumCalculator ?? throw new ArgumentNullException(nameof(checksumCalculator));
 		}
 
@@ -42,7 +45,20 @@ namespace MusicLibraryApi.Logic.Internal
 		public async Task StoreSong(Song song, Stream contentStream, CancellationToken cancellationToken)
 		{
 			var songFilePathParts = await GetSongFilePathParts(song, cancellationToken);
-			var content = await ReadContent(contentStream, cancellationToken);
+
+			// Loading all data required required for song tagging.
+			var disc = await unitOfWork.DiscsRepository.GetDisc(song.DiscId, cancellationToken);
+			var artist = song.ArtistId.HasValue ? await unitOfWork.ArtistsRepository.GetArtist(song.ArtistId.Value, cancellationToken) : null;
+			var genre = song.GenreId.HasValue ? await unitOfWork.GenresRepository.GetGenre(song.GenreId.Value, cancellationToken) : null;
+
+			// We do not know the capabilities of input stream (i.e. CanWrite, CanSeek properties).
+			// That's why we open MemoryStream on top of it.
+			await using var memoryStream = new MemoryStream();
+			await contentStream.CopyToAsync(memoryStream, cancellationToken);
+
+			await songTagger.SetTagData(song, disc, artist, genre, memoryStream, cancellationToken);
+			var content = memoryStream.ToArray();
+
 			await contentStorage.StoreContent(songFilePathParts, content, cancellationToken);
 
 			// Enriching the song with content info
@@ -111,14 +127,6 @@ namespace MusicLibraryApi.Logic.Internal
 
 			var discPathParts = await GetDiscFolderPathParts(disc, cancellationToken);
 			return discPathParts.Concat(new[] { song.TreeTitle });
-		}
-
-		private static async Task<byte[]> ReadContent(Stream contentStream, CancellationToken cancellationToken)
-		{
-			await using var memoryStream = new MemoryStream();
-			await contentStream.CopyToAsync(memoryStream, cancellationToken);
-
-			return memoryStream.ToArray();
 		}
 	}
 }

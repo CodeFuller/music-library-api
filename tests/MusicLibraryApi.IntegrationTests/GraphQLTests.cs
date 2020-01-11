@@ -184,13 +184,25 @@ namespace MusicLibraryApi.IntegrationTests
 
 		protected void AssertSongContent(string relativeContentPath, byte[] expectedContent)
 		{
-			var fullContentPath = GetFullContentPath(relativeContentPath);
+			var fileInfo = GetSongFileInfo(relativeContentPath);
 
-			var content = File.ReadAllBytes(fullContentPath);
+			var content = File.ReadAllBytes(fileInfo.FullName);
 			CollectionAssert.AreEqual(expectedContent, content);
 
-			var fileInfo = new FileInfo(fullContentPath);
 			Assert.IsTrue(fileInfo.IsReadOnly);
+		}
+
+		protected void AssertSongContent(string relativeContentPath, long expectedFileSize)
+		{
+			var fileInfo = GetSongFileInfo(relativeContentPath);
+
+			Assert.AreEqual(expectedFileSize, fileInfo.Length);
+			Assert.IsTrue(fileInfo.IsReadOnly);
+		}
+
+		private FileInfo GetSongFileInfo(string relativeContentPath)
+		{
+			return new FileInfo(GetFullContentPath(relativeContentPath));
 		}
 	}
 }

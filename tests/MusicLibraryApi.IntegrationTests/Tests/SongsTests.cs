@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using MusicLibraryApi.Abstractions.Exceptions;
+using MusicLibraryApi.Abstractions.Interfaces;
 using MusicLibraryApi.Abstractions.Models;
 using MusicLibraryApi.Client.Contracts.Artists;
 using MusicLibraryApi.Client.Contracts.Discs;
@@ -15,6 +16,7 @@ using MusicLibraryApi.Client.Contracts.Songs;
 using MusicLibraryApi.Client.Exceptions;
 using MusicLibraryApi.Client.Fields;
 using MusicLibraryApi.Client.Interfaces;
+using MusicLibraryApi.IntegrationTests.Utility;
 using MusicLibraryApi.Logic.Interfaces;
 using Rating = MusicLibraryApi.Client.Contracts.Rating;
 
@@ -164,11 +166,11 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var client = CreateClient<ISongsMutation>();
 
-			await using var contentStream = new MemoryStream(new byte[] { 0x01, 0x02, 0x03, });
+			await using var songContent = File.OpenRead(Paths.GetTestDataFilePath("Input Song With Filled ID3v2.3 tag.mp3"));
 
 			// Act
 
-			var newSongId = await client.CreateSong(newSongData, contentStream, CancellationToken.None);
+			var newSongId = await client.CreateSong(newSongData, songContent, CancellationToken.None);
 
 			// Assert
 
@@ -188,7 +190,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 				Genre = new OutputGenreData { Id = 3, },
 				Rating = Rating.R4,
 				BitRate = 320000,
-				Size = 3,
+				Size = 405586,
 				LastPlaybackTime = null,
 				PlaybacksCount = 0,
 				Playbacks = Array.Empty<OutputPlaybackData>(),
@@ -197,8 +199,10 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			var songsQuery = CreateClient<ISongsQuery>();
 			var receivedSong = await songsQuery.GetSong(5, RequestedFields, CancellationToken.None);
 
+			var expectedContent = await File.ReadAllBytesAsync(Paths.GetTestDataFilePath("Output Song With Optional Data Filled.mp3"));
+
 			AssertData(expectedSong, receivedSong);
-			AssertSongContent("2001 - Platinum Hits (CD 2)/04 - Hail Caesar.mp3", new byte[] { 0x01, 0x02, 0x03, });
+			AssertSongContent("2001 - Platinum Hits (CD 2)/04 - Hail Caesar.mp3", expectedContent);
 		}
 
 		[TestMethod]
@@ -216,11 +220,11 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var client = CreateClient<ISongsMutation>();
 
-			await using var contentStream = new MemoryStream(new byte[] { 0x01, 0x02, 0x03, });
+			await using var songContent = File.OpenRead(Paths.GetTestDataFilePath("Input Song With Filled ID3v2.3 tag.mp3"));
 
 			// Act
 
-			var newSongId = await client.CreateSong(newSongData, contentStream, CancellationToken.None);
+			var newSongId = await client.CreateSong(newSongData, songContent, CancellationToken.None);
 
 			// Assert
 
@@ -234,7 +238,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 				Title = "Hail Caesar",
 				TreeTitle = "04 - Hail Caesar.mp3",
 				Duration = new TimeSpan(0, 5, 13),
-				Size = 3,
+				Size = 405503,
 				Disc = new OutputDiscData { Id = 1, },
 				PlaybacksCount = 0,
 				Playbacks = Array.Empty<OutputPlaybackData>(),
@@ -243,8 +247,10 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			var songsQuery = CreateClient<ISongsQuery>();
 			var receivedSong = await songsQuery.GetSong(5, RequestedFields, CancellationToken.None);
 
+			var expectedContent = await File.ReadAllBytesAsync(Paths.GetTestDataFilePath("Output Song With Optional Data Missing.mp3"));
+
 			AssertData(expectedSong, receivedSong);
-			AssertSongContent("2001 - Platinum Hits (CD 2)/04 - Hail Caesar.mp3", new byte[] { 0x01, 0x02, 0x03, });
+			AssertSongContent("2001 - Platinum Hits (CD 2)/04 - Hail Caesar.mp3", expectedContent);
 		}
 
 		[TestMethod]
@@ -321,7 +327,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Act
 
-			await using var songContent = new MemoryStream();
+			await using var songContent = File.OpenRead(Paths.GetTestDataFilePath("Input Song With Filled ID3v2.3 tag.mp3"));
 			var createSongTask = client.CreateSong(newSongData, songContent, CancellationToken.None);
 
 			// Assert
@@ -362,7 +368,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Act
 
-			await using var songContent = new MemoryStream();
+			await using var songContent = File.OpenRead(Paths.GetTestDataFilePath("Input Song With Filled ID3v2.3 tag.mp3"));
 			var createSongTask = client.CreateSong(newSongData, songContent, CancellationToken.None);
 
 			// Assert
@@ -403,7 +409,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Act
 
-			await using var songContent = new MemoryStream();
+			await using var songContent = File.OpenRead(Paths.GetTestDataFilePath("Input Song With Filled ID3v2.3 tag.mp3"));
 			var createSongTask = client.CreateSong(newSongData, songContent, CancellationToken.None);
 
 			// Assert
@@ -448,7 +454,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Act
 
-			await using var songContent = new MemoryStream();
+			await using var songContent = File.OpenRead(Paths.GetTestDataFilePath("Input Song With Filled ID3v2.3 tag.mp3"));
 			var exception = await Assert.ThrowsExceptionAsync<GraphQLRequestFailedException>(() => client.CreateSong(newSongData, songContent, CancellationToken.None));
 			Assert.AreEqual("Exception from IStorageService.StoreSong()", exception.Message);
 
@@ -477,19 +483,33 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			var newSongData = new InputSongData
 			{
 				DiscId = 1,
-				GenreId = 12345,
+				ArtistId = null,
+				GenreId = null,
 				Title = "Hail Caesar",
 				TreeTitle = "04 - Hail Caesar.mp3",
 				Duration = new TimeSpan(0, 5, 13),
 			};
 
-			var client = CreateClient<ISongsMutation>();
+			var foldersRepositoryStub = new Mock<IFoldersRepository>();
+			foldersRepositoryStub.Setup(x => x.GetFolder(1, It.IsAny<CancellationToken>())).ReturnsAsync(new Folder { Id = 1, ParentFolderId = null, Name = "<ROOT>", });
+
+			var discsRepositoryStub = new Mock<IDiscsRepository>();
+			discsRepositoryStub.Setup(x => x.GetDisc(1, It.IsAny<CancellationToken>())).ReturnsAsync(new Disc { Id = 1, TreeTitle = "2001 - Platinum Hits (CD 2)", FolderId = 1, });
+
+			var unitOfWorkStub = new Mock<IUnitOfWork>();
+			unitOfWorkStub.Setup(x => x.Commit(It.IsAny<CancellationToken>()))
+				.Throws(new ServiceOperationFailedException("Exception from IUnitOfWork.Commit()"));
+			unitOfWorkStub.Setup(x => x.FoldersRepository).Returns(foldersRepositoryStub.Object);
+			unitOfWorkStub.Setup(x => x.DiscsRepository).Returns(discsRepositoryStub.Object);
+			unitOfWorkStub.Setup(x => x.SongsRepository).Returns(Mock.Of<ISongsRepository>());
+
+			var client = CreateClient<ISongsMutation>(services => services.AddSingleton<IUnitOfWork>(unitOfWorkStub.Object));
 
 			// Act
 
-			await using var songContent = new MemoryStream();
+			await using var songContent = File.OpenRead(Paths.GetTestDataFilePath("Input Song With Filled ID3v2.3 tag.mp3"));
 			var exception = await Assert.ThrowsExceptionAsync<GraphQLRequestFailedException>(() => client.CreateSong(newSongData, songContent, CancellationToken.None));
-			Assert.AreEqual("The genre with id of '12345' does not exist", exception.Message);
+			Assert.AreEqual("Exception from IUnitOfWork.Commit()", exception.Message);
 
 			// Assert
 

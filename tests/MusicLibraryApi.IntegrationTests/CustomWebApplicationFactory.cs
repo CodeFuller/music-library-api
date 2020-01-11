@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Reflection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
@@ -20,8 +19,6 @@ namespace MusicLibraryApi.IntegrationTests
 	{
 		private readonly Action<IServiceCollection> configureServicesAction;
 
-		private string? TestDataPath { get; set; }
-
 		public string? FileSystemStorageRoot { get; private set; }
 
 		public CustomWebApplicationFactory(Action<IServiceCollection> configureServices)
@@ -37,14 +34,9 @@ namespace MusicLibraryApi.IntegrationTests
 		{
 			builder.ConfigureAppConfiguration((context, configBuilder) =>
 			{
-				var currAssembly = Assembly.GetExecutingAssembly().Location;
-				var currDirectory = Path.GetDirectoryName(currAssembly) ?? throw new InvalidOperationException("Failed to get current directory");
-				var configFile = Path.Combine(currDirectory, "TestRunSettings.json");
-
 				FileSystemStorageRoot = Path.Combine(Path.GetTempPath(), "MusicLibraryApi.IT", Path.GetRandomFileName());
-				TestDataPath = Path.Combine(currDirectory, "TestData");
 
-				configBuilder.AddJsonFile(configFile, optional: false)
+				configBuilder.AddJsonFile(Paths.GetTestRunSettingsPath(), optional: false)
 					.AddInMemoryCollection(new[] { new KeyValuePair<string, string>("fileSystemStorage:root", FileSystemStorageRoot) });
 			});
 
@@ -126,7 +118,7 @@ namespace MusicLibraryApi.IntegrationTests
 		 *		Folder "Russian" (Folder id: 2)
 		 *		Disc "2001 - Platinum Hits (CD 1)" (Disc id: 2)
 		 *		Disc "2001 - Platinum Hits (CD 2)" (Disc id: 1)
-		 *			Song "01 - Highway To Hell.mp3" (Song id: 2)
+		 *			Song "01 - Highway To Hell.mp3" (Song id: 2), ID3v2.3 tag presents (tag data differs from song data).
 		 *			Song "02 - Hell's Bells.mp3" (Song id: 1)
 		 *			Song "03 - Are You Ready?.mp3" (Song id: 3)
 		 *		Disc "Some deleted disc" (Disc id: 6, deleted)
@@ -417,12 +409,7 @@ namespace MusicLibraryApi.IntegrationTests
 				throw new InvalidOperationException($"{nameof(FileSystemStorageRoot)} is not set");
 			}
 
-			if (TestDataPath == null)
-			{
-				throw new InvalidOperationException($"{nameof(TestDataPath)} is not set");
-			}
-
-			var sourceFilePath = Path.Combine(TestDataPath, sourceFileName);
+			var sourceFilePath = Paths.GetTestDataFilePath(sourceFileName);
 			var targetFilePath = Path.Combine(FileSystemStorageRoot, targetDirectoryPath, sourceFileName);
 			File.Copy(sourceFilePath, targetFilePath);
 		}
