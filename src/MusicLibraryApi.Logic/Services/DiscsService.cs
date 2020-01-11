@@ -33,14 +33,17 @@ namespace MusicLibraryApi.Logic.Services
 
 		public async Task<int> CreateDisc(Disc disc, CancellationToken cancellationToken)
 		{
-			try
+			if (!disc.IsDeleted)
 			{
-				// Creating disc in the storage.
-				await storageService.CreateDisc(disc, cancellationToken);
-			}
-			catch (FolderNotFoundException e)
-			{
-				throw e.Handle(disc.FolderId, logger);
+				try
+				{
+					// Creating disc in the storage.
+					await storageService.CreateDisc(disc, cancellationToken);
+				}
+				catch (FolderNotFoundException e)
+				{
+					throw e.Handle(disc.FolderId, logger);
+				}
 			}
 
 			try

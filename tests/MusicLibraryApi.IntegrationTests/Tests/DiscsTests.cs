@@ -194,7 +194,9 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			var receivedDisc = await discsQuery.GetDisc(8, DiscFields.All + DiscFields.Folder(FolderFields.Id), CancellationToken.None);
 
 			AssertData(expectedDisc, receivedDisc);
-			Assert.IsTrue(Directory.Exists(GetFullContentPath("Guano Apes/1994 - Битва на мотоциклах (CD 2)")));
+
+			// No folder should be created for deleted disc.
+			Assert.IsFalse(Directory.Exists(GetFullContentPath("Guano Apes/1994 - Битва на мотоциклах (CD 2)")));
 		}
 
 		[TestMethod]
