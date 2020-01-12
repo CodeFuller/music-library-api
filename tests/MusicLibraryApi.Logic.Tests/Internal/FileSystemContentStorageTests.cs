@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using MusicLibraryApi.Abstractions.Exceptions;
 using MusicLibraryApi.Logic.Internal;
 using MusicLibraryApi.Logic.Settings;
 
@@ -16,8 +17,13 @@ namespace MusicLibraryApi.Logic.Tests.Internal
 			Root = "c:\\music",
 		});
 
-		[TestMethod]
-		public async Task CreateFolder_PathContainsInvalidChars_RemovesInvalidChars()
+		[DataRow("Do You Like It?", "Do You Like It")]
+		[DataRow("Another Me \"In Lack'ech\"", "Another Me 'In Lack'ech'")]
+		[DataRow("Ezekiel 25:17", "Ezekiel 25-17")]
+		[DataRow("Off/On (DrOff/On Remix)", "Off-On (DrOff-On Remix)")]
+		[DataRow("New|sympho|type", "New-sympho-type")]
+		[DataTestMethod]
+		public async Task CreateFolder_PathContainsInvalidCharsFromPredefinedReplacements_ReplacesInvalidChars(string inputName, string expectedName)
 		{
 			// Arrange
 
@@ -28,7 +34,26 @@ namespace MusicLibraryApi.Logic.Tests.Internal
 
 			// Act
 
-			await target.CreateFolder(new[] { "<ROOT>", @"Invalid Characters (""<>|:*?\/)", }, CancellationToken.None);
+			await target.CreateFolder(new[] { "<ROOT>", inputName, }, CancellationToken.None);
+
+			// Assert
+
+			fileSystemMock.Verify(x => x.CreateDirectory($"c:\\music\\{expectedName}"), Times.Once());
+		}
+
+		[TestMethod]
+		public async Task CreateFolder_PathContainsInvalidCharsNotFromPredefinedReplacements_RemovesInvalidChars()
+		{
+			// Arrange
+
+			var fileSystemMock = new Mock<IFileSystemFacade>();
+			fileSystemMock.Setup(x => x.DirectoryExists("c:\\music")).Returns(true);
+
+			var target = new FileSystemContentStorage(fileSystemMock.Object, StubOptions);
+
+			// Act
+
+			await target.CreateFolder(new[] { "<ROOT>", @"Invalid Characters (<>*)", }, CancellationToken.None);
 
 			// Assert
 
@@ -36,22 +61,22 @@ namespace MusicLibraryApi.Logic.Tests.Internal
 		}
 
 		[TestMethod]
-		public async Task CreateFolder_WholePathPartConsistsOfInvalidCharacters_ReplacesPathPartWithUnderscore()
+		public async Task CreateFolder_ResultFileNameIsEmpty_ThrowsServiceOperationFailedException()
 		{
 			// Arrange
 
-			var fileSystemMock = new Mock<IFileSystemFacade>();
-			fileSystemMock.Setup(x => x.DirectoryExists("c:\\music")).Returns(true);
+			var fileSystemStub = new Mock<IFileSystemFacade>();
+			fileSystemStub.Setup(x => x.DirectoryExists("c:\\music")).Returns(true);
 
-			var target = new FileSystemContentStorage(fileSystemMock.Object, StubOptions);
+			var target = new FileSystemContentStorage(fileSystemStub.Object, StubOptions);
 
 			// Act
 
-			await target.CreateFolder(new[] { "<ROOT>", @"""<>|:*?\/", "Good Name" }, CancellationToken.None);
+			Task CreateFolderCall() => target.CreateFolder(new[] { "<ROOT>", @"<>*", "Good Name" }, CancellationToken.None);
 
 			// Assert
 
-			fileSystemMock.Verify(x => x.CreateDirectory("c:\\music\\_\\Good Name"), Times.Once());
+			await Assert.ThrowsExceptionAsync<ServiceOperationFailedException>(CreateFolderCall);
 		}
 	}
 }

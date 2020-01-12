@@ -1,4 +1,7 @@
-﻿**3.1.1** / 2020.01.12**
+﻿**3.1.2** / 2020.01.12**
+* Enhanced replacement of invalid file name characters.
+
+**3.1.1** / 2020.01.12**
 * Added content validation when creating a song.
 
 **3.1.0** / 2020.01.12**

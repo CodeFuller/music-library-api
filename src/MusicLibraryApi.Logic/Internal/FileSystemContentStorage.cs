@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
+using MusicLibraryApi.Abstractions.Exceptions;
 using MusicLibraryApi.Logic.Interfaces;
 using MusicLibraryApi.Logic.Settings;
 
@@ -91,9 +92,30 @@ namespace MusicLibraryApi.Logic.Internal
 		private static string SafePathName(string name)
 		{
 			var invalidFileNameChars = Path.GetInvalidFileNameChars();
-			var split = name.Split(invalidFileNameChars, StringSplitOptions.RemoveEmptyEntries);
 
-			return split.Any() ? String.Join(String.Empty, split) : "_";
+			var parts = name.Select(c => invalidFileNameChars.Contains(c) ? ReplaceInvalidFileNameChar(c) : new String(c, 1));
+			var resultName = String.Join(String.Empty, parts);
+
+			if (resultName.Length == 0)
+			{
+				throw new ServiceOperationFailedException($"Can not build safe file name for '{name}'");
+			}
+
+			return resultName;
+		}
+
+		private static string ReplaceInvalidFileNameChar(char c)
+		{
+			var charactersReplacements = new Dictionary<char, string>
+			{
+				{ '?', String.Empty },
+				{ '"', "'" },
+				{ ':', "-" },
+				{ '/', "-" },
+				{ '|', "-" },
+			};
+
+			return charactersReplacements.TryGetValue(c, out var replaced) ? replaced : String.Empty;
 		}
 	}
 }
