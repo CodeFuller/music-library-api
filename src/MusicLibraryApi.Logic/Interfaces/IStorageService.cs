@@ -11,6 +11,8 @@ namespace MusicLibraryApi.Logic.Interfaces
 
 		Task CreateDisc(Disc disc, CancellationToken cancellationToken);
 
+		Task StoreDiscCover(Disc disc, Stream coverContentStream, CancellationToken cancellationToken);
+
 		Task StoreSong(Song song, Stream contentStream, CancellationToken cancellationToken);
 
 		Task RollbackFolderCreation(Folder folder, CancellationToken cancellationToken);

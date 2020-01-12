@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -31,7 +32,26 @@ namespace MusicLibraryApi.Logic.Services
 			this.repository = unitOfWork.DiscsRepository;
 		}
 
-		public async Task<int> CreateDisc(Disc disc, CancellationToken cancellationToken)
+		public Task<int> CreateDisc(Disc disc, CancellationToken cancellationToken)
+		{
+			return CreateDiscInternal(disc, null, cancellationToken);
+		}
+
+		public Task<int> CreateDisc(Disc disc, Stream coverContent, CancellationToken cancellationToken)
+		{
+			_ = coverContent ?? throw new ArgumentNullException(nameof(coverContent));
+
+			return CreateDiscInternal(disc, coverContent, cancellationToken);
+		}
+
+		private async Task<int> CreateDiscInternal(Disc disc, Stream? coverContent, CancellationToken cancellationToken)
+		{
+			await CreateDiscInStorage(disc, coverContent, cancellationToken);
+
+			return await CreateDiscInRepository(disc, cancellationToken);
+		}
+
+		private async Task CreateDiscInStorage(Disc disc, Stream? coverContent, CancellationToken cancellationToken)
 		{
 			if (!disc.IsDeleted)
 			{
@@ -44,8 +64,23 @@ namespace MusicLibraryApi.Logic.Services
 				{
 					throw e.Handle(disc.FolderId, logger);
 				}
-			}
 
+				if (coverContent != null)
+				{
+					await storageService.StoreDiscCover(disc, coverContent, cancellationToken);
+				}
+			}
+			else
+			{
+				if (coverContent != null)
+				{
+					throw new InvalidOperationException("Can not create deleted disc with cover");
+				}
+			}
+		}
+
+		private async Task<int> CreateDiscInRepository(Disc disc, CancellationToken cancellationToken)
+		{
 			try
 			{
 				// Creating disc in the repository.

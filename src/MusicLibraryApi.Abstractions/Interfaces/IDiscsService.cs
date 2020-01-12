@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,6 +10,8 @@ namespace MusicLibraryApi.Abstractions.Interfaces
 	public interface IDiscsService
 	{
 		Task<int> CreateDisc(Disc disc, CancellationToken cancellationToken);
+
+		Task<int> CreateDisc(Disc disc, Stream coverContent, CancellationToken cancellationToken);
 
 		Task<IReadOnlyCollection<Disc>> GetAllDiscs(CancellationToken cancellationToken);
 

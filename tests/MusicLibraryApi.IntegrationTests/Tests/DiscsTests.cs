@@ -14,6 +14,7 @@ using MusicLibraryApi.Client.Contracts.Songs;
 using MusicLibraryApi.Client.Exceptions;
 using MusicLibraryApi.Client.Fields;
 using MusicLibraryApi.Client.Interfaces;
+using MusicLibraryApi.IntegrationTests.Utility;
 using MusicLibraryApi.Logic.Interfaces;
 
 namespace MusicLibraryApi.IntegrationTests.Tests
@@ -241,6 +242,114 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		}
 
 		[TestMethod]
+		public async Task CreateDiscMutation_ForCoverInJpegFormat_CreatesDiscSuccessfully()
+		{
+			// Arrange
+
+			var newDiscData = new InputDiscData
+			{
+				FolderId = 5,
+				Title = "Best Russian",
+				TreeTitle = "Russian",
+				AlbumTitle = String.Empty,
+			};
+
+			var client = CreateClient<IDiscsMutation>();
+
+			await using var coverContent = File.OpenRead(Paths.GetTestDataFilePath("cover.jpg"));
+
+			// Act
+
+			await client.CreateDisc(newDiscData, coverContent, CancellationToken.None);
+
+			// Assert
+
+			var expectedCoverContent = await File.ReadAllBytesAsync(Paths.GetTestDataFilePath("cover.jpg"));
+			AssertStorageContent("Guano Apes/Russian/cover.jpg", expectedCoverContent);
+		}
+
+		[TestMethod]
+		public async Task CreateDiscMutation_ForCoverInPngFormat_CreatesDiscSuccessfully()
+		{
+			// Arrange
+
+			var newDiscData = new InputDiscData
+			{
+				FolderId = 5,
+				Title = "Best Russian",
+				TreeTitle = "Russian",
+				AlbumTitle = String.Empty,
+			};
+
+			var client = CreateClient<IDiscsMutation>();
+
+			await using var coverContent = File.OpenRead(Paths.GetTestDataFilePath("cover.png"));
+
+			// Act
+
+			await client.CreateDisc(newDiscData, coverContent, CancellationToken.None);
+
+			// Assert
+
+			var expectedCoverContent = await File.ReadAllBytesAsync(Paths.GetTestDataFilePath("cover.png"));
+			AssertStorageContent("Guano Apes/Russian/cover.png", expectedCoverContent);
+		}
+
+		[TestMethod]
+		public async Task CreateDiscMutation_ForBadCoverContent_ReturnsError()
+		{
+			// Arrange
+
+			var newDiscData = new InputDiscData
+			{
+				FolderId = 5,
+				Title = "Best Russian",
+				TreeTitle = "Russian",
+				AlbumTitle = String.Empty,
+			};
+
+			var client = CreateClient<IDiscsMutation>();
+
+			await using var coverContent = new MemoryStream(new byte[] { 0x01, 0x02, 0x03, });
+
+			// Act
+
+			var createDiscTask = client.CreateDisc(newDiscData, coverContent, CancellationToken.None);
+
+			// Assert
+
+			var exception = await Assert.ThrowsExceptionAsync<GraphQLRequestFailedException>(() => createDiscTask);
+			Assert.AreEqual("Disc cover content is invalid", exception.Message);
+		}
+
+		[TestMethod]
+		public async Task CreateDiscMutation_ForUnsupportedCoverFormat_ReturnsError()
+		{
+			// Arrange
+
+			var newDiscData = new InputDiscData
+			{
+				FolderId = 5,
+				Title = "Best Russian",
+				TreeTitle = "Russian",
+				AlbumTitle = String.Empty,
+			};
+
+			var client = CreateClient<IDiscsMutation>();
+
+			await using var coverContent = File.OpenRead(Paths.GetTestDataFilePath("cover.bmp"));
+
+			// Act
+
+			var createDiscTask = client.CreateDisc(newDiscData, coverContent, CancellationToken.None);
+
+			// Assert
+
+			var exception = await Assert.ThrowsExceptionAsync<GraphQLRequestFailedException>(() => createDiscTask);
+			Assert.AreEqual("Image format 'Bmp' is not supported", exception.Message);
+		}
+
+		[TestMethod]
 		public async Task CreateDiscMutation_IfFolderDoesNotExist_ReturnsError()
 		{
 			// Arrange
@@ -259,7 +368,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var createDiscTask = client.CreateDisc(newDiscData, CancellationToken.None);
 
-			// Arrange
+			// Assert
 
 			var exception = await Assert.ThrowsExceptionAsync<GraphQLRequestFailedException>(() => createDiscTask);
 			Assert.AreEqual("The folder with id of '12345' does not exist", exception.Message);
@@ -305,7 +414,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			var exception = await Assert.ThrowsExceptionAsync<GraphQLRequestFailedException>(() => client.CreateDisc(newDiscData, CancellationToken.None));
 			Assert.AreEqual("Exception from IStorageService.CreateDisc()", exception.Message);
 
-			// Arrange
+			// Assert
 
 			// Checking that no folders were created in the repository.
 
@@ -349,15 +458,20 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			var client = CreateClient<IDiscsMutation>(services => services.AddSingleton<IUnitOfWork>(unitOfWorkStub.Object));
 
+			await using var coverContent = File.OpenRead(Paths.GetTestDataFilePath("cover.jpg"));
+
 			// Act
 
-			var exception = await Assert.ThrowsExceptionAsync<GraphQLRequestFailedException>(() => client.CreateDisc(newDiscData, CancellationToken.None));
+			var exception = await Assert.ThrowsExceptionAsync<GraphQLRequestFailedException>(() => client.CreateDisc(newDiscData, coverContent, CancellationToken.None));
 			Assert.AreEqual("Exception from IUnitOfWork.Commit()", exception.Message);
 
-			// Arrange
+			// Assert
 
 			// Sanity check, that we build paths correctly.
 			Assert.IsTrue(Directory.Exists(GetFullContentPath("Guano Apes/1997 - Proud Like A God")));
+
+			// Checking that no disc covers were stored.
+			Assert.IsFalse(File.Exists(GetFullContentPath("Guano Apes/1999 - Some New Disc (CD 1)/cover.jpg")));
 
 			// Checking that no folders were created in the storage.
 			Assert.IsFalse(Directory.Exists(GetFullContentPath("Guano Apes/1999 - Some New Disc (CD 1)")));

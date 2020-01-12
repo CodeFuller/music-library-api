@@ -182,7 +182,7 @@ namespace MusicLibraryApi.IntegrationTests
 			return Path.Combine(WebApplicationFactory.FileSystemStorageRoot, relativeContentPath);
 		}
 
-		protected void AssertSongContent(string relativeContentPath, byte[] expectedContent)
+		protected void AssertStorageContent(string relativeContentPath, byte[] expectedContent)
 		{
 			var fileInfo = GetSongFileInfo(relativeContentPath);
 
@@ -192,7 +192,7 @@ namespace MusicLibraryApi.IntegrationTests
 			Assert.IsTrue(fileInfo.IsReadOnly);
 		}
 
-		protected void AssertSongContent(string relativeContentPath, long expectedFileSize)
+		protected void AssertStorageContent(string relativeContentPath, long expectedFileSize)
 		{
 			var fileInfo = GetSongFileInfo(relativeContentPath);
 

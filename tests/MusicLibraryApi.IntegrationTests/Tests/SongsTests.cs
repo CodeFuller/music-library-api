@@ -202,7 +202,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			var expectedContent = await File.ReadAllBytesAsync(Paths.GetTestDataFilePath("Output Song With Optional Data Filled.mp3"));
 
 			AssertData(expectedSong, receivedSong);
-			AssertSongContent("2001 - Platinum Hits (CD 2)/04 - Hail Caesar.mp3", expectedContent);
+			AssertStorageContent("2001 - Platinum Hits (CD 2)/04 - Hail Caesar.mp3", expectedContent);
 		}
 
 		[TestMethod]
@@ -250,7 +250,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			var expectedContent = await File.ReadAllBytesAsync(Paths.GetTestDataFilePath("Output Song With Optional Data Missing.mp3"));
 
 			AssertData(expectedSong, receivedSong);
-			AssertSongContent("2001 - Platinum Hits (CD 2)/04 - Hail Caesar.mp3", expectedContent);
+			AssertStorageContent("2001 - Platinum Hits (CD 2)/04 - Hail Caesar.mp3", expectedContent);
 		}
 
 		[TestMethod]

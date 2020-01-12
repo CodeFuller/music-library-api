@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,6 +10,7 @@ using MusicLibraryApi.Client.Exceptions;
 using MusicLibraryApi.Client.Fields;
 using MusicLibraryApi.Client.GraphQL;
 using MusicLibraryApi.Client.Interfaces;
+using MusicLibraryApi.Client.Internal;
 using static System.FormattableString;
 
 namespace MusicLibraryApi.Client.Operations
@@ -62,15 +65,48 @@ namespace MusicLibraryApi.Client.Operations
 			};
 
 			var data = await ExecuteRequest<CreateDiscOutputData>("createDisc", request, cancellationToken);
+			return ProcessCreateDiscOutputData(discData.Title, data);
+		}
 
-			var newDiscId = data.NewDiscId;
+		public async Task<int> CreateDisc(InputDiscData discData, Stream coverContent, CancellationToken cancellationToken)
+		{
+			Logger.LogInformation("Creating new disc {DiscTitle} ...", discData.Title);
+
+			var query = Invariant($@"mutation ($disc: DiscInput!, $coverFile: Upload) {{
+										createDisc(disc: $disc, coverFile: $coverFile) {{ newDiscId }}
+									}}");
+
+			var uploadedFiles = new Dictionary<string, FileUpload>
+			{
+				{ "coverFile", new FileUpload(coverContent, String.Empty) },
+			};
+
+			var request = new GraphQLRequest
+			{
+				Query = query,
+				Variables = new
+				{
+					disc = discData,
+
+					// coverFile (from mutation definition) -> coverFile (in below map)
+					coverFile = "coverFile",
+				},
+			};
+
+			var data = await ExecuteRequestWithUpload<CreateDiscOutputData>("createDisc", request, uploadedFiles, cancellationToken);
+			return ProcessCreateDiscOutputData(discData.Title, data);
+		}
+
+		private int ProcessCreateDiscOutputData(string? discTitle, CreateDiscOutputData outputData)
+		{
+			var newDiscId = outputData.NewDiscId;
 
 			if (newDiscId == null)
 			{
-				throw new GraphQLRequestFailedException($"Response does not contain id of created disc {discData.Title}");
+				throw new GraphQLRequestFailedException($"Response does not contain id of created disc {discTitle}");
 			}
 
-			Logger.LogInformation("Created new disc {DiscTitle} with id of {DiscId}", discData.Title, newDiscId);
+			Logger.LogInformation("Created new disc {DiscTitle} with id of {DiscId}", discTitle, newDiscId);
 
 			return newDiscId.Value;
 		}

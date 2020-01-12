@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using MusicLibraryApi.Abstractions.Exceptions;
 using MusicLibraryApi.Abstractions.Interfaces;
 using MusicLibraryApi.Abstractions.Models;
 using MusicLibraryApi.Logic.Interfaces;
@@ -42,6 +45,25 @@ namespace MusicLibraryApi.Logic.Internal
 			await contentStorage.CreateFolder(discFolderPathParts, cancellationToken);
 		}
 
+		public async Task StoreDiscCover(Disc disc, Stream coverContentStream, CancellationToken cancellationToken)
+		{
+			var discFolderPathParts = await GetDiscFolderPathParts(disc, cancellationToken);
+
+			await using var memoryStream = new MemoryStream();
+			await coverContentStream.CopyToAsync(memoryStream, cancellationToken);
+			var content = memoryStream.ToArray();
+
+			var coverFileName = GetCoverFileName(memoryStream);
+
+			var coverFilePathParts = discFolderPathParts.Concat(new[] { coverFileName });
+
+			await contentStorage.StoreContent(coverFilePathParts, content, cancellationToken);
+
+			disc.CoverFileName = coverFileName;
+			disc.CoverSize = content.LongLength;
+			disc.CoverChecksum = await checksumCalculator.CalculateChecksum(content, cancellationToken);
+		}
+
 		public async Task StoreSong(Song song, Stream contentStream, CancellationToken cancellationToken)
 		{
 			var songFilePathParts = await GetSongFilePathParts(song, cancellationToken);
@@ -74,7 +96,14 @@ namespace MusicLibraryApi.Logic.Internal
 
 		public async Task RollbackDiscCreation(Disc disc, CancellationToken cancellationToken)
 		{
-			var discFolderPathParts = await GetDiscFolderPathParts(disc, cancellationToken);
+			var discFolderPathParts = (await GetDiscFolderPathParts(disc, cancellationToken))
+				.ToList();
+
+			if (disc.CoverFileName != null)
+			{
+				await contentStorage.DeleteContent(discFolderPathParts.Concat(new[] { disc.CoverFileName }), cancellationToken);
+			}
+
 			await contentStorage.DeleteEmptyFolder(discFolderPathParts, cancellationToken);
 		}
 
@@ -127,6 +156,33 @@ namespace MusicLibraryApi.Logic.Internal
 
 			var discPathParts = await GetDiscFolderPathParts(disc, cancellationToken);
 			return discPathParts.Concat(new[] { song.TreeTitle });
+		}
+
+		private static string GetCoverFileName(MemoryStream memoryStream)
+		{
+			ImageFormat imageFormat;
+
+			try
+			{
+				using var image = Image.FromStream(memoryStream);
+				imageFormat = image.RawFormat;
+			}
+			catch (ArgumentException e)
+			{
+				throw new ServiceOperationFailedException("Disc cover content is invalid", e);
+			}
+
+			if (imageFormat.Equals(ImageFormat.Jpeg))
+			{
+				return "cover.jpg";
+			}
+
+			if (imageFormat.Equals(ImageFormat.Png))
+			{
+				return "cover.png";
+			}
+
+			throw new ServiceOperationFailedException($"Image format '{imageFormat}' is not supported");
 		}
 	}
 }

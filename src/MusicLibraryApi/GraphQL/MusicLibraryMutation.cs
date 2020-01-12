@@ -53,13 +53,27 @@ namespace MusicLibraryApi.GraphQL
 			FieldAsync<NonNullGraphType<CreateDiscResultType>>(
 				"createDisc",
 				arguments: new QueryArguments(
-					new QueryArgument<NonNullGraphType<DiscInputType>> { Name = "disc" }),
+					new QueryArgument<NonNullGraphType<DiscInputType>> { Name = "disc" },
+					new QueryArgument<UploadGraphType> { Name = "coverFile" }),
 				resolve: async context =>
 				{
 					var discInput = context.GetArgument<DiscInput>("disc");
 					var disc = discInput.ToModel();
 
-					var newDiscId = await serviceAccessor.DiscsService.CreateDisc(disc, context.CancellationToken);
+					var file = context.GetArgument<IFormFile>("coverFile");
+
+					int newDiscId;
+
+					if (file != null)
+					{
+						await using var contentStream = file.OpenReadStream();
+						newDiscId = await serviceAccessor.DiscsService.CreateDisc(disc, contentStream, context.CancellationToken);
+					}
+					else
+					{
+						newDiscId = await serviceAccessor.DiscsService.CreateDisc(disc, context.CancellationToken);
+					}
+
 					return new CreateDiscResult(newDiscId);
 				});
 
@@ -67,7 +81,7 @@ namespace MusicLibraryApi.GraphQL
 				"createSong",
 				arguments: new QueryArguments(
 					new QueryArgument<NonNullGraphType<SongInputType>> { Name = "song" },
-					new QueryArgument<UploadGraphType> { Name = "songFile" }),
+					new QueryArgument<NonNullGraphType<UploadGraphType>> { Name = "songFile" }),
 				resolve: async context =>
 				{
 					var songInput = context.GetArgument<SongInput>("song");

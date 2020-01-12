@@ -292,7 +292,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Assert
 
-			AssertSongContent("Guano Apes/Some subfolder/Some Folder/Some Disc TreeTitle/Some Song TreeTitle.mp3", 405504);
+			AssertStorageContent("Guano Apes/Some subfolder/Some Folder/Some Disc TreeTitle/Some Song TreeTitle.mp3", 405504);
 		}
 	}
 }

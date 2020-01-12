@@ -23,6 +23,12 @@ namespace MusicLibraryApi.Abstractions.Models
 
 		public Folder Folder { get; set; } = null!;
 
+		public string? CoverFileName { get; set; }
+
+		public long? CoverSize { get; set; }
+
+		public uint? CoverChecksum { get; set; }
+
 		public DateTimeOffset? DeleteDate { get; set; }
 
 		public string? DeleteComment { get; set; }
