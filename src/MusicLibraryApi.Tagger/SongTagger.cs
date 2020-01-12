@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using MusicLibraryApi.Abstractions.Exceptions;
 using MusicLibraryApi.Abstractions.Interfaces;
 using MusicLibraryApi.Abstractions.Models;
 using TagLib;
@@ -23,8 +24,15 @@ namespace MusicLibraryApi.Tagger
 		{
 			var streamWrapper = new StreamFileAbstraction(contentStream, song.TreeTitle);
 
-			using var file = TagLib.File.Create(streamWrapper);
-			SetTagData(song, disc, artist, genre, file);
+			try
+			{
+				using var file = TagLib.File.Create(streamWrapper);
+				SetTagData(song, disc, artist, genre, file);
+			}
+			catch (CorruptFileException e)
+			{
+				throw new InvalidSongContentException("Song content is corrupted", e);
+			}
 
 			return Task.CompletedTask;
 		}

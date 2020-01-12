@@ -78,7 +78,15 @@ namespace MusicLibraryApi.Logic.Internal
 			await using var memoryStream = new MemoryStream();
 			await contentStream.CopyToAsync(memoryStream, cancellationToken);
 
-			await songTagger.SetTagData(song, disc, artist, genre, memoryStream, cancellationToken);
+			try
+			{
+				await songTagger.SetTagData(song, disc, artist, genre, memoryStream, cancellationToken);
+			}
+			catch (InvalidSongContentException e)
+			{
+				throw new ServiceOperationFailedException("Song content is invalid", e);
+			}
+
 			var content = memoryStream.ToArray();
 
 			await contentStorage.StoreContent(songFilePathParts, content, cancellationToken);

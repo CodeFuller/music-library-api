@@ -433,6 +433,46 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 		}
 
 		[TestMethod]
+		public async Task CreateSongMutation_ForBadContent_ReturnsError()
+		{
+			// Arrange
+
+			var newSongData = new InputSongData
+			{
+				DiscId = 1,
+				Title = "Hail Caesar",
+				TreeTitle = "04 - Hail Caesar.mp3",
+				Duration = new TimeSpan(0, 5, 13),
+			};
+
+			var client = CreateClient<ISongsMutation>();
+
+			// Act
+
+			await using var songContent = new MemoryStream(new byte[] { 0x01, 0x02, 0x03, });
+			var createSongTask = client.CreateSong(newSongData, songContent, CancellationToken.None);
+
+			// Assert
+
+			var exception = await Assert.ThrowsExceptionAsync<GraphQLRequestFailedException>(() => createSongTask);
+			Assert.AreEqual("Song content is invalid", exception.Message);
+
+			// Checking that no songs were created.
+
+			var expectedSongs = new[]
+			{
+				new OutputSongData { Id = 1, },
+				new OutputSongData { Id = 2, },
+				new OutputSongData { Id = 3, },
+			};
+
+			var songsQuery = CreateClient<ISongsQuery>();
+			var receivedSongs = await songsQuery.GetSongs(SongFields.Id, CancellationToken.None);
+
+			AssertData(expectedSongs, receivedSongs);
+		}
+
+		[TestMethod]
 		public async Task CreateSongMutation_CreationOfSongInStorageFails_DoesNotCreateSongInRepository()
 		{
 			// Arrange
