@@ -77,6 +77,7 @@ namespace MusicLibraryApi.Client.Operations
 
 			using var content = new MultipartFormDataContent();
 
+#pragma warning disable CA2000 // Dispose objects before losing scope - All instances of HttpContent added to content are disposed when `content` is disposed.
 			var filesMap = uploadedFiles.Keys.ToDictionary(k => k, key => new[] { $"variables.{key}", });
 			content.Add(new StringContent(JsonConvert.SerializeObject(filesMap)), "map");
 
@@ -87,6 +88,7 @@ namespace MusicLibraryApi.Client.Operations
 				var fileUpload = file.Value;
 				content.Add(new StreamContent(fileUpload.Stream), $"\"{file.Key}\"", $"\"{fileUpload.FileName}\"");
 			}
+#pragma warning restore CA2000 // Dispose objects before losing scope
 
 			return await ProcessRequest<TData>(queryName, content, cancellationToken);
 		}

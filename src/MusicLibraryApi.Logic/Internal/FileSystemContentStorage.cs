@@ -58,7 +58,9 @@ namespace MusicLibraryApi.Logic.Internal
 			var fullPath = GetFullPath(pathParts);
 
 			await using var fileStream = fileSystemFacade.OpenFile(fullPath, FileMode.CreateNew);
+#pragma warning disable CA2000 // Dispose objects before losing scope - False positive because of IAsyncDisposable.
 			await using var contentStream = new MemoryStream(content);
+#pragma warning restore CA2000 // Dispose objects before losing scope
 			await contentStream.CopyToAsync(fileStream, cancellationToken);
 
 			fileSystemFacade.SetReadOnlyAttribute(fullPath);

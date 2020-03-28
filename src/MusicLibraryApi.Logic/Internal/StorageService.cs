@@ -49,7 +49,9 @@ namespace MusicLibraryApi.Logic.Internal
 		{
 			var discFolderPathParts = await GetDiscFolderPathParts(disc, cancellationToken);
 
+#pragma warning disable CA2000 // Dispose objects before losing scope - False positive because of IAsyncDisposable.
 			await using var memoryStream = new MemoryStream();
+#pragma warning restore CA2000 // Dispose objects before losing scope
 			await coverContentStream.CopyToAsync(memoryStream, cancellationToken);
 			var content = memoryStream.ToArray();
 
@@ -75,7 +77,9 @@ namespace MusicLibraryApi.Logic.Internal
 
 			// We do not know the capabilities of input stream (i.e. CanWrite, CanSeek properties).
 			// That's why we open MemoryStream on top of it.
+#pragma warning disable CA2000 // Dispose objects before losing scope - False positive because of IAsyncDisposable.
 			await using var memoryStream = new MemoryStream();
+#pragma warning restore CA2000 // Dispose objects before losing scope
 			await contentStream.CopyToAsync(memoryStream, cancellationToken);
 
 			try
