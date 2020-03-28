@@ -1,0 +1,22 @@
+version: "3"
+
+services:
+
+    db:
+        image: postgres
+        environment:
+          - POSTGRES_DB=MusicLibraryDb
+          - POSTGRES_USER=postgres
+          - POSTGRES_PASSWORD=efm5kctL4ylv4KnCZ9IG
+        ports:
+          - "5432:5432"
+        volumes:
+          - pgdata:/var/lib/postgresql/data
+        networks:
+          - musicLibraryApi-net
+
+volumes:
+  pgdata:
+
+networks:
+  musicLibraryApi-net:
