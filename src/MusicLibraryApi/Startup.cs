@@ -1,5 +1,5 @@
 using System;
-using CF.Library.Logging;
+using CodeFuller.Library.Logging;
 using GraphQL;
 using GraphQL.Server;
 using GraphQL.Server.Ui.Playground;
@@ -78,7 +78,7 @@ namespace MusicLibraryApi
 				app.UseDeveloperExceptionPage();
 			}
 
-			loggerFactory.LoadLoggingConfiguration(Configuration);
+			loggerFactory.AddLogging(settings => Configuration.Bind("logging", settings));
 
 			app.UseGraphQLUpload<MusicLibrarySchema>();
 			app.UseGraphQL<MusicLibrarySchema>();

@@ -34,7 +34,7 @@ namespace MusicLibraryApi
 					logging.ClearProviders();
 
 					// Setting native logging level to most verbose.
-					// Actual logging level will be set by CF.Library.Logging based on settings in Logging section.
+					// Actual logging level will be set by CodeFuller.Library.Logging based on settings in Logging section.
 					logging.SetMinimumLevel(LogLevel.Trace);
 				})
 				.ConfigureWebHostDefaults(webBuilder =>
