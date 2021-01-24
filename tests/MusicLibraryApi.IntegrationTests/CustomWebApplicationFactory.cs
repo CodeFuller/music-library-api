@@ -376,7 +376,7 @@ namespace MusicLibraryApi.IntegrationTests
 
 		private void DeleteStorageData()
 		{
-			if (!Directory.Exists(FileSystemStorageRoot))
+			if (FileSystemStorageRoot == null || !Directory.Exists(FileSystemStorageRoot))
 			{
 				return;
 			}

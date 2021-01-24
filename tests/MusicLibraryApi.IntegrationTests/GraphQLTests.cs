@@ -76,15 +76,16 @@ namespace MusicLibraryApi.IntegrationTests
 		}
 
 		protected TClient CreateClient<TClient>(Action<IServiceCollection>? configureServices = null)
+			where TClient : notnull
 		{
-			configureServices ??= services => { };
+			configureServices ??= _ => { };
 			return InitializeWebApplicationFactory(configureServices)
 				.Services.GetRequiredService<TClient>();
 		}
 
 		protected HttpClient CreateClient()
 		{
-			return InitializeWebApplicationFactory(services => { })
+			return InitializeWebApplicationFactory(_ => { })
 				.CreateClient();
 		}
 

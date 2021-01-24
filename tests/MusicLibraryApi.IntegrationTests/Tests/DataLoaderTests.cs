@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MusicLibraryApi.Client.Contracts.Songs;
 using MusicLibraryApi.Client.Fields;
 using MusicLibraryApi.Client.Interfaces;
 
@@ -33,7 +34,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 				return base.ReaderExecuted(command, eventData, result);
 			}
 
-			public override Task<DbDataReader> ReaderExecutedAsync(DbCommand command, CommandExecutedEventData eventData,
+			public override ValueTask<DbDataReader> ReaderExecutedAsync(DbCommand command, CommandExecutedEventData eventData,
 				DbDataReader result, CancellationToken cancellationToken = default)
 			{
 				executedCommands.Add(command.CommandText);
@@ -60,7 +61,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 
 			// Sanity check that multiple results were processed.
 			Assert.AreEqual(2, folderData.Discs?.Count);
-			var songs = folderData.Discs?.SelectMany(d => d.Songs).ToList();
+			var songs = folderData.Discs?.SelectMany(d => d.Songs ?? Enumerable.Empty<OutputSongData>()).ToList();
 			Assert.AreEqual(2, songs?.Select(s => s.Artist?.Id).Where(id => id != null).Distinct().Count());
 
 			// 1st - SELECT * FROM Folders WHERE Id = 1 from FoldersService.GetFolder(null)

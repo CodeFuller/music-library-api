@@ -20,8 +20,6 @@ namespace MusicLibraryApi.Client.Operations
 {
 	internal abstract class BasicQuery
 	{
-		private const string GraphQLRelativeUri = "graphql";
-
 		public static string HttpClientName => "graphql";
 
 		private readonly IHttpClientFactory httpClientFactory;
@@ -96,7 +94,7 @@ namespace MusicLibraryApi.Client.Operations
 		private async Task<TData> ProcessRequest<TData>(string queryName, HttpContent content, CancellationToken cancellationToken)
 		{
 			using var httpClient = httpClientFactory.CreateClient(HttpClientName);
-			var httpResponse = await httpClient.PostAsync(GraphQLRelativeUri, content, cancellationToken);
+			var httpResponse = await httpClient.PostAsync(new Uri("graphql", UriKind.Relative), content, cancellationToken);
 
 			if (!httpResponse.IsSuccessStatusCode)
 			{

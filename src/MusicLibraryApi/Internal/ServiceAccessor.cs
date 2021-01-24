@@ -29,6 +29,7 @@ namespace MusicLibraryApi.Internal
 		}
 
 		private TService GetService<TService>()
+			where TService : notnull
 		{
 			return serviceProvider.GetRequiredService<TService>();
 		}
