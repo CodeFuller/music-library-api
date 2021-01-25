@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <CodeAnalysisRuleSet>..\..\MusicLibraryApi.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>..\..\MusicLibraryApi.src.ruleset</CodeAnalysisRuleSet>
     <AnalysisMode>AllEnabledByDefault</AnalysisMode>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <WarningsAsErrors />
