@@ -2,9 +2,7 @@
 
 namespace MusicLibraryApi.Logic.Internal
 {
-#pragma warning disable CA1812 // Avoid uninstantiated internal classes
 	internal class FileSystemFacade : IFileSystemFacade
-#pragma warning restore CA1812 // Avoid uninstantiated internal classes
 	{
 		public bool DirectoryExists(string path)
 		{

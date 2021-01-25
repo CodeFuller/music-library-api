@@ -79,7 +79,7 @@ namespace MusicLibraryApi.IntegrationTests.DataCheckers
 			return (x, y, dataPath) => itemsChecker.CheckData(f(x), f(y), AppendFieldName(dataPath, fieldName));
 		}
 
-		private string AppendFieldName(string dataPath, string fieldName)
+		private static string AppendFieldName(string dataPath, string fieldName)
 		{
 			var prefix = String.IsNullOrEmpty(dataPath) ? String.Empty : $"{dataPath}.";
 			return $"{prefix}{fieldName}";

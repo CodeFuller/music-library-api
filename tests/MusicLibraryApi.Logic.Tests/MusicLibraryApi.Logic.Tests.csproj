@@ -7,24 +7,24 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <CodeAnalysisRuleSet>..\..\MusicLibraryApi.Tests.ruleset</CodeAnalysisRuleSet>
+    <AnalysisMode>AllEnabledByDefault</AnalysisMode>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsAsErrors />
+  </PropertyGroup>
+
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.7" PrivateAssets="all" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.3" />
     <PackageReference Include="Moq" Version="4.13.1" />
     <PackageReference Include="MSTest.TestAdapter" Version="2.1.2" />
     <PackageReference Include="MSTest.TestFramework" Version="2.1.2" />
-    <PackageReference Include="StyleCop.Analyzers" Version="1.1.118" PrivateAssets="all" />
+    <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.312" PrivateAssets="all" />
     <PackageReference Include="TeamCity.VSTest.TestAdapter" Version="1.0.17" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\MusicLibraryApi.Logic\MusicLibraryApi.Logic.csproj" />
   </ItemGroup>
-
-  <PropertyGroup>
-    <CodeAnalysisRuleSet>..\..\MusicLibraryApi.Tests.ruleset</CodeAnalysisRuleSet>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <WarningsAsErrors />
-  </PropertyGroup>
 
 </Project>

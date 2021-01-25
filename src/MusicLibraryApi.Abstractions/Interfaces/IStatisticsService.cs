@@ -24,6 +24,6 @@ namespace MusicLibraryApi.Abstractions.Interfaces
 
 		Task<int> GetUnheardSongsNumber(CancellationToken cancellationToken);
 
-		Task<IReadOnlyCollection<(Rating?, int)>> GetSongsRatingsNumbers(CancellationToken cancellationToken);
+		Task<IReadOnlyCollection<(Rating? Rating, int SongsNumber)>> GetSongsRatingsNumbers(CancellationToken cancellationToken);
 	}
 }

@@ -1,6 +1,8 @@
 ﻿namespace MusicLibraryApi.Client.Contracts
 {
+#pragma warning disable CA1008 // Enums should have zero value
 	public enum Rating
+#pragma warning restore CA1008 // Enums should have zero value
 	{
 		R1 = 1,
 		R2 = 2,

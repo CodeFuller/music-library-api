@@ -43,7 +43,7 @@ namespace MusicLibraryApi.Client.Converters
 				return null;
 			}
 
-			if (!(reader.Value is string ratingValue))
+			if (reader.Value is not string ratingValue)
 			{
 				throw new InvalidOperationException($"Unexpected type of input rating value: {reader.Value.GetType()}");
 			}
@@ -63,7 +63,7 @@ namespace MusicLibraryApi.Client.Converters
 				throw new ArgumentNullException(nameof(value));
 			}
 
-			if (!(value is Rating rating))
+			if (value is not Rating rating)
 			{
 				throw new InvalidOperationException($"Unexpected type of output rating value: {value.GetType()}");
 			}

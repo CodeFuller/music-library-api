@@ -25,7 +25,9 @@ namespace MusicLibraryApi.Client.Fields
 
 			this.nestedFields = nestedFields;
 
+#pragma warning disable CA1508 // Avoid dead conditional code
 			this.variables = variables ?? Array.Empty<QueryVariable>();
+#pragma warning restore CA1508 // Avoid dead conditional code
 		}
 
 		private string BuildVariableArguments()

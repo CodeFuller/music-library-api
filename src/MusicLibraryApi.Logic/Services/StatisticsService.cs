@@ -90,7 +90,7 @@ namespace MusicLibraryApi.Logic.Services
 				.Count(s => s.PlaybacksCount == 0);
 		}
 
-		public async Task<IReadOnlyCollection<(Rating?, int)>> GetSongsRatingsNumbers(CancellationToken cancellationToken)
+		public async Task<IReadOnlyCollection<(Rating? Rating, int SongsNumber)>> GetSongsRatingsNumbers(CancellationToken cancellationToken)
 		{
 			var songs = await unitOfWork.SongsRepository.GetAllSongs(cancellationToken);
 

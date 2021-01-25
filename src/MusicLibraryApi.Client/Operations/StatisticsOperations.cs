@@ -8,9 +8,7 @@ using MusicLibraryApi.Client.Interfaces;
 
 namespace MusicLibraryApi.Client.Operations
 {
-#pragma warning disable CA1812 // Avoid uninstantiated internal classes
 	internal class StatisticsOperations : BasicQuery, IStatisticsQuery
-#pragma warning restore CA1812 // Avoid uninstantiated internal classes
 	{
 		public StatisticsOperations(IHttpClientFactory httpClientFactory, ILogger<BasicQuery> logger)
 			: base(httpClientFactory, logger)

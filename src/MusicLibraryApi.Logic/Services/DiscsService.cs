@@ -93,7 +93,9 @@ namespace MusicLibraryApi.Logic.Services
 			{
 				await RollbackDiscCreation(disc, cancellationToken);
 
+#pragma warning disable CA1508 // Avoid dead conditional code - False positive
 				if (e is FolderNotFoundException folderNotFoundException)
+#pragma warning restore CA1508 // Avoid dead conditional code
 				{
 					throw folderNotFoundException.Handle(disc.FolderId, logger);
 				}

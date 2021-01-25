@@ -30,7 +30,7 @@ namespace MusicLibraryApi.Logic.Tests.Services
 			var exception = new InvalidOperationException();
 
 			var storageServiceStub = new Mock<IStorageService>();
-			storageServiceStub.Setup(x => x.RollbackSongCreation(song, It.IsAny<CancellationToken>())).ThrowsAsync(new OutOfMemoryException());
+			storageServiceStub.Setup(x => x.RollbackSongCreation(song, It.IsAny<CancellationToken>())).ThrowsAsync(new NotSupportedException());
 
 			var unitOfWorkStub = new Mock<IUnitOfWork>();
 			unitOfWorkStub.Setup(x => x.Commit(It.IsAny<CancellationToken>())).ThrowsAsync(exception);

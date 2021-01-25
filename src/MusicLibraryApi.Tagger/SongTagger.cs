@@ -8,9 +8,7 @@ using TagLib;
 
 namespace MusicLibraryApi.Tagger
 {
-#pragma warning disable CA1812 // Avoid uninstantiated internal classes
 	internal class SongTagger : ISongTagger
-#pragma warning restore CA1812 // Avoid uninstantiated internal classes
 	{
 		static SongTagger()
 		{

@@ -12,16 +12,12 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 	[TestClass]
 	public class ErrorsTests : GraphQLTests
 	{
-#pragma warning disable CA1812 // Avoid uninstantiated internal classes
 		private class ErrorItem
-#pragma warning restore CA1812 // Avoid uninstantiated internal classes
 		{
 			public string? Message { get; set; }
 		}
 
-#pragma warning disable CA1812 // Avoid uninstantiated internal classes
 		private class ErrorData
-#pragma warning restore CA1812 // Avoid uninstantiated internal classes
 		{
 			public IReadOnlyCollection<ErrorItem>? Errors { get; set; }
 		}
