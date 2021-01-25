@@ -1,4 +1,4 @@
 ﻿using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("MusicLibraryApi.Logic.Tests")]
+[assembly: InternalsVisibleTo("MusicLibraryApi.Logic.UnitTests")]
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]

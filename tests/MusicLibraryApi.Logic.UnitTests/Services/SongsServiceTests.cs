@@ -10,7 +10,7 @@ using MusicLibraryApi.Abstractions.Models;
 using MusicLibraryApi.Logic.Interfaces;
 using MusicLibraryApi.Logic.Services;
 
-namespace MusicLibraryApi.Logic.Tests.Services
+namespace MusicLibraryApi.Logic.UnitTests.Services
 {
 	[TestClass]
 	public class SongsServiceTests

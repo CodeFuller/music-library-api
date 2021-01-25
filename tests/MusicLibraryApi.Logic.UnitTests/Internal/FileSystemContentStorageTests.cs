@@ -7,7 +7,7 @@ using MusicLibraryApi.Abstractions.Exceptions;
 using MusicLibraryApi.Logic.Internal;
 using MusicLibraryApi.Logic.Settings;
 
-namespace MusicLibraryApi.Logic.Tests.Internal
+namespace MusicLibraryApi.Logic.UnitTests.Internal
 {
 	[TestClass]
 	public class FileSystemContentStorageTests

@@ -21,9 +21,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MusicLibraryApi.Client", "s
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MusicLibraryApi.Logic", "src\MusicLibraryApi.Logic\MusicLibraryApi.Logic.csproj", "{89273748-CAF8-471F-B55A-6F4621CDE384}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MusicLibraryApi.Logic.Tests", "tests\MusicLibraryApi.Logic.Tests\MusicLibraryApi.Logic.Tests.csproj", "{53314697-ADB0-48F0-8D97-E599F5914989}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MusicLibraryApi.Logic.UnitTests", "tests\MusicLibraryApi.Logic.UnitTests\MusicLibraryApi.Logic.UnitTests.csproj", "{53314697-ADB0-48F0-8D97-E599F5914989}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MusicLibraryApi.Tagger", "src\MusicLibraryApi.Tagger\MusicLibraryApi.Tagger.csproj", "{0CEE5344-AFB5-4788-B484-0CFC42017266}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MusicLibraryApi.Tagger", "src\MusicLibraryApi.Tagger\MusicLibraryApi.Tagger.csproj", "{0CEE5344-AFB5-4788-B484-0CFC42017266}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
