@@ -1,4 +1,5 @@
 ﻿using System;
+using GraphQL;
 using GraphQL.Types;
 using MusicLibraryApi.GraphQL.Types;
 using MusicLibraryApi.Interfaces;

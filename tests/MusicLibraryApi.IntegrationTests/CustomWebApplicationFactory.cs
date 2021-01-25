@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using MusicLibraryApi.Abstractions.Models;
 using MusicLibraryApi.Client;
 using MusicLibraryApi.Dal.EfCore;
@@ -32,6 +33,10 @@ namespace MusicLibraryApi.IntegrationTests
 
 		protected override void ConfigureWebHost(IWebHostBuilder builder)
 		{
+			// This is required for tests on error handling.
+			// ErrorInfoProviderOptions.ExposeExceptionStackTrace is set to environment.IsDevelopment().
+			builder.UseEnvironment(Environments.Production);
+
 			builder.ConfigureAppConfiguration((context, configBuilder) =>
 			{
 				FileSystemStorageRoot = Path.Combine(Path.GetTempPath(), "MusicLibraryApi.IT", Path.GetRandomFileName());

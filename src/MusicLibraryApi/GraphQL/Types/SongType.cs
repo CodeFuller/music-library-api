@@ -12,8 +12,8 @@ namespace MusicLibraryApi.GraphQL.Types
 			Field(x => x.Id);
 			Field(x => x.Title);
 			Field(x => x.TreeTitle);
-			Field<IntGraphType>("trackNumber", resolve: context => context.Source.TrackNumber);
-			Field<NonNullGraphType<TimeSpanSecondsGraphType>>("duration");
+			Field(x => x.TrackNumber, nullable: true);
+			Field(x => x.Duration);
 			Field<NonNullGraphType<DiscType>>("disc", resolve: context =>
 			{
 				var discsService = serviceAccessor.DiscsService;
@@ -44,7 +44,7 @@ namespace MusicLibraryApi.GraphQL.Types
 			});
 			Field<RatingEnumType>("rating");
 			Field(x => x.BitRate, nullable: true);
-			Field<NonNullGraphType<ULongGraphType>>("size", resolve: context => context.Source.Size);
+			Field(x => x.Size, nullable: true);
 			Field(x => x.LastPlaybackTime, nullable: true);
 			Field(x => x.PlaybacksCount);
 			Field<NonNullGraphType<ListGraphType<NonNullGraphType<PlaybackType>>>>(

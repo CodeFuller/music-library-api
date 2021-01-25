@@ -21,11 +21,14 @@ namespace MusicLibraryApi
 {
 	public class Startup
 	{
-		public IConfiguration Configuration { get; }
+		private readonly IConfiguration configuration;
 
-		public Startup(IConfiguration configuration)
+		private readonly IWebHostEnvironment environment;
+
+		public Startup(IConfiguration configuration, IWebHostEnvironment environment)
 		{
-			Configuration = configuration;
+			this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+			this.environment = environment ?? throw new ArgumentNullException(nameof(environment));
 		}
 
 		public void ConfigureServices(IServiceCollection services)
@@ -37,22 +40,22 @@ namespace MusicLibraryApi
 			// If it is registered with Singleton lifetime, then all instances created via inner ServiceProvider will be disposed only on application exit.
 			services.AddScoped<IServiceAccessor, ServiceAccessor>();
 
-			var connectionString = Configuration.GetConnectionString("musicLibraryDB");
+			var connectionString = configuration.GetConnectionString("musicLibraryDB");
 			if (String.IsNullOrWhiteSpace(connectionString))
 			{
 				throw new InvalidOperationException("Database connection string is not set");
 			}
 
-			services.AddLogic(Configuration);
+			services.AddLogic(configuration);
 			services.AddDal(connectionString);
 
 			services.AddScoped<MusicLibraryQuery>();
 			services.AddScoped<MusicLibraryMutation>();
 			services.AddScoped<MusicLibrarySchema>();
 
-			services.AddScoped<IDependencyResolver>(s => new FuncDependencyResolver(s.GetRequiredService));
-
-			services.AddGraphQL(options => { options.ExposeExceptions = false; })
+			services.AddGraphQL()
+				.AddSystemTextJson()
+				.AddErrorInfoProvider(opt => opt.ExposeExceptionStackTrace = environment.IsDevelopment())
 				.AddDataLoader()
 				.AddGraphTypes(ServiceLifetime.Scoped);
 
@@ -78,7 +81,7 @@ namespace MusicLibraryApi
 				app.UseDeveloperExceptionPage();
 			}
 
-			loggerFactory.AddLogging(settings => Configuration.Bind("logging", settings));
+			loggerFactory.AddLogging(settings => configuration.Bind("logging", settings));
 
 			app.UseGraphQLUpload<MusicLibrarySchema>();
 			app.UseGraphQL<MusicLibrarySchema>();

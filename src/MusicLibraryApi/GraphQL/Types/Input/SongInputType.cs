@@ -14,7 +14,7 @@ namespace MusicLibraryApi.GraphQL.Types.Input
 			Field<NonNullGraphType<StringGraphType>>("title");
 			Field<NonNullGraphType<StringGraphType>>("treeTitle");
 			Field<IntGraphType>("trackNumber", resolve: context => context.Source.TrackNumber);
-			Field<NonNullGraphType<CustomTimeSpanSecondsGraphType>>("duration");
+			Field<NonNullGraphType<TimeSpanSecondsGraphType>>("duration");
 			Field<RatingEnumType>("rating");
 			Field<IntGraphType>("bitRate");
 			Field<DateTimeOffsetGraphType>("lastPlaybackTime");

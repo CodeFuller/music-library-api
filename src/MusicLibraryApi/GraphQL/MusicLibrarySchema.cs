@@ -1,16 +1,17 @@
-﻿using GraphQL;
+﻿using System;
 using GraphQL.Types;
 using GraphQL.Upload.AspNetCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace MusicLibraryApi.GraphQL
 {
 	public class MusicLibrarySchema : Schema
 	{
-		public MusicLibrarySchema(IDependencyResolver resolver)
-			: base(resolver)
+		public MusicLibrarySchema(IServiceProvider services)
+			: base(services)
 		{
-			Query = resolver.Resolve<MusicLibraryQuery>();
-			Mutation = resolver.Resolve<MusicLibraryMutation>();
+			Query = services.GetRequiredService<MusicLibraryQuery>();
+			Mutation = services.GetRequiredService<MusicLibraryMutation>();
 
 			RegisterValueConverter(new FormFileConverter());
 		}

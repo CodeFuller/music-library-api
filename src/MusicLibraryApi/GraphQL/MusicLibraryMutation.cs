@@ -1,4 +1,5 @@
-﻿using GraphQL.Types;
+﻿using GraphQL;
+using GraphQL.Types;
 using GraphQL.Upload.AspNetCore;
 using Microsoft.AspNetCore.Http;
 using MusicLibraryApi.GraphQL.Types.Input;

@@ -1,4 +1,5 @@
-﻿using GraphQL.DataLoader;
+﻿using GraphQL;
+using GraphQL.DataLoader;
 using GraphQL.Types;
 using MusicLibraryApi.Abstractions.Models;
 using MusicLibraryApi.Interfaces;

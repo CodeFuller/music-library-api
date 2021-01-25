@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using GraphQL;
 using GraphQL.Instrumentation;
-using GraphQL.Types;
 using Microsoft.Extensions.Logging;
 using MusicLibraryApi.Abstractions.Exceptions;
 using static System.FormattableString;
@@ -18,7 +17,7 @@ namespace MusicLibraryApi.GraphQL
 			this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
 		}
 
-		public async Task<object> Resolve(ResolveFieldContext context, FieldMiddlewareDelegate next)
+		public async Task<object> Resolve(IResolveFieldContext context, FieldMiddlewareDelegate next)
 		{
 			try
 			{

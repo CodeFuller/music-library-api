@@ -211,7 +211,7 @@ namespace MusicLibraryApi.IntegrationTests.Tests
 			// Assert
 
 			var exception = await Assert.ThrowsExceptionAsync<GraphQLRequestFailedException>(() => addPlaybackTask);
-			Assert.AreEqual("Can not add earlier playback for the song: 2018.11.25 09:18:17 <= 2018.11.25 09:25:17", exception.Message);
+			Assert.AreEqual("Can not add earlier playback for the song: 2018.11.25 06:18:17 +00 <= 2018.11.25 06:25:17 +00", exception.Message);
 		}
 	}
 }

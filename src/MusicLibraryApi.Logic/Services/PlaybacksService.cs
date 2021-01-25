@@ -44,7 +44,12 @@ namespace MusicLibraryApi.Logic.Services
 
 			if (song.LastPlaybackTime != null && playbackTime <= song.LastPlaybackTime)
 			{
-				throw new ServiceOperationFailedException($"Can not add earlier playback for the song: {playbackTime:yyyy.MM.dd HH:mm:ss} <= {song.LastPlaybackTime:yyyy.MM.dd HH:mm:ss}");
+				// PostgreSQL does not store original timezone for DateTimeOffset values. DateTimeOffset loaded from the database will have current timezone of the server.
+				// In this public API error, we want to avoid showing specific server timezone, that is why we convert time to UTC.
+				// This is also required for integration test, which covers this branch and verifies the error message.
+				// Note: we still show timezone in the message, so that API user understands which time is used.
+				var message = $"Can not add earlier playback for the song: {playbackTime.ToUniversalTime():yyyy.MM.dd HH:mm:ss zz} <= {song.LastPlaybackTime.Value.ToUniversalTime():yyyy.MM.dd HH:mm:ss zz}";
+				throw new ServiceOperationFailedException(message);
 			}
 
 			await repository.AddPlayback(playback, cancellationToken);
