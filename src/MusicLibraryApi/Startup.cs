@@ -31,9 +31,6 @@ namespace MusicLibraryApi
 
 		public void ConfigureServices(IServiceCollection services)
 		{
-			services.AddControllers()
-				.AddNewtonsoftJson();
-
 			// ServiceAccessor should be registered with Scoped (or Transient) lifetime.
 			// If it is registered with Singleton lifetime, then all instances created via inner ServiceProvider will be disposed only on application exit.
 			services.AddScoped<IServiceAccessor, ServiceAccessor>();
