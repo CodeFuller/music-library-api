@@ -25,10 +25,6 @@ namespace MusicLibraryApi.IntegrationTests
 		public CustomWebApplicationFactory(Action<IServiceCollection> configureServices)
 		{
 			this.configureServicesAction = configureServices ?? throw new ArgumentNullException(nameof(configureServices));
-
-			// Fix for the error "Synchronous operations are disallowed. Call ReadAsync or set AllowSynchronousIO to true instead."
-			// See https://stackoverflow.com/questions/55052319/net-core-3-preview-synchronous-operations-are-disallowed
-			Server.AllowSynchronousIO = true;
 		}
 
 		protected override void ConfigureWebHost(IWebHostBuilder builder)
