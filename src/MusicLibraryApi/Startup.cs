@@ -3,7 +3,6 @@ using CodeFuller.Library.Logging;
 using GraphQL;
 using GraphQL.Server;
 using GraphQL.Server.Ui.Playground;
-using GraphQL.Types;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
@@ -58,8 +57,6 @@ namespace MusicLibraryApi
 				.AddErrorInfoProvider(opt => opt.ExposeExceptionStackTrace = environment.IsDevelopment())
 				.AddDataLoader()
 				.AddGraphTypes(ServiceLifetime.Scoped);
-
-			services.AddScoped<ULongGraphType>();
 
 			services.AddGraphQLUpload();
 
