@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Formatting;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -26,7 +25,6 @@ namespace MusicLibraryApi.Client.Operations
 
 		private readonly IContractResolver contractResolver = new CustomContractResolver();
 		private readonly JsonSerializer jsonSerializer;
-		private readonly JsonMediaTypeFormatter formatter;
 
 		protected ILogger<BasicQuery> Logger { get; }
 
@@ -38,14 +36,6 @@ namespace MusicLibraryApi.Client.Operations
 			this.jsonSerializer = new JsonSerializer
 			{
 				ContractResolver = contractResolver,
-			};
-
-			this.formatter = new JsonMediaTypeFormatter
-			{
-				SerializerSettings = new JsonSerializerSettings
-				{
-					ContractResolver = contractResolver,
-				},
 			};
 		}
 
