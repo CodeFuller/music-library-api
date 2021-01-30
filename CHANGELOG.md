@@ -11,10 +11,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated CodeFuller.Library to version 7.2.0.
 - Added MIT license.
 
+## 3.1.2 - 2020-01-12
+- Enhanced replacement of invalid file name characters.
+
 ## 3.1.1 - 2020-01-12
-- Added storing of disc cover images.
 - Added content validation when creating a song.
 - Improved replacement of invalid file name characters.
+
+## 3.1.0 - 2020-01-12
+- Added storing of disc cover images.
 
 ## 3.0.2 - 2020-01-11
 - Fixed the order for MP3 tags.
